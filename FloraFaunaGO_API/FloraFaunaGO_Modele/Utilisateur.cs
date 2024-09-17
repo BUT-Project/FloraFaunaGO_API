@@ -36,10 +36,10 @@ public class Utilisateur
     public string Mail
     {
         get { return mail; }
-        set 
+        set
         {
             if (value.Contains("@") && value.Contains(".")) mail = value;
-            else mail = this.Pseudo + "@mail.com";
+            else mail = Pseudo + "@mail.com";
         }
     }
 
@@ -57,9 +57,9 @@ public class Utilisateur
 
     private DateTime date_inscription;
     public DateTime DateInscription
-    { 
+    {
         get { return date_inscription; }
-        set 
+        set
         {
             if (value < DateTime.Now) date_inscription = DateTime.Now;
             else date_inscription = value;

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using FloraFaunaGO_Modele.Enum;
 
 namespace FloraFaunaGO_Modele;
 
@@ -11,13 +12,13 @@ public class Espece
 {
     private uint id;
 
-    public uint Id 
-    {  
-        get { return id; } 
-        set 
+    public uint Id
+    {
+        get { return id; }
+        set
         {
             if (value < 0) id = 0;
-            else id = value; 
+            else id = value;
         }
     }
 
@@ -74,7 +75,7 @@ public class Espece
         get { return image; }
         set
         {
-            if (Blob.Equals(value, null)) image = default;
+            if (Equals(value, null)) image = default;
             else image = value;
         }
     }
@@ -109,7 +110,7 @@ public class Espece
     private Regime_Alimentaire regime;
     public Regime_Alimentaire Regime { get; set; }
 
-    public Espece(uint id,string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, List<uint> lidHabitat, List<uint> lidLocalisation, Regime_Alimentaire regime)
+    public Espece(uint id, string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, List<uint> lidHabitat, List<uint> lidLocalisation, Regime_Alimentaire regime)
     {
         Id = id;
         Nom = nom;

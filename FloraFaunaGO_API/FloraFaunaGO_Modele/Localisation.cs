@@ -30,7 +30,7 @@ public class Localisation
     public double Rayon
     {
         get { return rayon; }
-        set 
+        set
         {
             if (value < 0) rayon = 0;
             else rayon = value;

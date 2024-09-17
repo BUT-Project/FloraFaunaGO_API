@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFaunaGO_Modele;
+namespace FloraFaunaGO_Modele.Enum;
 
 public enum Regime_Alimentaire
 {

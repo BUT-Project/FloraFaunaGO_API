@@ -28,7 +28,7 @@ public class Capture : IEquatable<Capture>
         get { return photo; }
         set
         {
-            if (Blob.Equals(value, null)) photo = default;
+            if (Equals(value, null)) photo = default;
             else photo = value;
         }
     }
@@ -43,7 +43,7 @@ public class Capture : IEquatable<Capture>
         get => LidCaptureDetails;
         internal set
         {
-            if(value != null)
+            if (value != null)
                 LidCaptureDetail = value;
         }
     }
@@ -59,17 +59,18 @@ public class Capture : IEquatable<Capture>
         }
     }
 
-    public Capture(uint id, Blob photo, DateTime dateCapture, List<uint> lidCaptureDetail, uint idEspece) { 
-        this.Id = id;
-        this.Photo = photo;
-        this.DateCapture = dateCapture;
-        this.LidCaptureDetail = lidCaptureDetail;
-        this.IdEspece = idEspece;
+    public Capture(uint id, Blob photo, DateTime dateCapture, List<uint> lidCaptureDetail, uint idEspece)
+    {
+        Id = id;
+        Photo = photo;
+        DateCapture = dateCapture;
+        LidCaptureDetail = lidCaptureDetail;
+        IdEspece = idEspece;
     }
 
     public bool Equals(Capture? other)
     {
-        if (this.idEspece == other.idEspece) return true;
+        if (idEspece == other.idEspece) return true;
         return false;
     }
 }

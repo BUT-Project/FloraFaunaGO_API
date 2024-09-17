@@ -12,10 +12,10 @@ public class Habitat
     public string Zone
     {
         get { return zone; }
-        set 
+        set
         {
             if (string.IsNullOrEmpty(value)) zone = "Zone";
-            else zone = value; 
+            else zone = value;
         }
     }
 
