@@ -78,4 +78,48 @@ public class Espece
             else image = value;
         }
     }
+
+    private Famille famille;
+    public Famille Famille { get; set; }
+
+    private List<uint> lidHabitat;
+    public List<uint> LidHabitat
+    {
+        get { return lidHabitat; }
+        set
+        {
+            if (value == null) return;
+            if (lidHabitat == null) lidHabitat = new List<uint>();
+            else lidHabitat = value;
+        }
+    }
+
+    private List<uint> lidLocalisation;
+    public List<uint> LidLocalisation
+    {
+        get { return lidLocalisation; }
+        set
+        {
+            if (value == null) return;
+            if (lidLocalisation == null) lidLocalisation = new List<uint>();
+            else lidLocalisation = value;
+        }
+    }
+
+    private Regime_Alimentaire regime;
+    public Regime_Alimentaire Regime { get; set; }
+
+    public Espece(uint id,string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, List<uint> lidHabitat, List<uint> lidLocalisation, Regime_Alimentaire regime)
+    {
+        Id = id;
+        Nom = nom;
+        Nom_scientifique = nom_scientifique;
+        Description = description;
+        Numero = numero;
+        Image = image;
+        Famille = famille;
+        LidHabitat = lidHabitat;
+        LidLocalisation = lidLocalisation;
+        Regime = regime;
+    }
 }

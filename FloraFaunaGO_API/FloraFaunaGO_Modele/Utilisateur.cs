@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -63,5 +64,27 @@ public class Utilisateur
             if (value < DateTime.Now) date_inscription = DateTime.Now;
             else date_inscription = value;
         }
+    }
+
+    private List<uint> lidCapture;
+    public List<uint> Lidcapture
+    {
+        get { return lidCapture; }
+        set
+        {
+            if (value == null) return;
+            if (lidCapture == null) lidCapture = new List<uint>();
+            lidCapture = value;
+        }
+    }
+
+    public Utilisateur(uint id, string pseudo, string mail, string hash_mdp, DateTime date_inscription, List<uint> lidcapture)
+    {
+        Id = id;
+        Pseudo = pseudo;
+        Mail = mail;
+        Hash_mdp = hash_mdp;
+        DateInscription = date_inscription;
+        Lidcapture = lidcapture;
     }
 }
