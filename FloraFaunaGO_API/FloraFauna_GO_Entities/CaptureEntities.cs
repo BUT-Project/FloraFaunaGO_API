@@ -25,7 +25,7 @@ public class CaptureEntities
         }
     }
 
-    private DateTime date_capture;
+    private DateTime dateCapture;
     public DateTime DateCapture { get; set; }
 
     private List<CaptureDetailsEntities> captureDetails;

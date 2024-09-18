@@ -47,14 +47,14 @@ public class UtilisateurEntities
         }
     }
 
-    private DateTime date_inscription;
+    private DateTime dateInscription;
     public DateTime DateInscription
     {
-        get { return date_inscription; }
+        get { return dateInscription; }
         set
         {
-            if (value < DateTime.Now) date_inscription = DateTime.Now;
-            else date_inscription = value;
+            if (value < DateTime.Now) dateInscription = DateTime.Now;
+            else dateInscription = value;
         }
     }
 
