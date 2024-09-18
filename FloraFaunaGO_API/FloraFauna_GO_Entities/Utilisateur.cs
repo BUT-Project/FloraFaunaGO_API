@@ -11,10 +11,7 @@ public class Utilisateur
 {
     private Guid id;
 
-    public Guid Id
-    {
-        get;
-    }
+    public Guid Id { get; }
 
     private string pseudo;
     public string Pseudo

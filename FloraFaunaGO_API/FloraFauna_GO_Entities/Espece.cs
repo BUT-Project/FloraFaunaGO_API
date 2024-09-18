@@ -12,10 +12,7 @@ public class Espece
 {
     private Guid id;
 
-    public Guid Id
-    {
-        get;
-    }
+    public Guid Id { get; }
 
     private string nom;
 

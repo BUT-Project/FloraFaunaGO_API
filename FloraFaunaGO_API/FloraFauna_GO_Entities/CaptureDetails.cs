@@ -21,7 +21,12 @@ public class CaptureDetails
     private Localisation localisation;
     public Localisation Localisation
     {
-        get; set;
+        get => localisation;
+        set
+        {
+            if (value == null || value == localisation) return;
+            localisation = value;
+        }
     }
 
     public CaptureDetails(bool shiny, Localisation localisation)

@@ -12,10 +12,7 @@ public class Capture
 {
     private Guid id;
 
-    public Guid Id
-    {
-        get;
-    }
+    public Guid Id { get; }
 
     private Blob photo;
     public Blob Photo
@@ -36,9 +33,13 @@ public class Capture
     public List<CaptureDetails> CaptureDetails => captureDetails;
 
     private Espece espece;
-    public Espece Espece
-    {
-        get; set;
+    public Espece Espece {
+        get => espece;
+        set
+        {
+            if (value == null || espece == value) return;
+            espece = value;
+        }
     }
 
     public Capture(Blob photo, DateTime dateCapture, Espece espece)
