@@ -5,13 +5,13 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_API", "FloraFaunaGO_API\FloraFaunaGO_API.csproj", "{0D4BDED2-89C8-44AB-A934-456CC38CCAF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Modele", "FloraFaunaGO_Modele\FloraFaunaGO_Modele.csproj", "{EFA5106D-26C0-4422-B248-9DC34C3917F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Entities", "FloraFaunaGO_Modele\FloraFaunaGO_Entities.csproj", "{EFA5106D-26C0-4422-B248-9DC34C3917F7}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Test", "FloraFaunaGO_Test\FloraFaunaGO_Test.csproj", "{DE341A49-BD33-43CE-804D-6A4556848DD5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFaunaGO_Services", "FloraFaunaGO_Services\FloraFaunaGO_Services.csproj", "{37A1A495-9A90-4DCA-8620-68E3E0934C03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Services", "FloraFaunaGO_Services\FloraFaunaGO_Services.csproj", "{37A1A495-9A90-4DCA-8620-68E3E0934C03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Entities", "FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj", "{C64F8173-22B4-480A-B7D9-0A7708D2D713}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Entities", "FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj", "{C64F8173-22B4-480A-B7D9-0A7708D2D713}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
