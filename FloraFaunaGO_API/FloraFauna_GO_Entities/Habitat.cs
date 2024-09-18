@@ -8,6 +8,13 @@ namespace FloraFaunaGO_Modele;
 
 public class Habitat
 {
+    private uint id;
+    public uint Id
+    {
+        get { return id; }
+        set { }
+    }
+
     private string zone;
     public string Zone
     {
@@ -28,5 +35,12 @@ public class Habitat
             if (string.IsNullOrEmpty(value)) climat = "Climat";
             else climat = value;
         }
+    }
+
+    public Habitat(string zone,  string climat, uint id)
+    {
+        Id = id;
+        Zone = zone;
+        Climat = climat;
     }
 }

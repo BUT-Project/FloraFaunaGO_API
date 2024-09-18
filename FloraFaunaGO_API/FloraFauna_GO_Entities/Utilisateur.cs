@@ -9,16 +9,11 @@ namespace FloraFaunaGO_Modele;
 
 public class Utilisateur
 {
-    private uint id;
+    private Guid id;
 
-    public uint Id
+    public Guid Id
     {
-        get { return id; }
-        set
-        {
-            if (value < 0) id = 0;
-            else id = value;
-        }
+        get;
     }
 
     private string pseudo;
@@ -66,25 +61,15 @@ public class Utilisateur
         }
     }
 
-    private List<uint> lidCapture;
-    public List<uint> Lidcapture
-    {
-        get { return lidCapture; }
-        set
-        {
-            if (value == null) return;
-            if (lidCapture == null) lidCapture = new List<uint>();
-            lidCapture = value;
-        }
-    }
+    private List<Capture> captures;
+    public List<Capture> Captures => new List<Capture>();
 
-    public Utilisateur(uint id, string pseudo, string mail, string hash_mdp, DateTime date_inscription, List<uint> lidcapture)
+    public Utilisateur(string pseudo, string mail, string hash_mdp, DateTime date_inscription)
     {
-        Id = id;
         Pseudo = pseudo;
         Mail = mail;
         Hash_mdp = hash_mdp;
         DateInscription = date_inscription;
-        Lidcapture = lidcapture;
+        captures = new List<Capture>();
     }
 }

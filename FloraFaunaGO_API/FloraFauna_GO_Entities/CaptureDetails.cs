@@ -8,36 +8,25 @@ namespace FloraFaunaGO_Modele;
 
 public class CaptureDetails
 {
-    private uint id;
+    private Guid id;
 
-    public uint Id
+    public Guid Id
     {
-        get { return id; }
-        set
-        {
-            if (value < 0) id = 0;
-            else id = value;
-        }
+        get;
     }
 
     private bool shiny;
     public bool Shiny { get; set; }
 
-    private uint idLocalisation;
-    public uint IdLocalisation
+    private Localisation localisation;
+    public Localisation Localisation
     {
-        get { return idLocalisation; }
-        set
-        {
-            if (value < 0) idLocalisation = 0;
-            else idLocalisation = value;
-        }
+        get; set;
     }
 
-    public CaptureDetails(uint id, bool shiny, uint idLocalisation)
+    public CaptureDetails(bool shiny, Localisation localisation)
     {
-        Id = id;
         Shiny = shiny;
-        IdLocalisation = idLocalisation;
+        Localisation = localisation;
     }
 }

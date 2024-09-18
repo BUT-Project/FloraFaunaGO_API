@@ -8,18 +8,13 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace FloraFaunaGO_Modele;
 
-public class Capture : IEquatable<Capture>
+public class Capture
 {
-    private uint id;
+    private Guid id;
 
-    public uint Id
+    public Guid Id
     {
-        get { return id; }
-        set
-        {
-            if (value < 0) id = 0;
-            else id = value;
-        }
+        get;
     }
 
     private Blob photo;
@@ -36,41 +31,21 @@ public class Capture : IEquatable<Capture>
     private DateTime date_capture;
     public DateTime DateCapture { get; set; }
 
-    private List<uint> LidCaptureDetail;
+    private List<CaptureDetails> captureDetails;
 
-    public List<uint> LidCaptureDetails
+    public List<CaptureDetails> CaptureDetails => captureDetails;
+
+    private Espece espece;
+    public Espece Espece
     {
-        get => LidCaptureDetails;
-        internal set
-        {
-            if (value != null)
-                LidCaptureDetail = value;
-        }
+        get; set;
     }
 
-    private uint idEspece;
-    public uint IdEspece
+    public Capture(Blob photo, DateTime dateCapture, Espece espece)
     {
-        get => idEspece;
-        set
-        {
-            if (value < 0) value = 0;
-            idEspece = value;
-        }
-    }
-
-    public Capture(uint id, Blob photo, DateTime dateCapture, List<uint> lidCaptureDetail, uint idEspece)
-    {
-        Id = id;
         Photo = photo;
         DateCapture = dateCapture;
-        LidCaptureDetail = lidCaptureDetail;
-        IdEspece = idEspece;
-    }
-
-    public bool Equals(Capture? other)
-    {
-        if (idEspece == other.idEspece) return true;
-        return false;
+        captureDetails = new List<CaptureDetails>();
+        Espece = espece;
     }
 }

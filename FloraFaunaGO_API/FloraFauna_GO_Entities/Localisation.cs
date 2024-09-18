@@ -8,18 +8,6 @@ namespace FloraFaunaGO_Modele;
 
 public class Localisation
 {
-    private uint id;
-
-    public uint Id
-    {
-        get { return id; }
-        set
-        {
-            if (value < 0) id = 0;
-            else id = value;
-        }
-    }
-
     private double latitude;
     public double Latitude { get; set; }
 
