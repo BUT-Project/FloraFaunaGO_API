@@ -5,13 +5,15 @@ VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_API", "FloraFaunaGO_API\FloraFaunaGO_API.csproj", "{0D4BDED2-89C8-44AB-A934-456CC38CCAF5}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Entities", "FloraFaunaGO_Modele\FloraFaunaGO_Entities.csproj", "{EFA5106D-26C0-4422-B248-9DC34C3917F7}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Test", "FloraFaunaGO_Test\FloraFaunaGO_Test.csproj", "{DE341A49-BD33-43CE-804D-6A4556848DD5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Services", "FloraFaunaGO_Services\FloraFaunaGO_Services.csproj", "{37A1A495-9A90-4DCA-8620-68E3E0934C03}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Entities", "FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj", "{C64F8173-22B4-480A-B7D9-0A7708D2D713}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Dto", "FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj", "{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Shared", "FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj", "{52E99748-99EC-49E3-895E-9EB98D3557C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +25,6 @@ Global
 		{0D4BDED2-89C8-44AB-A934-456CC38CCAF5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D4BDED2-89C8-44AB-A934-456CC38CCAF5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D4BDED2-89C8-44AB-A934-456CC38CCAF5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EFA5106D-26C0-4422-B248-9DC34C3917F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EFA5106D-26C0-4422-B248-9DC34C3917F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EFA5106D-26C0-4422-B248-9DC34C3917F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EFA5106D-26C0-4422-B248-9DC34C3917F7}.Release|Any CPU.Build.0 = Release|Any CPU
 		{DE341A49-BD33-43CE-804D-6A4556848DD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DE341A49-BD33-43CE-804D-6A4556848DD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE341A49-BD33-43CE-804D-6A4556848DD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -39,6 +37,14 @@ Global
 		{C64F8173-22B4-480A-B7D9-0A7708D2D713}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C64F8173-22B4-480A-B7D9-0A7708D2D713}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C64F8173-22B4-480A-B7D9-0A7708D2D713}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FloraFaunaGO_Modele;
 
-public class Habitat
+public class HabitatEntities
 {
     private uint id;
     public uint Id
@@ -37,7 +37,7 @@ public class Habitat
         }
     }
 
-    public Habitat(string zone,  string climat, uint id)
+    public HabitatEntities(string zone,  string climat, uint id)
     {
         Id = id;
         Zone = zone;

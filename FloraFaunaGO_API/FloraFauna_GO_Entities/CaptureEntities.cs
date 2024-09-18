@@ -8,7 +8,7 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace FloraFaunaGO_Modele;
 
-public class Capture
+public class CaptureEntities
 {
     private Guid id;
 
@@ -28,12 +28,12 @@ public class Capture
     private DateTime date_capture;
     public DateTime DateCapture { get; set; }
 
-    private List<CaptureDetails> captureDetails;
+    private List<CaptureDetailsEntities> captureDetails;
 
-    public List<CaptureDetails> CaptureDetails => captureDetails;
+    public List<CaptureDetailsEntities> CaptureDetails => captureDetails;
 
-    private Espece espece;
-    public Espece Espece {
+    private EspeceEntities espece;
+    public EspeceEntities Espece {
         get => espece;
         set
         {
@@ -42,11 +42,11 @@ public class Capture
         }
     }
 
-    public Capture(Blob photo, DateTime dateCapture, Espece espece)
+    public CaptureEntities(Blob photo, DateTime dateCapture, EspeceEntities espece)
     {
         Photo = photo;
         DateCapture = dateCapture;
-        captureDetails = new List<CaptureDetails>();
+        captureDetails = new List<CaptureDetailsEntities>();
         Espece = espece;
     }
 }

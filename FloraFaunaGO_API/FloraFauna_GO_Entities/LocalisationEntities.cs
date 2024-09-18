@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FloraFaunaGO_Modele;
 
-public class Localisation
+public class LocalisationEntities
 {
     private double latitude;
     public double Latitude { get; set; }

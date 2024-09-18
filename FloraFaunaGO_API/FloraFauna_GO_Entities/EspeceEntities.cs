@@ -8,7 +8,7 @@ using FloraFaunaGO_Modele.Enum;
 
 namespace FloraFaunaGO_Modele;
 
-public class Espece
+public class EspeceEntities
 {
     private Guid id;
 
@@ -75,17 +75,17 @@ public class Espece
     private Famille famille;
     public Famille Famille { get; set; }
 
-    private List<Habitat> habitats;
-    public List<Habitat> Habitats => habitats;
+    private List<HabitatEntities> habitats;
+    public List<HabitatEntities> Habitats => habitats;
 
-    private List<Localisation> localisations;
-    public List<Localisation> Localisations => localisations;
+    private List<LocalisationEntities> localisations;
+    public List<LocalisationEntities> Localisations => localisations;
     
 
     private Regime_Alimentaire regime;
     public Regime_Alimentaire Regime { get; set; }
 
-    public Espece(string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, Regime_Alimentaire regime)
+    public EspeceEntities(string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, Regime_Alimentaire regime)
     {
         Nom = nom;
         Nom_scientifique = nom_scientifique;
@@ -93,8 +93,8 @@ public class Espece
         Numero = numero;
         Image = image;
         Famille = famille;
-        habitats = new List<Habitat>();
-        localisations = new List<Localisation>();
+        habitats = new List<HabitatEntities>();
+        localisations = new List<LocalisationEntities>();
         Regime = regime;
     }
 }

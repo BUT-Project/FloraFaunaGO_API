@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FloraFaunaGO_Modele;
 
-public class CaptureDetails
+public class CaptureDetailsEntities
 {
     private Guid id;
 
@@ -18,8 +18,8 @@ public class CaptureDetails
     private bool shiny;
     public bool Shiny { get; set; }
 
-    private Localisation localisation;
-    public Localisation Localisation
+    private LocalisationEntities localisation;
+    public LocalisationEntities Localisation
     {
         get => localisation;
         set
@@ -29,7 +29,7 @@ public class CaptureDetails
         }
     }
 
-    public CaptureDetails(bool shiny, Localisation localisation)
+    public CaptureDetailsEntities(bool shiny, LocalisationEntities localisation)
     {
         Shiny = shiny;
         Localisation = localisation;

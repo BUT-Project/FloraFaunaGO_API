@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FloraFaunaGO_Modele;
 
-public class Utilisateur
+public class UtilisateurEntities
 {
     private Guid id;
 
@@ -58,15 +58,15 @@ public class Utilisateur
         }
     }
 
-    private List<Capture> captures;
-    public List<Capture> Captures => new List<Capture>();
+    private List<CaptureEntities> captures;
+    public List<CaptureEntities> Captures => new List<CaptureEntities>();
 
-    public Utilisateur(string pseudo, string mail, string hash_mdp, DateTime date_inscription)
+    public UtilisateurEntities(string pseudo, string mail, string hash_mdp, DateTime date_inscription)
     {
         Pseudo = pseudo;
         Mail = mail;
         Hash_mdp = hash_mdp;
         DateInscription = date_inscription;
-        captures = new List<Capture>();
+        captures = new List<CaptureEntities>();
     }
 }
