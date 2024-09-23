@@ -8,8 +8,8 @@ namespace FloraFaunaGO_Modele;
 
 public class HabitatEntities
 {
-    private uint id;
-    public uint Id
+    private Guid id;
+    public Guid Id
     {
         get { return id; }
         set { }
