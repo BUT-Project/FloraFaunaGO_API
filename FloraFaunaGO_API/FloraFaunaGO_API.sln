@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFaunaGO_Services", "Fl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Entities", "FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj", "{C64F8173-22B4-480A-B7D9-0A7708D2D713}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Dto", "FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj", "{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Dto", "FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj", "{A0CF6BDE-F389-4387-B618-8255ADD1BDC8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Shared", "FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj", "{52E99748-99EC-49E3-895E-9EB98D3557C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Shared", "FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj", "{52E99748-99EC-49E3-895E-9EB98D3557C9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_Go_Repository", "FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj", "{FA44C14E-3C07-4832-ABE4-322961EE34B0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{52E99748-99EC-49E3-895E-9EB98D3557C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
