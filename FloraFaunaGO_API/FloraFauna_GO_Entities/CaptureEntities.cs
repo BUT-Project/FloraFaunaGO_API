@@ -28,6 +28,17 @@ public class CaptureEntities
     private DateTime dateCapture;
     public DateTime DateCapture { get; set; }
 
+    private uint numero;
+    public uint Numero
+    {
+        get { return numero; }
+        set
+        {
+            if (value < 0) numero = 0;
+            else numero = value;
+        }
+    }
+
     private List<CaptureDetailsEntities> captureDetails;
 
     public List<CaptureDetailsEntities> CaptureDetails => captureDetails;
@@ -40,6 +51,14 @@ public class CaptureEntities
             if (value == null || espece == value) return;
             espece = value;
         }
+    }
+
+    public CaptureEntities(Blob photo, DateTime dateCapture)
+    {
+        Photo = photo;
+        DateCapture = dateCapture;
+        captureDetails = new List<CaptureDetailsEntities>();
+        Espece = new EspeceEntities();
     }
 
     public CaptureEntities(Blob photo, DateTime dateCapture, EspeceEntities espece)

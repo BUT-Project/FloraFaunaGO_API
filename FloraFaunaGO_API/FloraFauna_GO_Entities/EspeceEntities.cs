@@ -50,16 +50,7 @@ public class EspeceEntities
         }
     }
 
-    private uint numero;
-    public uint Numero
-    {
-        get { return numero; }
-        set
-        {
-            if (value < 0) numero = 0;
-            else numero = value;
-        }
-    }
+    
 
     private Blob image;
     public Blob Image
@@ -84,6 +75,10 @@ public class EspeceEntities
 
     private Regime_Alimentaire regime;
     public Regime_Alimentaire Regime { get; set; }
+
+    public EspeceEntities()
+    {
+    }
 
     public EspeceEntities(string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, Regime_Alimentaire regime)
     {

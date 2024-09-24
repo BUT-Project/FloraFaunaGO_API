@@ -7,15 +7,16 @@ using System.Threading.Tasks;
 namespace FloraFauna_GO_Shared
 {
     public interface IGenericRepository<TInput, TOutput>
-        where TInput : class where TOutput : class
+        where TInput : class 
+        where TOutput : class
     {
-        Task<TOutput?> GetById(object id);
+        Task<TOutput?> GetById(string id);
 
         Task<TOutput?> Insert(TInput item);
 
-        Task<bool> Delete(object id);
+        Task<bool> Delete(string id);
 
-        Task<TOutput?> Update(object id, TInput item);
+        Task<TOutput?> Update(string id, TInput item);
     }
 
     public interface IGenericRepository<T> : IGenericRepository<T, T> 

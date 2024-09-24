@@ -1,5 +1,6 @@
 ﻿using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace FloraFauna_Go_Repository
 {
@@ -16,9 +17,52 @@ namespace FloraFauna_Go_Repository
            Set = Context.Set<TEntity>();
         }
 
-        public virtual async Task<TEntity?> GetById(object id)
+        public virtual async Task<TEntity?> GetById(string id)
             => await Set.FindAsync(id);
-    
+
+        public virtual Pagination<TEntity> GetItems(Expression<Func<TEntity, bool>>? filter = null,
+                                         int index = 0, int count = 10,
+                                         params string[] includeProperties)
+        => GetItems(filter, null, index, count, includeProperties);
+
+        public virtual Pagination<TEntity> GetItems(Func<IQueryable<TEntity>, IQueryable<TEntity>>? orderBy = null,
+                                             int index = 0, int count = 10,
+                                             params string[] includeProperties)
+            => GetItems(null, orderBy, index, count, includeProperties);
+
+        public virtual Pagination<TEntity> GetItems(int index = 0, int count = 10,
+                                             params string[] includeProperties)
+            => GetItems(null, null, index, count, includeProperties);
+
+        public virtual Pagination<TEntity> GetItems(Expression<Func<TEntity, bool>>? filter = null,
+                                         Func<IQueryable<TEntity>, IQueryable<TEntity>>? orderBy = null,
+                                         int index = 0, int count = 10,
+                                         params string[] includeProperties)
+        {
+            IQueryable<TEntity> query = Set;
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+            foreach (string includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+            long totalCount = query.LongCount();
+            if (orderBy != null)
+            {
+                query = orderBy(query);
+            }
+            return new Pagination<TEntity>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = query.Skip(index * count)
+                        .Take(count)
+                        .ToList()
+            };
+        }
 
         public virtual Task<TEntity?> Insert(TEntity item)
         {
@@ -38,7 +82,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public virtual Task<TEntity?> Update(object id, TEntity item)
+        public virtual Task<TEntity?> Update(string id, TEntity item)
         {
             var originalEntity = Set.Find(id);
             if (originalEntity == null)
@@ -60,7 +104,7 @@ namespace FloraFauna_Go_Repository
             return Task.FromResult<TEntity?>(originalEntity);
         }
 
-        public virtual async Task<bool> Delete(object id)
+        public virtual async Task<bool> Delete(string id)
         {
             TEntity? entity = await Set.FindAsync(id);
             if (entity == null)
