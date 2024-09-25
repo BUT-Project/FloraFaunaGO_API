@@ -6,14 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace FloraFaunaGO_Modele;
+namespace FloraFauna_GO_Entities;
 
-public class CaptureEntities
+public class CaptureEntities : BaseEntity
 {
-    private Guid id;
-
-    public Guid Id { get; }
-
     private Blob photo;
     public Blob Photo
     {
@@ -24,9 +20,6 @@ public class CaptureEntities
             else photo = value;
         }
     }
-
-    private DateTime dateCapture;
-    public DateTime DateCapture { get; set; }
 
     private uint numero;
     public uint Numero
@@ -51,21 +44,5 @@ public class CaptureEntities
             if (value == null || espece == value) return;
             espece = value;
         }
-    }
-
-    public CaptureEntities(Blob photo, DateTime dateCapture)
-    {
-        Photo = photo;
-        DateCapture = dateCapture;
-        captureDetails = new List<CaptureDetailsEntities>();
-        Espece = new EspeceEntities();
-    }
-
-    public CaptureEntities(Blob photo, DateTime dateCapture, EspeceEntities espece)
-    {
-        Photo = photo;
-        DateCapture = dateCapture;
-        captureDetails = new List<CaptureDetailsEntities>();
-        Espece = espece;
     }
 }

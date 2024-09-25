@@ -1,11 +1,11 @@
 ﻿using FloraFauna_GO_Shared;
-using FloraFaunaGO_Modele;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FloraFauna_GO_Entities;
 
 namespace FloraFauna_Go_Repository
 {
@@ -20,7 +20,7 @@ namespace FloraFauna_Go_Repository
             [EspeceOrderingCriteria.ByNom] = query => query.OrderBy(espece => espece.Nom),
         };
 
-        // public EspeceRepository(DbContext context) : base(context) { }
+        public EspeceRepository(FloraFaunaGoDB context) : base(context) { }
 
 
         public Task<Pagination<EspeceEntities>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)

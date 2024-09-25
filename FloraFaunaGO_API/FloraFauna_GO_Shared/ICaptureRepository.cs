@@ -17,6 +17,6 @@ namespace FloraFauna_GO_Shared
             int index = 0, int count = 15);
 
         Task<Pagination<Toutput>> GetCaptureByDate(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByDateCapture,
-            int index = 0, int count = 15)
+            int index = 0, int count = 15);
     }
 }
