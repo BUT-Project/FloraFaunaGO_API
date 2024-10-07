@@ -59,14 +59,7 @@ public class UtilisateurEntities
     }
 
     private List<CaptureEntities> captures;
-    public List<CaptureEntities> Captures => new List<CaptureEntities>();
+    public List<CaptureEntities> Captures => captures;
 
-    public UtilisateurEntities(string pseudo, string mail, string hash_mdp, DateTime date_inscription)
-    {
-        Pseudo = pseudo;
-        Mail = mail;
-        Hash_mdp = hash_mdp;
-        DateInscription = date_inscription;
-        captures = new List<CaptureEntities>();
-    }
+    public UtilisateurEntities() { }
 }

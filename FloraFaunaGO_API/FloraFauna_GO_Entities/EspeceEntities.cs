@@ -5,6 +5,7 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using FloraFaunaGO_Modele.Enum;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FloraFaunaGO_Modele;
 
@@ -50,17 +51,6 @@ public class EspeceEntities
         }
     }
 
-    private uint numero;
-    public uint Numero
-    {
-        get { return numero; }
-        set
-        {
-            if (value < 0) numero = 0;
-            else numero = value;
-        }
-    }
-
     private Blob image;
     public Blob Image
     {
@@ -79,22 +69,62 @@ public class EspeceEntities
     public List<HabitatEntities> Habitats => habitats;
 
     private List<LocalisationEntities> localisations;
-    public List<LocalisationEntities> Localisations => localisations;
-    
+    public List<LocalisationEntities> Localisations => localisations; 
 
     private Regime_Alimentaire regime;
     public Regime_Alimentaire Regime { get; set; }
 
-    public EspeceEntities(string nom, string nom_scientifique, string description, uint numero, Blob image, Famille famille, Regime_Alimentaire regime)
+    public bool AddHabitat(HabitatEntities item)
     {
-        Nom = nom;
-        Nom_scientifique = nom_scientifique;
-        Description = description;
-        Numero = numero;
-        Image = image;
-        Famille = famille;
-        habitats = new List<HabitatEntities>();
-        localisations = new List<LocalisationEntities>();
-        Regime = regime;
+        bool found = false;
+        Habitats.ForEach(hab => {
+            if (hab.Id == item.Id)
+                found = true;
+        });
+        if (!found) Habitats.Add(item);
+        return found;
+    }
+
+    public bool RemoveHabitat(HabitatEntities item)
+    {
+        bool found = false;
+        Habitats.ForEach(hab => {
+            if (hab.Id == item.Id)
+                found = true;
+        });
+        if (found) Habitats.Remove(item);
+        return found;
+    }
+
+    public HabitatEntities? RechHabitat(Guid Id)
+    {
+        HabitatEntities? habitat = null;
+        Habitats.ForEach(hab => {
+            if (hab.Id == Id)
+                habitat = hab;
+        });
+        return habitat;
+    }
+
+    public bool AddLocalisation(LocalisationEntities item)
+    {
+        bool found = false;
+        Localisations.ForEach(loc => {
+            if (loc.Latitude == item.Latitude && loc.Longitude == item.Longitude && loc.Rayon == item.Rayon)
+                found = true;
+        });
+        if (!found) Localisations.Add(item);
+        return found;
+    }
+
+    public bool RemoveLocalisation(LocalisationEntities item)
+    {
+        bool found = false;
+        Localisations.ForEach(loc => {
+            if (loc.Latitude == item.Latitude && loc.Longitude == item.Longitude && loc.Rayon == item.Rayon)
+                    found = true;
+        });
+        if (found) Localisations.Remove(item);
+        return found;
     }
 }

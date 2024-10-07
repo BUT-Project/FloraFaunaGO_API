@@ -4,13 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto;
+namespace FloraFauna_GO_Dto.Normal;
 
-public class CaptureDetailDto
+public class CaptureDetailNormalDto
 {
     public Guid Id { get; set; }
 
     public bool Shiny { get; set; }
-
-    public LocalisationDto Localisation { get; set; }
 }

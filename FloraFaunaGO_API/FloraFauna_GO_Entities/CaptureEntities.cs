@@ -14,6 +14,17 @@ public class CaptureEntities
 
     public Guid Id { get; }
 
+    private uint numero;
+    public uint Numero
+    {
+        get { return numero; }
+        set
+        {
+            if (value < 0) numero = 0;
+            else numero = value;
+        }
+    }
+
     private Blob photo;
     public Blob Photo
     {
@@ -42,11 +53,38 @@ public class CaptureEntities
         }
     }
 
-    public CaptureEntities(Blob photo, DateTime dateCapture, EspeceEntities espece)
+    public bool AddCaptureDetail(CaptureDetailsEntities item)
     {
-        Photo = photo;
-        DateCapture = dateCapture;
-        captureDetails = new List<CaptureDetailsEntities>();
-        Espece = espece;
+        bool found = false;
+        CaptureDetails.ForEach(cde => {
+            if (cde.Id == item.Id)
+                found = true;
+        });
+        if(!found) CaptureDetails.Add(item);
+        return found;
     }
+
+    public bool RemoveCaptureDetails(CaptureDetailsEntities item)
+    {
+        bool found = false;
+        CaptureDetails.ForEach(cde => {
+            if (cde.Id == item.Id)
+                found = true;
+        });
+        if (found) CaptureDetails.Remove(item);
+        return found;
+    }
+
+    public CaptureDetailsEntities? RechCaptureDetails(Guid id)
+    {
+        CaptureDetailsEntities? captureDetails = null;
+        bool found = false;
+        CaptureDetails.ForEach(cde => {
+            if (cde.Id == id)
+                captureDetails = cde;
+        });
+        return captureDetails;
+    }
+
+    public CaptureEntities() { }
 }

@@ -29,9 +29,5 @@ public class CaptureDetailsEntities
         }
     }
 
-    public CaptureDetailsEntities(bool shiny, LocalisationEntities localisation)
-    {
-        Shiny = shiny;
-        Localisation = localisation;
-    }
+    public CaptureDetailsEntities() { }
 }

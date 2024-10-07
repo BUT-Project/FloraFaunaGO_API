@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto;
+namespace FloraFauna_GO_Dto.Normal;
 
-public class HabitatDto
+public class HabitatNormalDto
 {
     public Guid Id { get; set; }
     public string? Zone { get; set; }

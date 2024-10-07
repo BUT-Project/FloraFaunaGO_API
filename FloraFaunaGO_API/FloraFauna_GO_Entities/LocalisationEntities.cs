@@ -24,4 +24,6 @@ public class LocalisationEntities
             else rayon = value;
         }
     }
+
+    public LocalisationEntities() { }
 }

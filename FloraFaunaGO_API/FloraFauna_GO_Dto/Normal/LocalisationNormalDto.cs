@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto;
+namespace FloraFauna_GO_Dto.Normal;
 
-public class LocalisationDto
+public class LocalisationNormalDto
 {
     public double Latitude { get; set; }
     public double Longitude { get; set; }

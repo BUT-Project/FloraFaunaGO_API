@@ -6,8 +6,4 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj" />
-  </ItemGroup>
-
 </Project>

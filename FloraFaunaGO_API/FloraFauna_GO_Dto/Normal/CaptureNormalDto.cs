@@ -5,14 +5,11 @@ using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto;
+namespace FloraFauna_GO_Dto.Normal;
 
-public class CaptureDto
+public class CaptureNormalDto
 {
     public Guid Id { get; set; }
     public Blob photo { get; set; }
     public DateTime DateCapture { get; set; }
-    public IEnumerable<CaptureDetailDto> CaptureDetailDtos { get; set; } = Enumerable.Empty<CaptureDetailDto>();
-
-    //public EspeceDto Espece { get; set; }
 }

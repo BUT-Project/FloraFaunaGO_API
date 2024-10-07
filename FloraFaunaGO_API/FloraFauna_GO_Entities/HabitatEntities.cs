@@ -37,10 +37,5 @@ public class HabitatEntities
         }
     }
 
-    public HabitatEntities(string zone,  string climat, uint id)
-    {
-        Id = id;
-        Zone = zone;
-        Climat = climat;
-    }
+    public HabitatEntities() { }
 }
