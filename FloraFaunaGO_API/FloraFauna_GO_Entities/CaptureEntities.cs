@@ -1,62 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
-namespace FloraFaunaGO_Modele;
+namespace FloraFauna_GO_Entities;
 
-public class CaptureEntities
+public class CaptureEntities : BaseEntity
 {
-    private Guid id;
+    public Blob Photo { get; set; }
 
-    public Guid Id { get; }
+    public uint Numero { get; set; }
 
-    private uint numero;
-    public uint Numero
-    {
-        get { return numero; }
-        set
-        {
-            if (value < 0) numero = 0;
-            else numero = value;
-        }
-    }
+    public CaptureEntities() { }
+    public ICollection<CaptureDetailsEntities> CaptureDetails = new Collection<CaptureDetailsEntities>();
 
-    private Blob photo;
-    public Blob Photo
-    {
-        get { return photo; }
-        set
-        {
-            if (Equals(value, null)) photo = default;
-            else photo = value;
-        }
-    }
-
-    private DateTime dateCapture;
-    public DateTime DateCapture { get; set; }
-
-    private List<CaptureDetailsEntities> captureDetails;
-
-    public List<CaptureDetailsEntities> CaptureDetails => captureDetails;
-
-    private EspeceEntities espece;
-    public EspeceEntities Espece {
-        get => espece;
-        set
-        {
-            if (value == null || espece == value) return;
-            espece = value;
-        }
-    }
+    public EspeceEntities Espece = new EspeceEntities();
 
     public bool AddCaptureDetail(CaptureDetailsEntities item)
     {
         bool found = false;
-        CaptureDetails.ForEach(cde => {
+        CaptureDetails.ToList().ForEach(cde => {
             if (cde.Id == item.Id)
                 found = true;
         });
@@ -67,7 +34,7 @@ public class CaptureEntities
     public bool RemoveCaptureDetails(CaptureDetailsEntities item)
     {
         bool found = false;
-        CaptureDetails.ForEach(cde => {
+        CaptureDetails.ToList().ForEach(cde => {
             if (cde.Id == item.Id)
                 found = true;
         });
@@ -75,16 +42,14 @@ public class CaptureEntities
         return found;
     }
 
-    public CaptureDetailsEntities? RechCaptureDetails(Guid id)
+    public CaptureDetailsEntities? RechCaptureDetails(string id)
     {
         CaptureDetailsEntities? captureDetails = null;
         bool found = false;
-        CaptureDetails.ForEach(cde => {
+        CaptureDetails.ToList().ForEach(cde => {
             if (cde.Id == id)
                 captureDetails = cde;
         });
         return captureDetails;
     }
-
-    public CaptureEntities() { }
 }

@@ -4,10 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFaunaGO_Entities.Enum;
-
-public enum Famille
+namespace FloraFauna_GO_Entities
 {
-    Canidés,
-    Félin
+    internal class SuccesEntity
+    {
+    }
 }

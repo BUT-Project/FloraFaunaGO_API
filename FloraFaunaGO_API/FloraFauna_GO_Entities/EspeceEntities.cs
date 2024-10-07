@@ -1,83 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using FloraFaunaGO_Modele.Enum;
-using static System.Net.Mime.MediaTypeNames;
+using FloraFaunaGO_Entities.Enum;
 
-namespace FloraFaunaGO_Modele;
+namespace FloraFauna_GO_Entities;
 
-public class EspeceEntities
+public class EspeceEntities : BaseEntity
 {
-    private Guid id;
+    public string Nom {  get; set; }
 
-    public Guid Id { get; }
+    public string Nom_scientifique { get; set; }
 
-    private string nom;
+    public string? Description { get; set; }
+  
+    public Blob Image {  get; set; }
 
-    public string Nom
-    {
-        get { return nom; }
-        set
-        {
-            if (string.IsNullOrEmpty(value)) nom = "default";
-            else nom = value;
-        }
-    }
-
-    private string nom_scientifique;
-
-    public string Nom_scientifique
-    {
-        get { return nom_scientifique; }
-        set
-        {
-            if (string.IsNullOrEmpty(value)) nom_scientifique = "default";
-            else nom_scientifique = value;
-        }
-    }
-
-    private string description;
-
-    public string Description
-    {
-        get { return description; }
-        set
-        {
-            if (value == null) description = "";
-            else description = value;
-        }
-    }
-
-    private Blob image;
-    public Blob Image
-    {
-        get { return image; }
-        set
-        {
-            if (Equals(value, null)) image = default;
-            else image = value;
-        }
-    }
-
-    private Famille famille;
+    public Blob? Image3D { get; set; }
     public Famille Famille { get; set; }
 
-    private List<HabitatEntities> habitats;
-    public List<HabitatEntities> Habitats => habitats;
+    public ICollection<HabitatEntities>? Habitats {  get; set; } = new Collection<HabitatEntities>();
 
-    private List<LocalisationEntities> localisations;
-    public List<LocalisationEntities> Localisations => localisations; 
-
-    private Regime_Alimentaire regime;
+    public ICollection<LocalisationEntities>? Localisations { get; set; } = new Collection<LocalisationEntities>();
     public Regime_Alimentaire Regime { get; set; }
-
     public bool AddHabitat(HabitatEntities item)
     {
         bool found = false;
-        Habitats.ForEach(hab => {
+        Habitats.ToList().ForEach(hab => {
             if (hab.Id == item.Id)
                 found = true;
         });
@@ -88,7 +41,7 @@ public class EspeceEntities
     public bool RemoveHabitat(HabitatEntities item)
     {
         bool found = false;
-        Habitats.ForEach(hab => {
+        Habitats.ToList().ForEach(hab => {
             if (hab.Id == item.Id)
                 found = true;
         });
@@ -96,10 +49,10 @@ public class EspeceEntities
         return found;
     }
 
-    public HabitatEntities? RechHabitat(Guid Id)
+    public HabitatEntities? RechHabitat(string Id)
     {
         HabitatEntities? habitat = null;
-        Habitats.ForEach(hab => {
+        Habitats.ToList().ForEach(hab => {
             if (hab.Id == Id)
                 habitat = hab;
         });
@@ -109,7 +62,7 @@ public class EspeceEntities
     public bool AddLocalisation(LocalisationEntities item)
     {
         bool found = false;
-        Localisations.ForEach(loc => {
+        Localisations.ToList().ForEach(loc => {
             if (loc.Latitude == item.Latitude && loc.Longitude == item.Longitude && loc.Rayon == item.Rayon)
                 found = true;
         });
@@ -120,7 +73,7 @@ public class EspeceEntities
     public bool RemoveLocalisation(LocalisationEntities item)
     {
         bool found = false;
-        Localisations.ForEach(loc => {
+        Localisations.ToList().ForEach(loc => {
             if (loc.Latitude == item.Latitude && loc.Longitude == item.Longitude && loc.Rayon == item.Rayon)
                     found = true;
         });

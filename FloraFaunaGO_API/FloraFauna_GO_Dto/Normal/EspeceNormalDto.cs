@@ -10,6 +10,7 @@ namespace FloraFauna_GO_Dto.Normal;
 public class EspeceNormalDto
 {
     public Guid Id { get; set; }
+
     public string? Nom { get; set; }
 
     public string? Nom_Scientifique { get; set; }

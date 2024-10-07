@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFaunaGO_Entities.Enum;
-
-public enum Famille
+namespace FloraFauna_Go_Repository
 {
-    Canidés,
-    Félin
+    class CaptureRepository
+    {
+
+    }
 }
