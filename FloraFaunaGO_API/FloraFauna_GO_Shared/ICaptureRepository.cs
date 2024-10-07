@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Shared
 {
@@ -18,5 +19,11 @@ namespace FloraFauna_GO_Shared
 
         Task<Pagination<Toutput>> GetCaptureByDate(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByDateCapture,
             int index = 0, int count = 15);
+    }
+
+    public interface ICaptureRepository<T> : ICaptureRepository<T, T>
+        where T : class
+    {
+
     }
 }
