@@ -9,7 +9,7 @@ namespace FloraFauna_GO_Dto.Normal;
 
 public class EspeceNormalDto
 {
-    public Guid Id { get; set; }
+    public string? Id { get; set; }
 
     public string? Nom { get; set; }
 
@@ -18,4 +18,6 @@ public class EspeceNormalDto
     public string Description { get; set; }
 
     public Blob Image { get; set; }
+
+    public Blob? Image3D { get; set; }
 }

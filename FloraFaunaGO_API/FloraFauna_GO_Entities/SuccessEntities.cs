@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Entities
+namespace FloraFauna_GO_Entities;
+
+public class SuccessEntities
 {
-    internal class SuccesEntity
-    {
-    }
+    
+    [Required]
+    public string Nom { get; set; }
+
+    public int Avancement { get; set; } = 0;
+
+    public string? Description { get; set; }
 }

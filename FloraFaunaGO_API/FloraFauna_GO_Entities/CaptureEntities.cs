@@ -15,6 +15,8 @@ public class CaptureEntities : BaseEntity
 
     public uint Numero { get; set; }
 
+
+
     public CaptureEntities() { }
     public ICollection<CaptureDetailsEntities> CaptureDetails = new Collection<CaptureDetailsEntities>();
 
