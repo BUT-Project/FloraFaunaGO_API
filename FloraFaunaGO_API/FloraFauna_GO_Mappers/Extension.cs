@@ -134,7 +134,7 @@ public static class Extension
             Espece = new EspeceNormalDto()
             {
                 Id = entities.Id,
-                Description = entities.Description,
+                Description = entities.Description ?? "",
                 Image = entities.Image,
                 Image3D = entities.Image3D,
                 Nom = entities.Nom,
