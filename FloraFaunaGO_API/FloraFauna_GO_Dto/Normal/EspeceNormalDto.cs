@@ -17,7 +17,7 @@ public class EspeceNormalDto
 
     public string Description { get; set; }
 
-    public Blob Image { get; set; }
+    public Blob? Image { get; set; }
 
     public Blob? Image3D { get; set; }
 }

@@ -200,4 +200,50 @@ public static class Extension
         };
         return entities.ToT(null, creator);
     }
+
+
+
+    public static Pagination<FullEspeceDto> ToPagingResponseDtos(this Pagination<EspeceEntities> entities)
+    {
+        return new Pagination<FullEspeceDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<FullCaptureDto> ToPagingResponseDtos(this Pagination<CaptureEntities> entities)
+    {
+        return new Pagination<FullCaptureDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<FullCaptureDetailDto> ToPagingResponseDtos(this Pagination<CaptureDetailsEntities> entities)
+    {
+        return new Pagination<FullCaptureDetailDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<FullUtilisateurDto> ToPagingResponseDtos(this Pagination<UtilisateurEntities> entities)
+    {
+        return new Pagination<FullUtilisateurDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
 }

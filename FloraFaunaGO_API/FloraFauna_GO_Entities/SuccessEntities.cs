@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,11 +10,13 @@ namespace FloraFauna_GO_Entities;
 
 public class SuccessEntities
 {
-    
-    [Required]
-    public string Nom { get; set; }
+    public class SuccessEntities
+    {
+        [Required]
+        public string Nom { get; set; }
 
-    public int Avancement { get; set; } = 0;
+        public int Avancement { get; set; } = 0;
 
-    public string? Description { get; set; }
+        public string? Description { get; set; }
+    }
 }

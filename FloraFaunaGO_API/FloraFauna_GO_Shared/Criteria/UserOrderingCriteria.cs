@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Shared
+namespace FloraFauna_GO_Shared.Criteria
 {
-    public enum CaptureOrderingCriteria
+    public enum UserOrderingCriteria
     {
         None,
-        ByNumero, 
-        ByDateCapture
+        Id,
+        Mail
     }
 }

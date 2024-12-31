@@ -14,6 +14,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj" />
+    <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
   </ItemGroup>
 
 </Project>

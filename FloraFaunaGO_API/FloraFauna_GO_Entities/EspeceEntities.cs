@@ -12,13 +12,14 @@ namespace FloraFauna_GO_Entities;
 
 public class EspeceEntities : BaseEntity
 {
+    [Required]
     public string Nom {  get; set; }
 
-    public string Nom_scientifique { get; set; }
+    public string? Nom_scientifique { get; set; }
 
     public string? Description { get; set; }
-  
-    public Blob Image {  get; set; }
+    
+    public Blob? Image {  get; set; }
 
     public Blob? Image3D { get; set; }
     public Famille Famille { get; set; }
