@@ -1,6 +1,7 @@
 ﻿using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,19 +14,55 @@ namespace FloraFauna_Go_Repository
     {
         public UserRepository(FloraFaunaGoDB context) : base(context) { }
 
-        public Task<Pagination<UtilisateurEntities>> GetAllUser(UserOrderingCriteria criteria = UserOrderingCriteria.None, int index = 0, int count = 10)
+        public async Task<Pagination<UtilisateurEntities>> GetAllUser(UserOrderingCriteria criteria = UserOrderingCriteria.None, int index = 0, int count = 10)
         {
-            throw new NotImplementedException();
+            IQueryable<UtilisateurEntities> query = Set;
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<UtilisateurEntities>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
         }
 
-        public Task<Pagination<UtilisateurEntities>> GetUserById(UserOrderingCriteria criteria = UserOrderingCriteria.Id, int index = 0, int count = 5)
+        public async Task<Pagination<UtilisateurEntities>> GetUserById(UserOrderingCriteria criteria = UserOrderingCriteria.Id, int index = 0, int count = 5)
         {
-            throw new NotImplementedException();
+            IQueryable<UtilisateurEntities> query = Set;
+
+            query = query.OrderBy(user => user.Id);
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<UtilisateurEntities>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
         }
 
-        public Task<Pagination<UtilisateurEntities>> GetUserMail(UserOrderingCriteria criteria = UserOrderingCriteria.Mail, int index = 0, int count = 5)
+        public async Task<Pagination<UtilisateurEntities>> GetUserMail(UserOrderingCriteria criteria = UserOrderingCriteria.Mail, int index = 0, int count = 5)
         {
-            throw new NotImplementedException();
+            IQueryable<UtilisateurEntities> query = Set;
+
+            query = query.OrderBy(user => user.Mail);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<UtilisateurEntities>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
         }
     }
 }

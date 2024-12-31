@@ -16,13 +16,14 @@ public class UtilisateurEntities : BaseEntity
     public string Pseudo { get; set; }
 
     [EmailAddress]
-    [MaxLength (100)]
+    [MaxLength (70)]
     public string Mail { get; set; }
 
     [Required]
     [MinLength(8)]
     public string Hash_mdp { get; set; }
 
+    [Required]
     public DateTime DateInscription { get; set; }
 
     public ICollection<CaptureEntities>? Captures { get; set; } =  new Collection<CaptureEntities>();
