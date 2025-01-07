@@ -53,6 +53,21 @@ public class UtilisateurControlleur : ControllerBase
         throw new NotImplementedException();
     }
 
+    [HttpPut("login")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Login([FromBody] UtilisateurNormalDto)
+    {
+        throw new NotImplementedException();
+    }
+
+    [HttpPut("logout")]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> Logout()
+    {
+        throw new NotImplementedException();
+    }
 
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
