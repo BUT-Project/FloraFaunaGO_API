@@ -1,0 +1,16 @@
+kind: pipeline
+type: docker
+name: FloraFaunaGO-API-CI
+
+trigger:
+  event:
+    - push
+
+steps:
+  - name: build
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    commands:
+      - cd FloraFaunaGO_API/
+      - dotnet restore FloraFaunaGO_API.sln
+      - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o CI_PROJECT_DIR/build/release
