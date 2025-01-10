@@ -14,10 +14,10 @@ public class EspeceController : ControllerBase
     public IEspeceRepository<FullEspeceDto,FullEspeceDto> EspeceRepository { get; private set; }
     public IUnitOfWork<FullEspeceDto, FullCaptureDto, FullUtilisateurDto> UnitOfWork { get; private set; }
 
-    public EspeceController(ILogger<EspeceController> logger, )
+    public EspeceController(ILogger<EspeceController> logger)
     {
         _logger = logger;
-        EspeceRepository = especeRepository;
+        //EspeceRepository = especeRepository;
     }
 
     [HttpGet ("id={id}")]
@@ -86,7 +86,7 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
     {
-        _ = await 
+        throw new NotImplementedException();
     }
 
     [HttpPut]

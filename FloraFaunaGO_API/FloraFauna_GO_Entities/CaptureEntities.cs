@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
@@ -15,43 +16,15 @@ public class CaptureEntities : BaseEntity
 
     public uint Numero { get; set; }
 
-
-
-    public CaptureEntities() { }
     public ICollection<CaptureDetailsEntities> CaptureDetails = new Collection<CaptureDetailsEntities>();
 
-    public EspeceEntities Espece = new EspeceEntities();
+    [Required]
+    public string EspeceId { get; set;  }
 
-    public bool AddCaptureDetail(CaptureDetailsEntities item)
-    {
-        bool found = false;
-        CaptureDetails.ToList().ForEach(cde => {
-            if (cde.Id == item.Id)
-                found = true;
-        });
-        if(!found) CaptureDetails.Add(item);
-        return found;
-    }
+    public EspeceEntities Espece { get; set; }
 
-    public bool RemoveCaptureDetails(CaptureDetailsEntities item)
-    {
-        bool found = false;
-        CaptureDetails.ToList().ForEach(cde => {
-            if (cde.Id == item.Id)
-                found = true;
-        });
-        if (found) CaptureDetails.Remove(item);
-        return found;
-    }
+    [Required]
+    public string UtilisateurId { get; set; }
 
-    public CaptureDetailsEntities? RechCaptureDetails(string id)
-    {
-        CaptureDetailsEntities? captureDetails = null;
-        bool found = false;
-        CaptureDetails.ToList().ForEach(cde => {
-            if (cde.Id == id)
-                captureDetails = cde;
-        });
-        return captureDetails;
-    }
+    public UtilisateurEntities Utilisateur { get; set; }
 }

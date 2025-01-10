@@ -15,11 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Dto", "FloraF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Shared", "FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj", "{52E99748-99EC-49E3-895E-9EB98D3557C9}"
 EndProject
-<<<<<<< HEAD
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Entities2Dto", "FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj", "{0B81A69C-E94A-443F-AFD3-9DCC2E8FCA24}"
-=======
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_Go_Repository", "FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj", "{FA44C14E-3C07-4832-ABE4-322961EE34B0}"
->>>>>>> origin/Thomas-UnitOfWork
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -23,7 +23,7 @@ namespace FloraFauna_Go_Repository
         public virtual Pagination<TEntity> GetItems(Expression<Func<TEntity, bool>>? filter = null,
                                          int index = 0, int count = 10,
                                          params string[] includeProperties)
-        => GetItems(filter, null, index, count, includeProperties);
+            => GetItems(filter, null, index, count, includeProperties);
 
         public virtual Pagination<TEntity> GetItems(Func<IQueryable<TEntity>, IQueryable<TEntity>>? orderBy = null,
                                              int index = 0, int count = 10,

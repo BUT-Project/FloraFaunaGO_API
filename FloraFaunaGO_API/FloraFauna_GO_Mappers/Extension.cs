@@ -194,7 +194,7 @@ public static class Extension
     {
         Func<SuccessEntities, SuccessNormalDto> creator = (entities) => new SuccessNormalDto()
         {
-            Objectif = entities.Avancement,
+            Objectif = entities.Objectif,
             Description = entities.Description,
             Name = entities.Nom,
         };
