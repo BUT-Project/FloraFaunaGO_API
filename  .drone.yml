@@ -5,6 +5,7 @@ name: FloraFaunaGO-API-CI
 trigger:
   event:
     - push
+    
   
 steps:
   - name: build
