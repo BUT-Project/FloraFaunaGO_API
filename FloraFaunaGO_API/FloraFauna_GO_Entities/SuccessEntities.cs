@@ -13,7 +13,7 @@ public class SuccessEntities
         [Required]
         public string Nom { get; set; }
 
-        public int Avancement { get; set; } = 0;
+        public uint Avancement { get; set; } = 0;
 
         public string? Description { get; set; }
 }

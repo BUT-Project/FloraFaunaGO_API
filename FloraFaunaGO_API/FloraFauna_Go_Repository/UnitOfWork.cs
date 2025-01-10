@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    class UnitOfWork: IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
+    public class UnitOfWork: IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
