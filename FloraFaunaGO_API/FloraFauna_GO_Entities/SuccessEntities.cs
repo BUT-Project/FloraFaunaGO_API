@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace FloraFauna_GO_Entities;
 
-namespace FloraFauna_GO_Entities
+internal class SuccesEntity
 {
-    internal class SuccesEntity
-    {
-    }
 }

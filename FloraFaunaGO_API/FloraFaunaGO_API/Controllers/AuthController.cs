@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
+
 [ApiController]
 [Route("FloraFaunaGo_API/authentification/")]
 public class AuthController : ControllerBase

@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace FloraFauna_Go_Repository;
 
-namespace FloraFauna_Go_Repository
+internal class CaptureRepository
 {
-    class CaptureRepository
-    {
-
-    }
 }

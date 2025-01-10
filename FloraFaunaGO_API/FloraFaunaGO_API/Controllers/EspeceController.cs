@@ -9,7 +9,7 @@ public class EspeceController : ControllerBase
 {
     private readonly ILogger<EspeceController> _logger;
 
-    [HttpGet ("{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)

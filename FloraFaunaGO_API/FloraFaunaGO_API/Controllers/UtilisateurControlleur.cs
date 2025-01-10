@@ -2,11 +2,12 @@
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
+
 [ApiController]
 [Route("FloraFaunaGo_API/utilisateur/")]
 public class UtilisateurControlleur : ControllerBase
 {
-   private readonly ILogger<UtilisateurControlleur> _logger;
+    private readonly ILogger<UtilisateurControlleur> _logger;
 
     public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger)
     {

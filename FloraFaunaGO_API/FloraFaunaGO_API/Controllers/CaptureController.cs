@@ -7,7 +7,7 @@ namespace FloraFaunaGO_API.Controllers;
 [Route("FloraFaunaGo_API/capture/")]
 public class CaptureController : ControllerBase
 {
-    [HttpGet ("{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureById(string id)
@@ -15,7 +15,7 @@ public class CaptureController : ControllerBase
         throw new NotImplementedException();
     }
 
-    [HttpGet ("{pseudo}")]
+    [HttpGet("{pseudo}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllCapturesOfPlayer(string pseudo)
