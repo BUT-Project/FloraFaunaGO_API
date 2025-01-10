@@ -66,15 +66,15 @@ steps:
       - swagger tofile --output /docs/swagger.json FloraFaunaGO_API/bin/Release/net8.0/FloraFaunaGO_API.dll v1
     depends_on: [build,tests]
 
-#  - name: generate-and-deploy-docs
-#    image: hub.codefirst.iut.uca.fr/maxime.batista/codefirst-docdeployer
-#    failure: ignore
-#    commands:
-#      - /entrypoint.sh -l docs/doxygen -t doxygen
-#    when:
-#      event:
-#        - push
-#    depends_on: [ build ]
+  - name: generate-and-deploy-docs
+    image: hub.codefirst.iut.uca.fr/maxime.batista/codefirst-docdeployer
+    failure: ignore
+    commands:
+      - /entrypoint.sh -l docs/doxygen -t doxygen
+    when:
+      event:
+        - push
+    depends_on: [ build ]
 
 volumes:
   - name: docs
