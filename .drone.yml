@@ -132,7 +132,7 @@ steps:
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
       IMAGENAME: mariadb:10
-      CONTAINERNAME: mysql
+      CONTAINERNAME: FFGODev-mysql
       COMMAND: create
       OVERWRITE: true
       PRIVATE: true
