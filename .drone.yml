@@ -34,7 +34,7 @@ steps:
       coverage_exclusions: Tests/**
       duplication_exclusions: Tests/**
     commands:
-      - cd src/
+      - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
       - dotnet sonarscanner begin /k:FloraFaunaGO_API /d:sonar.host.url=$${PLUGIN_SONAR_HOST} /d:sonar.login=$${PLUGIN_SONAR_TOKEN} /d:sonar.coverage.exclusions="Tests/**" /d:sonar.cpd.exclusions="Tests/***" /d:sonar.coverageReportPaths="coveragereport/SonarQube.xml"
       - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
