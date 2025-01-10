@@ -2,11 +2,9 @@ kind: pipeline
 type: docker
 name: FloraFaunaGO-API-CI
 
-#trigger:
-#  branch:
-#    - master
-#  event:
-#    - push
+trigger:
+  event:
+    - push
   
 steps:
   - name: build
