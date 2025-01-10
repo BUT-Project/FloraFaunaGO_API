@@ -36,7 +36,7 @@ namespace FloraFauna_Go_Repository
 
             // a voir ça ne marche pas
             // Je ne sais pas encore comment faire !
-            //query = query.OrderBy(capture => capture.CaptureDetails);
+            query = query.OrderBy(capture => capture.CaptureDetails.FirstOrDefault().DateCapture);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

@@ -19,7 +19,7 @@ public class EspeceDto
 
     public int Numero { get; set; }
 
-    public Blob Image { get; set; }
+    public byte[] Image { get; set; }
 
     public IEnumerable<HabitatDto> Habitats { get; set; } = Enumerable.Empty<HabitatDto>();
     public IEnumerable<LocalisationDto> Localisations { get; set; } = Enumerable.Empty<LocalisationDto>();

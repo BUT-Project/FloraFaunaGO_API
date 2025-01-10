@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,4 +12,9 @@ public class HabitatEntities : BaseEntity
     public string Zone { get; set; }
 
     public string Climat { get; set; }
+
+    public EspeceEntities Espece { get; set; }
+
+    [Required]
+    public string EspeceId { get; set; }
 }

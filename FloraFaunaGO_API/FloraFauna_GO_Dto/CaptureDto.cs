@@ -10,7 +10,7 @@ namespace FloraFauna_GO_Dto;
 public class CaptureDto
 {
     public Guid Id { get; set; }
-    public Blob photo { get; set; }
+    public byte[] photo { get; set; }
     public DateTime DateCapture { get; set; }
     public IEnumerable<CaptureDetailDto> CaptureDetailDtos { get; set; } = Enumerable.Empty<CaptureDetailDto>();
 

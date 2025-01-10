@@ -15,6 +15,8 @@ namespace FloraFauna_GO_Entities
         public virtual DbSet<HabitatEntities> Habitat { get; set; }
         public virtual DbSet<LocalisationEntities> Localisation { get; set; }
         public virtual DbSet<UtilisateurEntities> Utilisateur { get; set; }
+        public virtual DbSet<SuccesEntities> Succes { get; set; }
+        public virtual DbSet<SuccesStateEntities> SuccesState { get; set; }
 
         public FloraFaunaGoDB() { }
 
@@ -29,12 +31,45 @@ namespace FloraFauna_GO_Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Evènement obligatoire à déterminer
+            // Configuration des relations
+
+            // EspeceEntities - HabitatEntities (One-to-Many)
+            modelBuilder.Entity<EspeceEntities>()
+                .HasMany(e => e.Habitats)
+                .WithOne(h => h.Espece)
+                .HasForeignKey(h => h.EspeceId);
+
+            // EspeceEntities - LocalisationEntities (One-to-Many)
+            modelBuilder.Entity<EspeceEntities>()
+                .HasMany(e => e.Localisations)
+                .WithOne(l => l.Espece)
+                .HasForeignKey(l => l.EspeceId);
+
+            // CaptureEntities - CaptureDetailsEntities (One-to-Many)
+            modelBuilder.Entity<CaptureEntities>()
+                .HasMany(c => c.CaptureDetails)
+                .WithOne(cd => cd.Capture)
+                .HasForeignKey(cd => cd.CaptureId);
+
+            // CaptureEntities - UtilisateurEntities (Many-to-One)
+            modelBuilder.Entity<CaptureEntities>()
+                .HasOne(c => c.Utilisateur)
+                .WithMany(u => u.Captures)
+                .HasForeignKey(c => c.UtilisateurId);
+
+            // UtilisateurEntities - SuccesStateEntities (One-to-Many)
+            modelBuilder.Entity<UtilisateurEntities>()
+                .HasMany(u => u.SuccesState)
+                .WithOne(ss => ss.User)
+                .HasForeignKey(ss => ss.UtilisateurId);
+
+            // SuccesEntities - SuccesStateEntities (One-to-Many)
+            modelBuilder.Entity<SuccesEntities>()
+                .HasMany(s => s.State)
+                .WithOne(ss => ss.SuccesEntities)
+                .HasForeignKey(ss => ss.SuccesEntitiesId);
 
             base.OnModelCreating(modelBuilder);
         }
-
-
-
     }
 }

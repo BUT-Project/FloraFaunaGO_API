@@ -28,5 +28,5 @@ public class UtilisateurEntities : BaseEntity
 
     public ICollection<CaptureEntities>? Captures { get; set; } =  new Collection<CaptureEntities>();
 
-    public ICollection<SuccessEntities>? Succes { get; set; } = new Collection<SuccessEntities>();
+    public ICollection<SuccesStateEntities>? SuccesState { get; set; } = new Collection<SuccesStateEntities>();
 }

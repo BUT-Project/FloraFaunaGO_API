@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class SuccessEntities
+    public class SuccesEntities : BaseEntity
     {
         [Required]
         public string Nom { get; set; }
 
-        public uint Avancement { get; set; } = 0;
+        [Required]
+        public string Description { get; set; }
 
-        public string? Description { get; set; }
+        public double Objectif { get; set; }
+
+        public ICollection<SuccesStateEntities> State { get; set; }
     }
 }
