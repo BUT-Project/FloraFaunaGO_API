@@ -56,7 +56,7 @@ public class UtilisateurControlleur : ControllerBase
     [HttpPut("login")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Login([FromBody] UtilisateurNormalDto)
+    public async Task<IActionResult> Login([FromBody] FullUtilisateurDto dto)
     {
         throw new NotImplementedException();
     }

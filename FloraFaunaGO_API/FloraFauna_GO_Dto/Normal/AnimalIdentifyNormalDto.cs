@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Dto.Normal;
 
-public class AnimalAuthNormalDto
+public class AnimalIdentifyNormalDto
 {
-    public Blob AskedImage { get; set; }
+    public byte[] AskedImage { get; set; }
 }

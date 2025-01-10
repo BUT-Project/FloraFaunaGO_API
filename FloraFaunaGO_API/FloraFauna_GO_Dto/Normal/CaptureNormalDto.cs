@@ -10,5 +10,5 @@ namespace FloraFauna_GO_Dto.Normal;
 public class CaptureNormalDto
 {
     public string? Id { get; set; }
-    public Blob photo { get; set; }
+    public byte[]? photo { get; set; }
 }

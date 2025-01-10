@@ -184,7 +184,7 @@ public static class Extension
         Func<SuccessNormalDto, SuccessEntities> creator = (dto) => new SuccessEntities()
         {
             Nom = dto.Name,
-            Avancement = dto.Avancement,
+            Avancement = dto.Objectif,
             Description = dto.Description,
         };
         return dto.ToU(Mappers.SuccessMapper, creator);
@@ -194,7 +194,7 @@ public static class Extension
     {
         Func<SuccessEntities, SuccessNormalDto> creator = (entities) => new SuccessNormalDto()
         {
-            Avancement = entities.Avancement,
+            Objectif = entities.Avancement,
             Description = entities.Description,
             Name = entities.Nom,
         };

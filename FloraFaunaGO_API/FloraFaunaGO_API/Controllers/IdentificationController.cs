@@ -11,7 +11,7 @@ public class IdentificationController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AskToIdentifyAPI([FromBody] AnimalAuthNormalDto dto)
+    public async Task<IActionResult> AskToIdentifyAPI([FromBody] AnimalIdentifyNormalDto dto)
     {
         throw new NotImplementedException();
         //return un espece Dto
