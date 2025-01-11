@@ -16,7 +16,7 @@ public static class Mappers
     internal static Mapper<FullCaptureDetailDto, CaptureDetailsEntities> CaptureDetailMapper { get; } = new Mapper<FullCaptureDetailDto, CaptureDetailsEntities>();
     internal static Mapper<FullCaptureDto, CaptureEntities> CaptureMapper { get; } = new Mapper<FullCaptureDto, CaptureEntities>();
     internal static Mapper<FullEspeceDto, EspeceEntities> EspeceMapper { get; } = new Mapper<FullEspeceDto, EspeceEntities>();
-    internal static Mapper<SuccessNormalDto, SuccessEntities> SuccessMapper { get; } = new Mapper<SuccessNormalDto, SuccessEntities>();
+    internal static Mapper<SuccessNormalDto, SuccesEntities> SuccessMapper { get; } = new Mapper<SuccessNormalDto, SuccesEntities>();
     internal static Mapper<LocalisationNormalDto, LocalisationEntities> LocalisationMapper { get; } = new Mapper<LocalisationNormalDto, LocalisationEntities>();
     internal static Mapper<HabitatNormalDto, HabitatEntities> HabitatMapper { get; } = new Mapper<HabitatNormalDto, HabitatEntities>();
 

@@ -179,20 +179,20 @@ public static class Extension
         return entities.ToT(null, creator);
     }
 
-    public static SuccessEntities ToEntities(this SuccessNormalDto dto)
+    public static SuccesEntities ToEntities(this SuccessNormalDto dto)
     {
-        Func<SuccessNormalDto, SuccessEntities> creator = (dto) => new SuccessEntities()
+        Func<SuccessNormalDto, SuccesEntities> creator = (dto) => new SuccesEntities()
         {
             Nom = dto.Name,
-            Avancement = dto.Objectif,
+            Objectif = dto.Objectif,
             Description = dto.Description,
         };
         return dto.ToU(Mappers.SuccessMapper, creator);
     }
 
-    public static SuccessNormalDto ToDto(this SuccessEntities entities)
+    public static SuccessNormalDto ToDto(this SuccesEntities entities)
     {
-        Func<SuccessEntities, SuccessNormalDto> creator = (entities) => new SuccessNormalDto()
+        Func<SuccesEntities, SuccessNormalDto> creator = (entities) => new SuccessNormalDto()
         {
             Objectif = entities.Objectif,
             Description = entities.Description,

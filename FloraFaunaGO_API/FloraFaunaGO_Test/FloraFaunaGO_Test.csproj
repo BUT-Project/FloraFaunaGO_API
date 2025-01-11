@@ -22,4 +22,9 @@
     <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj" />
+    <ProjectReference Include="..\FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj" />
+  </ItemGroup>
+
 </Project>
