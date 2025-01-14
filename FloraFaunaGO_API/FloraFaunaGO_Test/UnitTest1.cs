@@ -1,5 +1,4 @@
 using FloraFauna_GO_Dto.Full;
-using Xunit;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
@@ -8,9 +7,10 @@ using FloraFaunaGO_Entities.Enum;
 
 namespace FloraFaunaGO_Test
 {
+    [TestClass]
     public class UnitTest1
     {
-        [Fact]
+        [TestMethod]
         public void ToEntities_Should_Map_FullEspeceDto_To_EspeceEntities()
         {
             // Arrange
@@ -32,7 +32,7 @@ namespace FloraFaunaGO_Test
             // Ajoutez des vérifications supplémentaires ici
         }
 
-        [Fact]
+        [TestMethod]
         public void ToDto_Should_Map_EspeceEntities_To_FullEspeceDto()
         {
             // Arrange
@@ -46,11 +46,11 @@ namespace FloraFaunaGO_Test
 
             // Assert
             Assert.IsNotNull(dtos);
-            Assert.IsInstanceOfType<FullEspeceDto>(dtos[0]);
+            Assert.IsInstanceOfType<FullEspeceDto>(dtos);
             // Vérifiez les propriétés spécifiques, si besoin
         }
 
-        [Fact]
+        [TestMethod]
         public void ToEntities_Should_Map_HabitatNormalDto_To_HabitatEntities()
         {
             // Arrange
@@ -68,7 +68,7 @@ namespace FloraFaunaGO_Test
             // Vérifiez ici les propriétés mappées spécifiques
         }
 
-        [Fact]
+        [TestMethod]
         public void ToDto_Should_Map_HabitatEntities_To_HabitatNormalDto()
         {
             // Arrange
@@ -86,13 +86,21 @@ namespace FloraFaunaGO_Test
             // Testez les propriétés
         }
 
-        [Fact]
+        [TestMethod]
         public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
         {
             // Arrange
             var captureDto = new FullCaptureDto
             {
-                // Remplissez les données ici
+                Capture = new CaptureNormalDto { /* Remplissez les données */ },
+                Espece = new FullEspeceDto
+                {
+                    Espece = new EspeceNormalDto { /* Remplissez les propriétés pertinentes */ },
+                    Habitats = new[] { new HabitatNormalDto() },
+                    Famille = new Famille { /* Remplissez les données */ },
+                    Regime_Alimentaire = new Regime_Alimentaire { /* Données */ },
+                    localisationNormalDtos = new[] { new LocalisationNormalDto() }
+                }
             };
 
             // Act
@@ -104,7 +112,7 @@ namespace FloraFaunaGO_Test
             // Vérifiez les propriétés
         }
 
-        [Fact]
+        [TestMethod]
         public void ToDto_Should_Map_CaptureEntities_To_FullCaptureDto()
         {
             // Arrange
@@ -122,7 +130,7 @@ namespace FloraFaunaGO_Test
             // Vérifiez les propriétés
         }
 
-        [Fact]
+        [TestMethod]
         public void Mapper_Should_Store_And_Return_Correct_Mappings()
         {
             // Arrange
@@ -141,7 +149,7 @@ namespace FloraFaunaGO_Test
             Assert.AreEqual<EspeceEntities>(entity, returnedEntity);
         }
 
-        [Fact]
+        [TestMethod]
         public void Mapper_Reset_Should_Clear_All_Mappings()
         {
             // Arrange
