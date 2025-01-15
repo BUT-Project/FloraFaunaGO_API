@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Shared.Criteria
 {
-    internal class SuccessStateOrderingCriteria
+    public enum SuccessStateOrderingCreteria
     {
+        None,
+        BySuccess,
+        ByUser
     }
 }

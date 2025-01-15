@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    internal class Zone
+    public class Zone
     {
+        public string zoneIndication { get; set; }
+
+        public ICollection<EspeceEntities> entities { get; set; }
     }
 }

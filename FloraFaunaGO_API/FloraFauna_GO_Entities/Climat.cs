@@ -8,6 +8,8 @@ namespace FloraFauna_GO_Entities
 {
     public class Climat : BaseEntity
     {
-        string climatName { get; set; }
+        public string climatName { get; set; }
+
+        public ICollection<EspeceEntities> entities { get; set; }
     }
 }
