@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork: IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -47,11 +47,11 @@ namespace FloraFauna_Go_Repository
 
         private ICaptureRepository<CaptureEntities> captureRepository;
 
-        public IEspeceRepository<EspeceEntities> EspeceRepository 
+        public IEspeceRepository<EspeceEntities> EspeceRepository
         {
             get
             {
-                if(especeRepository == null)
+                if (especeRepository == null)
                 {
                     especeRepository = new EspeceRepository(Context);
                 }
@@ -61,16 +61,52 @@ namespace FloraFauna_Go_Repository
 
         private IEspeceRepository<EspeceEntities> especeRepository;
 
-
-
-        public Task<bool> AddNewCapture(IEnumerable<CaptureEntities> capture, IEnumerable<UtilisateurEntities> user)
+        public async Task<bool> AddNewCapture(IEnumerable<CaptureEntities> captures, IEnumerable<UtilisateurEntities> users)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var capture in captures)
+                {
+                    await CaptureRepository.Insert(capture);
+                }
+
+                foreach (var user in users)
+                {
+                    await UserRepository.Insert(user);
+                }
+
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
         }
 
-        public Task<bool> AddNewEspece(IEnumerable<EspeceEntities> espece)
+        public async Task<bool> AddNewEspece(IEnumerable<EspeceEntities> especes)
         {
-            throw new NotImplementedException();
+            try
+            {
+                foreach (var espece in especes)
+                {
+                    await EspeceRepository.Insert(espece);
+                }
+
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> AddNewUser(IEnumerable<UtilisateurEntities> utilisateur)
+        {
+           throw new NotImplementedException();
         }
 
         public async Task RejectChangesAsync()

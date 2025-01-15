@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Shared.Criteria
 {
-    public enum EspeceOrderingCriteria
+    public enum SuccessOrderingCreteria
     {
         None,
-        ByNom,
-        ByFamille,
-        ByRegime,
-        ByClimat,
-        ByZone
+        ByName
     }
 }

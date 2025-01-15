@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFaunaGO_Entities.Enum;
-
-public enum Famille
+namespace FloraFauna_GO_Entities
 {
-    Canidés,
-    Félin
+    public class Climat : BaseEntity
+    {
+        string climatName { get; set; }
+    }
 }
