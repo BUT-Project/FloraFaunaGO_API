@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_GO_Entities2Dto"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FloraFauna_Go_Repository", "FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj", "{FA44C14E-3C07-4832-ABE4-322961EE34B0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFauna_GO_Console_App", "FloraFauna_GO_Console_App\FloraFauna_GO_Console_App.csproj", "{B0CCF5CF-5D22-4600-9CBA-A2EAE4145C48}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FA44C14E-3C07-4832-ABE4-322961EE34B0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0CCF5CF-5D22-4600-9CBA-A2EAE4145C48}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0CCF5CF-5D22-4600-9CBA-A2EAE4145C48}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0CCF5CF-5D22-4600-9CBA-A2EAE4145C48}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0CCF5CF-5D22-4600-9CBA-A2EAE4145C48}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -89,7 +89,6 @@ namespace FloraFaunaGO_Test
         [TestMethod]
         public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
         {
-            // Arrange
             var captureDto = new FullCaptureDto
             {
                 Capture = new CaptureNormalDto { /* Remplissez les données */ },
@@ -97,9 +96,24 @@ namespace FloraFaunaGO_Test
                 {
                     Espece = new EspeceNormalDto { /* Remplissez les propriétés pertinentes */ },
                     Habitats = new[] { new HabitatNormalDto() },
-                    Famille = new Famille { /* Remplissez les données */ },
+                    Famille = new Famille() { /* Remplissez les données */ },
                     Regime_Alimentaire = new Regime_Alimentaire { /* Données */ },
                     localisationNormalDtos = new[] { new LocalisationNormalDto() }
+                },
+                CaptureDetails = new []
+                {
+                    new FullCaptureDetailDto() { 
+                        CaptureDetail = new CaptureDetailNormalDto { 
+                            Id = "1",
+                            Shiny = false,
+                        },
+                        localisationNormalDtos = new LocalisationNormalDto()
+                           {
+                               Latitude = 0,
+                               Longitude = 0,
+                               Rayon = 0,
+                           }
+                    }
                 }
             };
 
@@ -115,11 +129,52 @@ namespace FloraFaunaGO_Test
         [TestMethod]
         public void ToDto_Should_Map_CaptureEntities_To_FullCaptureDto()
         {
-            // Arrange
-            var captureEntity = new CaptureEntities
+            var captureEntity = new CaptureEntities()
             {
-                // Remplissez les données ici
-            };
+                Numero = 1,
+                CaptureDetails = new[]
+            {
+                new CaptureDetailsEntities {
+                    Id = "1",
+                    Shiny = false,
+                    Localisation = new LocalisationEntities
+                    {
+                        Rayon = 4,
+                        Latitude = 4,
+                        Longitude = 4,
+                    }
+                },
+            },
+                        Photo = new byte[] { },
+                        Espece = new EspeceEntities
+                        {
+                            Id = "2",
+                            Description = "2",
+                            Image3D = new byte[] { },
+                            Famille = Famille.Félin,
+                            Habitats = new[]
+                {
+                    new HabitatEntities()
+                    {
+                        Climat = "le climat",
+                        Zone = "la zone",
+                    }
+                },
+                            Image = new byte[] { },
+                            Nom = "Nom",
+                            Nom_scientifique = "nom science",
+                            Localisations = new[]
+                {
+                    new LocalisationEntities()
+                    {
+                        Longitude = 0,
+                        Latitude = 0,
+                        Rayon = 0,
+                    },
+                },
+                            Regime = Regime_Alimentaire.Végétarien
+                        }
+                    };
 
             // Act
             var captureDto = captureEntity.ToDto();
@@ -127,7 +182,6 @@ namespace FloraFaunaGO_Test
             // Assert
             Assert.IsNotNull(captureDto);
             Assert.IsInstanceOfType<FullCaptureDto>(captureDto);
-            // Vérifiez les propriétés
         }
 
         [TestMethod]
