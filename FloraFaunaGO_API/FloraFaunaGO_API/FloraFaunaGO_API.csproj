@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj" />
     <ProjectReference Include="..\FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
   </ItemGroup>
