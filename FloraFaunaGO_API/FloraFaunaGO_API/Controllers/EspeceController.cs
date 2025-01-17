@@ -1,6 +1,8 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
@@ -12,12 +14,13 @@ public class EspeceController : ControllerBase
     private readonly ILogger<EspeceController> _logger;
 
     public IEspeceRepository<FullEspeceDto,FullEspeceDto> EspeceRepository { get; private set; }
-    public IUnitOfWork<FullEspeceDto, FullCaptureDto, FullUtilisateurDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullUtilisateurDto, FullUtilisateurDto> UnitOfWork { get; private set; }
 
-    public EspeceController(ILogger<EspeceController> logger)
+    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service)
     {
         _logger = logger;
-        //EspeceRepository = especeRepository;
+        UnitOfWork = service;
+        EspeceRepository = UnitOfWork.EspeceRepository;
     }
 
     [HttpGet ("id={id}")]
@@ -51,7 +54,7 @@ public class EspeceController : ControllerBase
                                                   [FromQuery] int index = 0, 
                                                   [FromQuery] int count = 10)
     {
-        return await GetEspeces(async () => await EspeceRepository.GetAllEspece(EspeceOrderingCriteria.None, 0, 100));
+        return await GetEspeces(async () => await EspeceRepository.GetAllEspece(EspeceOrderingCriteria.None, index, count));
     }
 
     [HttpGet("famille={famille}")]
@@ -86,7 +89,12 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
     {
-        throw new NotImplementedException();
+        _ = await EspeceRepository.Insert(dto);
+        var inserted = await UnitOfWork.SaveChangesAsync();
+
+        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
+        var insertedEspece = inserted?.SingleOrDefault();
+        return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
     }
 
     [HttpPut]
@@ -94,7 +102,9 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] FullEspeceDto dto)
     {
-        throw new NotImplementedException();
+        var result = await EspeceRepository.Update(id,dto);
+        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
+        return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }
 
     [HttpDelete]
@@ -102,6 +112,8 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteEspece([FromQuery] string id)
     {
-        throw new NotImplementedException();
+        bool result = await EspeceRepository.Delete(id);
+        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
+        return result ? Ok() : NotFound(id);
     }
 }

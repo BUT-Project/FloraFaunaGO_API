@@ -1,4 +1,7 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Entities2Dto;
+using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
@@ -8,20 +11,27 @@ public class UtilisateurControlleur : ControllerBase
 {
    private readonly ILogger<UtilisateurControlleur> _logger;
 
-    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger)
+    public IUserRepository<FullUtilisateurDto, FullUtilisateurDto> UserRepository { get; set; }
+
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullUtilisateurDto, FullUtilisateurDto> UnitOfWork { get; private set; }
+
+    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service)
     {
         _logger = logger;
+        UnitOfWork = service;
+        UserRepository = service.UserRepository;
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("id={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerById(string id)
     {
-        throw new NotImplementedException();
+        var user = await UserRepository.GetById(id);
+        return user != null ? Ok(user) : NotFound(id);
     }
 
-    [HttpGet("{pseudo}")]
+    [HttpGet("pseudo={pseudo}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
@@ -29,12 +39,20 @@ public class UtilisateurControlleur : ControllerBase
         throw new NotImplementedException();
     }
 
+    private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
+    {
+        var result = await func();
+        return result.Items.Any() ? Ok(result) : NoContent();
+    }
+
     [HttpGet("all")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllPlayer()
+    public async Task<IActionResult> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
+                                                  [FromQuery] int index = 0,
+                                                  [FromQuery] int count = 10)
     {
-        throw new NotImplementedException();
+        return await GetUsers(async () => await UserRepository.GetAllUser(UserOrderingCriteria.None, index, count));
     }
 
     [HttpPost]
@@ -42,7 +60,12 @@ public class UtilisateurControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostPlayer(FullUtilisateurDto dto)
     {
-        throw new NotImplementedException();
+        _ = await UserRepository.Insert(dto);
+        var inserted = await UnitOfWork.SaveChangesAsync();
+
+        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
+        var insertedUser = inserted?.SingleOrDefault();
+        return insertedUser != null ? Created(nameof(PostPlayer), insertedUser) : NotFound();
     }
 
     [HttpPut]
@@ -50,7 +73,9 @@ public class UtilisateurControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] FullUtilisateurDto dto)
     {
-        throw new NotImplementedException();
+        var result = await UserRepository.Update(id, dto);
+        if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
+        return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
     }
 
     [HttpPut("login")]
@@ -74,6 +99,8 @@ public class UtilisateurControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeletePlayer([FromQuery] string id)
     {
-        throw new NotImplementedException();
+        bool result = await UserRepository.Delete(id);
+        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
+        return result ? Ok() : NotFound(id);
     }
 }
