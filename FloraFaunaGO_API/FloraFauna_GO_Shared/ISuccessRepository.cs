@@ -18,7 +18,7 @@ namespace FloraFauna_GO_Shared
                 int index = 0, int count = 10);
     }
 
-    public interface ISuccessRepository<T> : IUserRepository<T, T>
+    public interface ISuccessRepository<T> : ISuccessRepository<T, T>
         where T : class
     {
 

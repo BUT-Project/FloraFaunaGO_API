@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -47,6 +47,19 @@ namespace FloraFauna_Go_Repository
 
         private ICaptureRepository<CaptureEntities> captureRepository;
 
+        public ICaptureDetailRepository<CaptureDetailsEntities> CaptureDetailRepository
+        {
+            get {
+                if (captureDetailRepository == null)
+                {
+                    captureDetailRepository = new CaptureDetailRepository(Context);
+                }
+                return captureDetailRepository;
+            }
+        }
+
+        private ICaptureDetailRepository<CaptureDetailsEntities> captureDetailRepository;
+
         public IEspeceRepository<EspeceEntities> EspeceRepository
         {
             get
@@ -61,53 +74,33 @@ namespace FloraFauna_Go_Repository
 
         private IEspeceRepository<EspeceEntities> especeRepository;
 
-        public async Task<bool> AddNewCapture(IEnumerable<CaptureEntities> captures, IEnumerable<UtilisateurEntities> users)
+        public ISuccessRepository<SuccesEntities> SuccessRepository
         {
-            try
+            get
             {
-                foreach (var capture in captures)
+                if (successRepository == null)
                 {
-                    await CaptureRepository.Insert(capture);
+                    successRepository = new SuccessRepository(Context);
                 }
-
-                foreach (var user in users)
-                {
-                    await UserRepository.Insert(user);
-                }
-
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
+                return successRepository;
             }
         }
 
-        public async Task<bool> AddNewEspece(IEnumerable<EspeceEntities> especes)
+        private ISuccessRepository<SuccesEntities> successRepository;
+
+        public ISuccessStateRepository<SuccesStateEntities> SuccessStateRepository
         {
-            try
+            get
             {
-                foreach (var espece in especes)
+                if (successStateRepository == null)
                 {
-                    await EspeceRepository.Insert(espece);
+                    successStateRepository = new SuccessStateRepository(Context);
                 }
-
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
+                return successStateRepository;
             }
         }
 
-        public async Task<bool> AddNewUser(IEnumerable<UtilisateurEntities> utilisateur)
-        {
-           throw new NotImplementedException();
-        }
+        private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
 
         public async Task RejectChangesAsync()
         {

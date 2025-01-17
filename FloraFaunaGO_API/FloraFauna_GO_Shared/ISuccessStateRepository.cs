@@ -21,7 +21,7 @@ namespace FloraFauna_GO_Shared
             int index = 0, int count = 10);
     }
 
-    public interface ISuccessStateRepository<T> : IUserRepository<T, T>
+    public interface ISuccessStateRepository<T> : ISuccessStateRepository<T, T>
         where T : class
     {
 

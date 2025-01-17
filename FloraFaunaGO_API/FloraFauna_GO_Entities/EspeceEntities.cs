@@ -28,8 +28,6 @@ public class EspeceEntities : BaseEntity
 
     public string Climat { get; set; }
 
-    public ICollection<HabitatEntities>? Habitats {  get; set; } = new Collection<HabitatEntities>();
-
     public ICollection<LocalisationEntities>? Localisations { get; set; } = new Collection<LocalisationEntities>();
     
     public string Regime { get; set; }

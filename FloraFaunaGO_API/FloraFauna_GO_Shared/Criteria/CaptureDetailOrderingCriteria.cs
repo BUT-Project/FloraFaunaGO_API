@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Shared.Criteria
 {
-    public enum CaptureOrderingCriteria
+    public enum CaptureDetailOrderingCriteria
     {
         None,
-        ByNumero
+        ByCapture,
+        ByCaptureLocation,
+        ByCaptureDate
     }
 }

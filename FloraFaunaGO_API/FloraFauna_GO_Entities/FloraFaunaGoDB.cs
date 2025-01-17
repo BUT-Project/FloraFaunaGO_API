@@ -31,14 +31,6 @@ namespace FloraFauna_GO_Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configuration des relations
-
-            // EspeceEntities - HabitatEntities (One-to-Many)
-            modelBuilder.Entity<EspeceEntities>()
-                .HasMany(e => e.Habitats)
-                .WithOne(h => h.Espece)
-                .HasForeignKey(h => h.EspeceId);
-
             // EspeceEntities - LocalisationEntities (One-to-Many)
             modelBuilder.Entity<EspeceEntities>()
                 .HasMany(e => e.Localisations)
