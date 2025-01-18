@@ -12,7 +12,6 @@ namespace FloraFauna_GO_Entities
         public virtual DbSet<EspeceEntities> Espece { get; set; }
         public virtual DbSet<CaptureEntities> Captures { get; set; }
         public virtual DbSet<CaptureDetailsEntities> CaptureDetails { get; set; }
-        public virtual DbSet<HabitatEntities> Habitat { get; set; }
         public virtual DbSet<LocalisationEntities> Localisation { get; set; }
         public virtual DbSet<UtilisateurEntities> Utilisateur { get; set; }
         public virtual DbSet<SuccesEntities> Succes { get; set; }

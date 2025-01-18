@@ -24,9 +24,6 @@ internal class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
     public async Task<Pagination<FullEspeceDto>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille, int index = 0, int count = 15)
         => (await Repository.GetEspeceByFamile(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<Pagination<FullEspeceDto>> GetEspeceByHabitat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByHabitat, int index = 0, int count = 15)
-        => (await Repository.GetEspeceByHabitat(criteria, index, count)).ToPagingResponseDtos();
-
     public async Task<Pagination<FullEspeceDto>> GetEspeceByName(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
         => (await Repository.GetEspeceByName(criteria, index, count)).ToPagingResponseDtos();
 
@@ -34,8 +31,18 @@ internal class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
         => (await Repository.GetEspeceByRegime(criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<FullEspeceDto?> Insert(FullEspeceDto item)
-        => (await Repository.Insert(item.ToEntites()))?.ToDto();
+        => (await Repository.Insert(item.ToEntities()))?.ToDto();
 
     public async Task<FullEspeceDto?> Update(string id, FullEspeceDto item)
-        => (await Repository.Update(id, item.ToEntites()))?.ToDto();
+        => (await Repository.Update(id, item.ToEntities()))?.ToDto();
+
+    public Task<Pagination<FullEspeceDto>> GetEspeceByClimat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByClimat, int index = 0, int count = 15)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<Pagination<FullEspeceDto>> GetEspeceByZone(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByZone, int index = 0, int count = 15)
+    {
+        throw new NotImplementedException();
+    }
 }

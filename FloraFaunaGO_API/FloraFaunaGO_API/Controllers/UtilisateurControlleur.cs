@@ -1,4 +1,5 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
@@ -13,7 +14,7 @@ public class UtilisateurControlleur : ControllerBase
 
     public IUserRepository<FullUtilisateurDto, FullUtilisateurDto> UserRepository { get; set; }
 
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullUtilisateurDto, FullUtilisateurDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service)
     {

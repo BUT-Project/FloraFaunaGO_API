@@ -1,4 +1,5 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
@@ -14,7 +15,7 @@ public class EspeceController : ControllerBase
     private readonly ILogger<EspeceController> _logger;
 
     public IEspeceRepository<FullEspeceDto,FullEspeceDto> EspeceRepository { get; private set; }
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullUtilisateurDto, FullUtilisateurDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service)
     {
@@ -75,15 +76,6 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
-    [HttpGet("habitat/{idHabitat}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByIdHabitat(string idHabitat)
-    {
-        var espece = await EspeceRepository.GetEspeceByHabitat(EspeceOrderingCriteria.ByHabitat);
-        return espece != null ? Ok(espece) : NotFound(idHabitat);
-    }
-
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -99,7 +91,7 @@ public class EspeceController : ControllerBase
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] FullEspeceDto dto)
     {
         var result = await EspeceRepository.Update(id,dto);

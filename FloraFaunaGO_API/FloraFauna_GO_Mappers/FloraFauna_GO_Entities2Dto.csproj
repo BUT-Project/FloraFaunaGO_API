@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj" />
-    <ProjectReference Include="..\FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj" />
     <ProjectReference Include="..\FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
   </ItemGroup>

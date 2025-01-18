@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\FloraFaunaGO_API\FloraFaunaGO_API.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj" />

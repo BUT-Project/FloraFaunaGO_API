@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	<GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,13 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj" />
-    <ProjectReference Include="..\FloraFauna_Go_Repository\FloraFauna_Go_Repository.csproj" />
-    <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\FloraFauna_GO_Dto\FloraFauna_GO_Dto.csproj" />
+    <ProjectReference Include="..\FloraFauna_GO_Mappers\FloraFauna_GO_Entities2Dto.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
   </ItemGroup>
 

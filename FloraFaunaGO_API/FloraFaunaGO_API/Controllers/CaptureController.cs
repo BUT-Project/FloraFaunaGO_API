@@ -1,4 +1,6 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿
+using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +16,7 @@ public class CaptureController : ControllerBase
 
     public ICaptureRepository<FullCaptureDto, FullCaptureDto> CaptureRepository { get; private set; }
 
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullUtilisateurDto, FullUtilisateurDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service)
     {
@@ -23,6 +25,11 @@ public class CaptureController : ControllerBase
         CaptureRepository = service.CaptureRepository;
     }
 
+    /// <summary>
+    /// get Capture by id
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

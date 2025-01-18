@@ -20,4 +20,12 @@ public class EspeceNormalDto
     public byte[]? Image { get; set; }
 
     public byte[]? Image3D { get; set; }
+
+    public string Famille { get; set; }
+
+    public string Zone { get; set; }
+
+    public string Climat { get; set; }
+
+    public string Regime { get; set; }
 }

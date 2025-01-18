@@ -20,30 +20,6 @@ public static class Extension
         }
     }
 
-    public static HabitatEntities ToEntities(this HabitatNormalDto dto)
-    {
-        Func<HabitatNormalDto, HabitatEntities> creator = (dto) => new HabitatEntities()
-            {
-                Id = dto.Id,
-                Zone = dto.Zone,
-                Climat = dto.Climat
-            };
-
-        return dto.ToU(Mappers.HabitatMapper, creator);
-    }
-
-    public static HabitatNormalDto ToDto(this HabitatEntities entities)
-    {
-        Func<HabitatEntities, HabitatNormalDto> creator = (entities) => new HabitatNormalDto()
-        {
-            Id = entities.Id,
-            Zone = entities.Zone,
-            Climat = entities.Climat
-        };
-
-        return entities.ToT(null, creator, null);
-    }
-
     public static LocalisationEntities ToEntities(this LocalisationNormalDto dto)
     {
         Func<LocalisationNormalDto, LocalisationEntities> creator = (dto) => new LocalisationEntities()
@@ -73,7 +49,8 @@ public static class Extension
         Func<FullCaptureDto, CaptureEntities> creator = (dto) => new CaptureEntities()
         {
             Id = dto.Capture.Id,
-            Espece = ToEntites(dto.Espece),
+            Photo = dto.Capture.photo,
+            Espece = ToEntities(dto.Espece),
             CaptureDetails = dto.CaptureDetails.Select(cd => ToEntities(cd)).ToList(),
         };
         return dto.ToU(Mappers.CaptureMapper, creator);
@@ -111,7 +88,7 @@ public static class Extension
         return entities.ToT(null, creator, null);
     }
 
-    public static EspeceEntities ToEntites(this FullEspeceDto dto)
+    public static EspeceEntities ToEntities(this FullEspeceDto dto)
     {
         Func<FullEspeceDto, EspeceEntities> creator = (dto) => new EspeceEntities()
         {
@@ -120,10 +97,11 @@ public static class Extension
             Description = dto.Espece.Description,
             Image = dto.Espece.Image,
             Image3D = dto.Espece.Image3D,
-            Famille = dto.Famille,
-            Habitats = dto.Habitats.Select(hab => ToEntities(hab)).ToList(),
             Localisations = dto.localisationNormalDtos.Select(loc => ToEntities(loc)).ToList(),
-            Regime = dto.Regime_Alimentaire,
+            Climat = dto.Espece.Climat,
+            Zone = dto.Espece.Zone,
+            Famille = dto.Espece.Famille,
+            Regime = dto.Espece.Regime,
         };
         return dto.ToU(Mappers.EspeceMapper, creator);
     }
@@ -138,11 +116,11 @@ public static class Extension
                 Image = entities.Image,
                 Image3D = entities.Image3D,
                 Nom = entities.Nom,
-                Nom_Scientifique = entities.Nom_scientifique
+                Nom_Scientifique = entities.Nom_scientifique,
+                Climat = entities.Climat,
+                Zone = entities.Zone,
+                Regime = entities.Regime,
             },
-            Habitats = entities.Habitats.Select(hab => ToDto(hab)).ToArray(),
-            Regime_Alimentaire = entities.Regime,
-            Famille = entities.Famille,
             localisationNormalDtos = entities.Localisations.Select(loc => ToDto(loc)).ToArray(),
         };
         return entities.ToT(null, creator);
@@ -158,6 +136,7 @@ public static class Extension
             Hash_mdp = dto.Utilisateur.Hash_mdp,
             DateInscription = dto.Utilisateur.DateInscription,
             Captures = dto.Capture?.Select(c => ToEntities(c)).ToList(),
+            SuccesState = dto.SuccessState?.Select(s => ToEntities(s)).ToList(),
         };
         return dto.ToU(Mappers.UtilisateurMapper, creator);
     }
@@ -175,6 +154,7 @@ public static class Extension
                 Id = entities.Id,
             },
             Capture = entities.Captures.Select(cpt => ToDto(cpt)).ToArray(),
+            SuccessState = entities.SuccesState.Select(s => ToDto(s)).ToArray(),
         };
         return entities.ToT(null, creator);
     }
@@ -183,7 +163,7 @@ public static class Extension
     {
         Func<SuccessNormalDto, SuccesEntities> creator = (dto) => new SuccesEntities()
         {
-            Nom = dto.Name,
+            Nom = dto.Nom,
             Objectif = dto.Objectif,
             Description = dto.Description,
         };
@@ -196,7 +176,32 @@ public static class Extension
         {
             Objectif = entities.Objectif,
             Description = entities.Description,
-            Name = entities.Nom,
+            Nom = entities.Nom,
+        };
+        return entities.ToT(null, creator);
+    }
+
+    public static SuccesStateEntities ToEntities(this FullSuccessStateDto dto)
+    {
+        Func<FullSuccessStateDto, SuccesStateEntities> creator = (dto) => new SuccesStateEntities()
+        {
+            PercentSucces = dto.State.PercentSucces,
+            IsSucces = dto.State.IsSucces,
+            SuccesEntities = dto.Success.ToEntities(),
+        };
+        return dto.ToU(Mappers.SuccessStateMapper, creator);
+    }
+
+    public static FullSuccessStateDto ToDto(this SuccesStateEntities entities)
+    {
+        Func<SuccesStateEntities, FullSuccessStateDto> creator = (entities) => new FullSuccessStateDto()
+        {
+            State = new SuccessStateNormalDto()
+            {
+                PercentSucces = entities.PercentSucces,
+                IsSucces = entities.IsSucces,
+            },
+            Success = entities.SuccesEntities.ToDto(),
         };
         return entities.ToT(null, creator);
     }
@@ -239,6 +244,28 @@ public static class Extension
     public static Pagination<FullUtilisateurDto> ToPagingResponseDtos(this Pagination<UtilisateurEntities> entities)
     {
         return new Pagination<FullUtilisateurDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<FullSuccessStateDto> ToPagingResponseDtos(this Pagination<SuccesStateEntities> entities)
+    {
+        return new Pagination<FullSuccessStateDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<SuccessNormalDto> ToPagingResponseDtos(this Pagination<SuccesEntities> entities)
+    {
+        return new Pagination<SuccessNormalDto>
         {
             PageIndex = entities.PageIndex,
             CountPerPage = entities.CountPerPage,

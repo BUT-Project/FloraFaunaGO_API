@@ -12,5 +12,5 @@ public class FullUtilisateurDto
     public UtilisateurNormalDto Utilisateur { get; set; }
     public FullCaptureDto[]? Capture { get; set; }
 
-    public SuccessNormalDto[]? Success { get; set; }
+    public FullSuccessStateDto[]? SuccessState { get; set; }
 }

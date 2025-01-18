@@ -7,10 +7,8 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Dto.Full;
 
-public class FullEspeceDto
+public class FullSuccessStateDto
 {
-    public EspeceNormalDto Espece { get; set; }
-    public LocalisationNormalDto[]? localisationNormalDtos { get; set; }
-
-
+    public SuccessStateNormalDto State { get; set; }
+    public SuccessNormalDto Success { get; set; }
 }
