@@ -34,14 +34,22 @@ builder.Services.AddSwaggerGen(options =>
             Url = new Uri("https://example.com/license")
         }
     });
+
+    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    options.IncludeXmlComments(xmlPath);
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+if (builder.Environment.IsDevelopment())
 {
-    app.UseSwagger();
+    
+    app.UseSwagger(option =>
+    {
+        option.SerializeAsV2 = true;
+    });
     app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
@@ -55,6 +63,10 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.MapGet("/", () => "Hello World!");
+app.MapSwagger().RequireAuthorization();
+
+app.MapGet("/FloraFaunaGO", () => "Hello, FloraFaunaGO!")
+.WithName("FloraFaunaGO");
+
 
 app.Run();
