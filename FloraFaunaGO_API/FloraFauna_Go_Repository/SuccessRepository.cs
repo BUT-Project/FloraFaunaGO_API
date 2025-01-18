@@ -10,18 +10,18 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_Go_Repository
 {
-    public class CaptureRepository : GenericRepository<CaptureEntities>, ICaptureRepository<CaptureEntities>
+    public class SuccessRepository : GenericRepository<SuccesEntities>, ISuccessRepository<SuccesEntities>
     {
-        public CaptureRepository(FloraFaunaGoDB context) : base(context) { }
+        public SuccessRepository(FloraFaunaGoDB context) : base(context) { }
 
-        public async Task<Pagination<CaptureEntities>> GetAllCapture(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None, int index = 0, int count = 15)
+        public async Task<Pagination<SuccesEntities>> GetAllSuccess(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.None, int index = 0, int count = 10)
         {
-            IQueryable<CaptureEntities> query = Set;
+            IQueryable<SuccesEntities> query = Set;
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
 
-            return new Pagination<CaptureEntities>
+            return new Pagination<SuccesEntities>()
             {
                 TotalCount = totalCount,
                 PageIndex = index,
@@ -30,16 +30,14 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<CaptureEntities>> GetCaptureByNumero(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByNumero, int index = 0, int count = 15)
+        public async Task<Pagination<SuccesEntities>> GetSuccessByName(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName, int index = 0, int count = 10)
         {
-            IQueryable<CaptureEntities> query = Set;
-
-            query = query.OrderBy(capture => capture.Numero);
+            IQueryable<SuccesEntities> query = Set;
+            query = query.OrderBy(success => success.Nom);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
-
-            return new Pagination<CaptureEntities>
+            return new Pagination<SuccesEntities>()
             {
                 TotalCount = totalCount,
                 PageIndex = index,

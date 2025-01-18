@@ -23,7 +23,10 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetEspeceByRegime(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByRegime,
             int index = 0, int count = 15);
 
-        Task<Pagination<Toutput>> GetEspeceByHabitat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByHabitat,
+        Task<Pagination<Toutput>> GetEspeceByClimat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByClimat,
+            int index = 0, int count = 15);
+
+        Task<Pagination<Toutput>> GetEspeceByZone(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByZone,
             int index = 0, int count = 15);
     }
 

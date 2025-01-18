@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork: IUnitOfWork<EspeceEntities, CaptureEntities, UtilisateurEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -47,11 +47,24 @@ namespace FloraFauna_Go_Repository
 
         private ICaptureRepository<CaptureEntities> captureRepository;
 
-        public IEspeceRepository<EspeceEntities> EspeceRepository 
+        public ICaptureDetailRepository<CaptureDetailsEntities> CaptureDetailRepository
+        {
+            get {
+                if (captureDetailRepository == null)
+                {
+                    captureDetailRepository = new CaptureDetailRepository(Context);
+                }
+                return captureDetailRepository;
+            }
+        }
+
+        private ICaptureDetailRepository<CaptureDetailsEntities> captureDetailRepository;
+
+        public IEspeceRepository<EspeceEntities> EspeceRepository
         {
             get
             {
-                if(especeRepository == null)
+                if (especeRepository == null)
                 {
                     especeRepository = new EspeceRepository(Context);
                 }
@@ -61,17 +74,33 @@ namespace FloraFauna_Go_Repository
 
         private IEspeceRepository<EspeceEntities> especeRepository;
 
-
-
-        public Task<bool> AddNewCapture(IEnumerable<CaptureEntities> capture, IEnumerable<UtilisateurEntities> user)
+        public ISuccessRepository<SuccesEntities> SuccessRepository
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (successRepository == null)
+                {
+                    successRepository = new SuccessRepository(Context);
+                }
+                return successRepository;
+            }
         }
 
-        public Task<bool> AddNewEspece(IEnumerable<EspeceEntities> espece)
+        private ISuccessRepository<SuccesEntities> successRepository;
+
+        public ISuccessStateRepository<SuccesStateEntities> SuccessStateRepository
         {
-            throw new NotImplementedException();
+            get
+            {
+                if (successStateRepository == null)
+                {
+                    successStateRepository = new SuccessStateRepository(Context);
+                }
+                return successStateRepository;
+            }
         }
+
+        private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
 
         public async Task RejectChangesAsync()
         {

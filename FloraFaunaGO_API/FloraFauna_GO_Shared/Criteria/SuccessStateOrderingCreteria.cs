@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Shared.Criteria
 {
-    public enum CaptureOrderingCriteria
+    public enum SuccessStateOrderingCreteria
     {
         None,
-        ByNumero
+        BySuccess,
+        ByUser
     }
 }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
-using FloraFaunaGO_Entities.Enum;
 
 namespace FloraFauna_GO_Entities;
 
@@ -23,11 +22,13 @@ public class EspeceEntities : BaseEntity
 
     public byte[]? Image3D { get; set; }
 
-    public Famille Famille { get; set; }
+    public string Famille { get; set; }
 
-    public ICollection<HabitatEntities>? Habitats {  get; set; } = new Collection<HabitatEntities>();
+    public string Zone { get; set; }
+
+    public string Climat { get; set; }
 
     public ICollection<LocalisationEntities>? Localisations { get; set; } = new Collection<LocalisationEntities>();
     
-    public Regime_Alimentaire Regime { get; set; }
+    public string Regime { get; set; }
 }

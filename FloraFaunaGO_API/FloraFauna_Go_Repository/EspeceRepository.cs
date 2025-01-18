@@ -19,6 +19,8 @@ namespace FloraFauna_Go_Repository
             [EspeceOrderingCriteria.ByFamille] = query => query.OrderBy(espece => espece.Famille),
             [EspeceOrderingCriteria.ByRegime] = query => query.OrderByDescending(espece => espece.Regime),
             [EspeceOrderingCriteria.ByNom] = query => query.OrderBy(espece => espece.Nom),
+            [EspeceOrderingCriteria.ByClimat] = query => query.OrderBy(espece => espece.Climat),
+            [EspeceOrderingCriteria.ByZone] = query => query.OrderBy(espece => espece.Zone)
         };
 
         public EspeceRepository(FloraFaunaGoDB context) : base(context) { }
@@ -40,11 +42,10 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<EspeceEntities>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille, int index = 0, int count = 15)
+        public async Task<Pagination<EspeceEntities>> GetEspeceByZone(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByZone, int index = 0, int count = 15)
         {
             IQueryable<EspeceEntities> query = Set;
-
-            query = query.OrderBy(espece => espece.Famille);
+            query = query.OrderBy(espece => espece.Zone);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
@@ -58,13 +59,28 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<EspeceEntities>> GetEspeceByHabitat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByHabitat, int index = 0, int count = 15)
+        public async Task<Pagination<EspeceEntities>> GetEspeceByClimat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByClimat, int index = 0, int count = 15)
+        {
+            IQueryable<EspeceEntities> query = Set;
+            query = query.OrderBy(espece => espece.Climat);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<EspeceEntities>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+
+        public async Task<Pagination<EspeceEntities>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille, int index = 0, int count = 15)
         {
             IQueryable<EspeceEntities> query = Set;
 
-            // Concernant l'haibtat, je vais le faire par zone, mais a voir comment faire par la suite
-            // Il est possible de faire par zone, mais aussi par climat.
-            query = query.OrderBy(espece => espece.Habitats.FirstOrDefault().Zone);
+            query = query.OrderBy(espece => espece.Famille);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
