@@ -65,8 +65,4 @@ app.MapControllers();
 
 app.MapSwagger().RequireAuthorization();
 
-app.MapGet("/FloraFaunaGO", () => "Hello, FloraFaunaGO!")
-.WithName("FloraFaunaGO");
-
-
 app.Run();

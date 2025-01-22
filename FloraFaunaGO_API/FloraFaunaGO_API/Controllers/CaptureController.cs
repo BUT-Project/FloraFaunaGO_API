@@ -30,13 +30,21 @@ public class CaptureController : ControllerBase
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    [HttpGet ("{id}")]
+    [HttpGet ("id={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureById(string id)
     {
         var capture = await CaptureRepository.GetById(id);
         return capture != null ? Ok(capture) : NotFound();
+    }
+
+    [HttpGet ("user={id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetCaptureByUser(string id)
+    {
+        throw new NotImplementedException();
     }
 
     [HttpPost]

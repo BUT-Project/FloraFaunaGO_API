@@ -67,7 +67,7 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(famille);
     }
 
-    [HttpGet("regimeAlimentaire/{regime_alimentaire}")]
+    [HttpGet("regimeAlimentaire={regime_alimentaire}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByRegimeAlimentaire(string regimeAlimentaire)
