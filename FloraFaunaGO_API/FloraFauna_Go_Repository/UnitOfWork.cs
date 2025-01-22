@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, EspeceEntities, CaptureEntities, CaptureEntities, CaptureDetailsEntities, CaptureDetailsEntities, UtilisateurEntities, UtilisateurEntities, SuccesEntities, SuccesEntities, SuccesStateEntities, SuccesStateEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -19,7 +19,7 @@ namespace FloraFauna_Go_Repository
             Context.Database.EnsureCreated();
         }
 
-        public IUserRepository<UtilisateurEntities> UserRepository
+        public IUserRepository<UtilisateurEntities, UtilisateurEntities> UserRepository
         {
             get
             {
@@ -31,9 +31,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private IUserRepository<UtilisateurEntities> userRepository;
+        private IUserRepository<UtilisateurEntities, UtilisateurEntities> userRepository;
 
-        public ICaptureRepository<CaptureEntities> CaptureRepository
+        public ICaptureRepository<CaptureEntities, CaptureEntities> CaptureRepository
         {
             get
             {
@@ -45,11 +45,12 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ICaptureRepository<CaptureEntities> captureRepository;
+        private ICaptureRepository<CaptureEntities, CaptureEntities> captureRepository;
 
-        public ICaptureDetailRepository<CaptureDetailsEntities> CaptureDetailRepository
+        public ICaptureDetailRepository<CaptureDetailsEntities, CaptureDetailsEntities> CaptureDetailRepository
         {
-            get {
+            get
+            {
                 if (captureDetailRepository == null)
                 {
                     captureDetailRepository = new CaptureDetailRepository(Context);
@@ -58,9 +59,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ICaptureDetailRepository<CaptureDetailsEntities> captureDetailRepository;
+        private ICaptureDetailRepository<CaptureDetailsEntities, CaptureDetailsEntities> captureDetailRepository;
 
-        public IEspeceRepository<EspeceEntities> EspeceRepository
+        public IEspeceRepository<EspeceEntities, EspeceEntities> EspeceRepository
         {
             get
             {
@@ -72,9 +73,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private IEspeceRepository<EspeceEntities> especeRepository;
+        private IEspeceRepository<EspeceEntities, EspeceEntities> especeRepository;
 
-        public ISuccessRepository<SuccesEntities> SuccessRepository
+        public ISuccessRepository<SuccesEntities, SuccesEntities> SuccessRepository
         {
             get
             {
@@ -86,9 +87,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ISuccessRepository<SuccesEntities> successRepository;
+        private ISuccessRepository<SuccesEntities, SuccesEntities> successRepository;
 
-        public ISuccessStateRepository<SuccesStateEntities> SuccessStateRepository
+        public ISuccessStateRepository<SuccesStateEntities, SuccesStateEntities> SuccessStateRepository
         {
             get
             {
@@ -100,7 +101,170 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
+        private ISuccessStateRepository<SuccesStateEntities, SuccesStateEntities> successStateRepository;
+
+        public async Task<bool> AddNewCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
+        {
+            try
+            {
+                if (await CaptureRepository.Insert(capture) == null)
+                {
+                    Context.Captures.Attach(capture);
+                    await Context.Entry(capture).ReloadAsync();
+                }
+                
+                if (user == null || user.Captures == null)
+                    throw new ArgumentNullException(nameof(user.Captures));
+
+                user.Captures.Add(capture);
+
+                if (await UserRepository.Update(user.Id, user) == null)
+                {
+                    Context.Utilisateur.Attach(user);
+                    await Context.Entry(user).ReloadAsync();
+                }
+
+                await SaveChangesAsync();
+                return await Task.FromResult(true);
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return await Task.FromResult(false);
+            }
+        }
+
+        public async Task<bool> AddNewCaptureDetailAsync(CaptureDetailsEntities captureDetail)
+        {
+            try
+            {
+                await CaptureDetailRepository.Insert(captureDetail);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece)
+        {
+            try
+            {
+                await EspeceRepository.Delete(espece.Id);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSuccessAsync(SuccesEntities success)
+        {
+            try
+            {
+                await SuccessRepository.Delete(success.Id);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> AddSuccesStateAsync(SuccesStateEntities successState)
+        {
+            try
+            {
+                await SuccessStateRepository.Insert(successState);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSuccessStateAsync(SuccesStateEntities successState)
+        {
+            try
+            {
+                await SuccessStateRepository.Delete(successState.Id);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> AddUserAsync(UtilisateurEntities user)
+        {
+            try
+            {
+                await UserRepository.Insert(user);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteUserAsync(UtilisateurEntities user)
+        {
+            try
+            {
+                await UserRepository.Delete(user.Id);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> LoginUserAsync(UtilisateurEntities user)
+        {
+            // Implémentation de la logique de connexion utilisateur
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> LogoutUserAsync(UtilisateurEntities user)
+        {
+            // Implémentation de la logique de déconnexion utilisateur
+            throw new NotImplementedException();
+        }
+
+        public async Task<bool> RegisterUserAsync(UtilisateurEntities user)
+        {
+            try
+            {
+                await UserRepository.Insert(user);
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
 
         public async Task RejectChangesAsync()
         {

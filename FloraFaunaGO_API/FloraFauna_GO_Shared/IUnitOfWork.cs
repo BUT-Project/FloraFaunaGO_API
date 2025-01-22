@@ -29,7 +29,14 @@ namespace FloraFauna_GO_Shared
         IEspeceRepository<TEspeceInput, TEspeceOutput> EspeceRepository { get; }
         ISuccessRepository<TSuccessInput, TSuccessOutput> SuccessRepository { get; }
         ISuccessStateRepository<TSuccessStateInput, TSuccessStateOutput> SuccessStateRepository { get; }
-        
+
+        Task<bool> AddNewCaptureAsync(TCaptureInput capture, TUserInput user);
+        Task<bool> AddNewCaptureDetailAsync(TCaptureDetailInput captureDetail);
+        Task<bool> DeleteEspeceAsync(TEspeceInput espece);
+        Task<bool> DeleteSuccessAsync(TSuccessInput success);
+        Task<bool> AddSuccesStateAsync(TSuccessStateInput successState);
+        Task<bool> DeleteSuccessStateAsync(TSuccessStateInput successState);
+
 
 
         Task<IEnumerable<object?>?> SaveChangesAsync();
@@ -50,6 +57,13 @@ namespace FloraFauna_GO_Shared
         IEspeceRepository<TEspeceInput> EspeceRepository { get; }
         ISuccessRepository<TSuccessInput> SuccessRepository { get; }
         ISuccessStateRepository<TSuccessStateInput> SuccessStateRepository { get; }
+
+        Task<bool> AddNewCaptureAsync(TCaptureInput capture, TUserInput user);
+        Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user);
+        Task<bool> AddNewCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user);
+        Task<bool> DeleteSuccessStateAsync(TSuccessStateInput successState, TUserInput user);
 
 
 
