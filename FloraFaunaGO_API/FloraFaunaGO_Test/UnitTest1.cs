@@ -51,7 +51,9 @@ public class UnitTest1
     {
         var captureDto = new FullCaptureDto
         {
-            Capture = new CaptureNormalDto { /* Remplissez les données */ },
+            Capture = new CaptureNormalDto { 
+                photo = new byte[] { 1, 2, 3 }
+            },
             Espece = new FullEspeceDto
             {
                 Espece = new EspeceNormalDto { /* Remplissez les propriétés pertinentes */ },
@@ -80,6 +82,7 @@ public class UnitTest1
         // Assert
         Assert.IsNotNull(captureEntity);
         Assert.IsInstanceOfType<CaptureEntities>(captureEntity);
+        Assert.AreEqual(captureEntity.Photo, captureDto.Capture.photo);
         // Vérifiez les propriétés
     }
 

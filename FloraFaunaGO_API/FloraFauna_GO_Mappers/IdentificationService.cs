@@ -1,120 +1,66 @@
 ﻿using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
+using FloraFauna_GO_Dto.Response;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-public class IdentificationService
+internal class IdentificationService
 {
-    private IEspeceRepository<EspeceEntities> Repository { get; set; }
+    private EspeceService Service { get; set; }
     private HttpClient client = new HttpClient();
+    private MultipartFormDataContent form = new MultipartFormDataContent();
+
+    private readonly string imagepath = "C:\\Users\\kyure\\Downloads\\Rose_Papa_Meilland.jpg";
 
     private const string API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
     private static readonly string apiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?api-key={API_KEY}";
 
-    public IdentificationService(IEspeceRepository<EspeceEntities> repository)
+    public IdentificationService(EspeceService service)
     {
-        Repository = repository;
+        Service = service;
     }
 
     public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto)
     {
+        var image = new StreamContent(File.OpenRead(imagepath));
+        image.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
 
-    }
-}
+        form.Add(image, "images", Path.GetFileName(imagepath));
 
-/*
-    private const string API_KEY = "YOUR-PRIVATE-API-KEY-HERE"; // Remplacez par votre clé API
-    private const string PROJECT = "all"; // Essayez des floras spécifiques : "weurope", "canada"…
-    private static readonly string apiEndpoint = $"https://my-api.plantnet.org/v2/identify/{PROJECT}?api-key={API_KEY}";
-
-    static async Task Main(string[] args)
-    {
-        string imagePath1 = @"../data/image_1.jpeg";
-        string imagePath2 = @"../data/image_2.jpeg";
-
-        // Créer un client HttpClient
-        using (HttpClient client = new HttpClient())
-        using (MultipartFormDataContent form = new MultipartFormDataContent())
+        HttpResponseMessage response = await client.PostAsync(apiEndpoint, form);
+        if (response.IsSuccessStatusCode)
         {
-            // Ajouter les images
-            form.Add(new StreamContent(File.OpenRead(imagePath1)), "images", Path.GetFileName(imagePath1));
-            form.Add(new StreamContent(File.OpenRead(imagePath2)), "images", Path.GetFileName(imagePath2));
-
-            // Ajouter les autres données (par exemple, organs)
-            var data = new Dictionary<string, string> { { "organs", "flower,leaf" } };
-
-            foreach (var item in data)
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            IdentificationResultDto dtoResult = JsonSerializer.Deserialize<IdentificationResultDto>(jsonResponse);
+            var allEspeces = await Service.GetAllEspece();
+            var espece = allEspeces.Items.FirstOrDefault(e => e.Espece.Nom_Scientifique == dtoResult.ScientificNameWithoutAuthor);
+            if (espece != null)
+                return espece;
+            espece = new FullEspeceDto
             {
-                form.Add(new StringContent(item.Value), item.Key);
-            }
-
-            // Configurer la requête HTTP
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            // Envoyer la requête POST
-            HttpResponseMessage response = await client.PostAsync(apiEndpoint, form);
-
-            // Lire la réponse
-            if (response.IsSuccessStatusCode)
-            {
-                string jsonResponse = await response.Content.ReadAsStringAsync();
-                dynamic jsonResult = JsonConvert.DeserializeObject(jsonResponse);
-                Console.WriteLine($"Status Code: {response.StatusCode}");
-                Console.WriteLine($"Response: {JsonConvert.SerializeObject(jsonResult, Formatting.Indented)}");
-            }
-            else
-            {
-                Console.WriteLine($"Error: {response.StatusCode}");
-            }
+                Espece = new EspeceNormalDto
+                {
+                    Nom = dtoResult.ScientificNameWithoutAuthor,
+                    Nom_Scientifique = dtoResult.ScientificNameWithoutAuthor,
+                    Description = "Description",
+                    Famille = dtoResult.Family.ScientificNameWithoutAuthor,
+                    Zone = "Zone",
+                    Climat = "Climat",
+                    Regime = "Regime",
+                    Image = image.ReadAsByteArrayAsync().Result,
+                },
+                localisationNormalDtos = null
+            };
+            return espece;
         }
+        return null;
     }
- */
-
-/*
- 
-{
-	"query": {
-		"project": "best",
-		"images": [
-			"buffer_code_image_1",
-			"buffer_code_image_2"
-		],
-		"organs": [
-			"flower",
-			"leaf"
-		]
-	},
-	"language": "en",
-	"preferedReferential": "useful",
-	"results": [
-		{
-			"score": 0.9952006530761719,
-			"species": {
-				"scientificNameWithoutAuthor": "Hibiscus rosa-sinensis",
-				"scientificNameAuthorship": "L.",
-				"genus": {
-					"scientificNameWithoutAuthor": "Hibiscus",
-					"scientificNameAuthorship": "L."
-				},
-				"family": {
-					"scientificNameWithoutAuthor": "Malvaceae",
-					"scientificNameAuthorship": "Juss."
-				},
-				"commonNames": [
-					"Chinese hibiscus",
-					"Hawaiian hibiscus",
-					"Hibiscus"
-				]
-			}
-		}
-	],
-	"remainingIdentificationRequests": 1228
 }
- */
