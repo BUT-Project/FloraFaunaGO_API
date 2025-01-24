@@ -103,7 +103,106 @@ namespace FloraFauna_Go_Repository
 
         private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
 
-        public async Task<bool> AddNewCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
+        public async Task<bool> AddSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
+        {
+            try
+            {
+                successState.User = user;
+                successState.SuccesEntities = success;
+
+                if (await SuccessStateRepository.Insert(successState) == null)
+                {
+                    Context.SuccesState.Attach(successState);
+                    await Context.Entry(successState).ReloadAsync();
+                }
+
+                if (await UserRepository.Insert(user) == null)
+                {
+                    Context.Utilisateur.Attach(user);
+                    await Context.Entry(user).ReloadAsync();
+                }
+
+                if (await SuccessRepository.Insert(success) == null)
+                {
+                    Context.Succes.Attach(success);
+                    await Context.Entry(success).ReloadAsync();
+                }
+
+                if (user.SuccesState == null)
+                {
+                    user.SuccesState = new List<SuccesStateEntities>();
+                }
+                user.SuccesState.Add(successState);
+
+                if (await UserRepository.Update(user.Id, user) == null)
+                {
+                    Context.Utilisateur.Attach(user);
+                    await Context.Entry(user).ReloadAsync();
+                }
+
+                if (success.State == null)
+                {
+                    success.State = new List<SuccesStateEntities>();
+                }
+                success.State.Add(successState);
+
+                if (await SuccessRepository.Update(success.Id, success) == null)
+                {
+                    Context.Succes.Attach(success);
+                    await Context.Entry(success).ReloadAsync();
+                }
+
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
+        {
+            try
+            {
+                await SuccessStateRepository.Delete(successState.Id);
+
+                // Remove successState from the user's SuccesState collection
+                if (user.SuccesState != null)
+                {
+                    user.SuccesState.Remove(successState);
+                }
+
+                // Remove successState from the success's State collection
+                if (success.State != null)
+                {
+                    success.State.Remove(successState);
+                }
+
+                if (await UserRepository.Update(user.Id, user) == null)
+                {
+                    Context.Utilisateur.Attach(user);
+                    await Context.Entry(user).ReloadAsync();
+                }
+
+                if (await SuccessRepository.Update(success.Id, success) == null)
+                {
+                    Context.Succes.Attach(success);
+                    await Context.Entry(success).ReloadAsync();
+                }
+
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> AddCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
         {
             try
             {
@@ -112,9 +211,12 @@ namespace FloraFauna_Go_Repository
                     Context.Captures.Attach(capture);
                     await Context.Entry(capture).ReloadAsync();
                 }
-                
-                if (user == null || user.Captures == null)
-                    throw new ArgumentNullException(nameof(user.Captures));
+
+                if (user == null)
+                    throw new ArgumentNullException(nameof(user));
+
+                if (user.Captures == null)
+                    user.Captures = new List<CaptureEntities>();
 
                 user.Captures.Add(capture);
 
@@ -125,20 +227,32 @@ namespace FloraFauna_Go_Repository
                 }
 
                 await SaveChangesAsync();
-                return await Task.FromResult(true);
+                return true;
             }
             catch (Exception)
             {
                 await RejectChangesAsync();
-                return await Task.FromResult(false);
+                return false;
             }
         }
 
-        public async Task<bool> AddNewCaptureDetailAsync(CaptureDetailsEntities captureDetail)
+        public async Task<bool> DeleteCaptureAsync(CaptureEntities capture, UtilisateurEntities user, IEnumerable<CaptureDetailsEntities> captureDetails)
         {
             try
             {
-                await CaptureDetailRepository.Insert(captureDetail);
+                foreach (var detail in captureDetails)
+                {
+                    await CaptureDetailRepository.Delete(detail.Id);
+                }
+
+                await CaptureRepository.Delete(capture.Id);
+
+                if (await UserRepository.Update(user.Id, user) == null)
+                {
+                    Context.Utilisateur.Attach(user);
+                    await Context.Entry(user).ReloadAsync();
+                }
+
                 await SaveChangesAsync();
                 return true;
             }
@@ -149,11 +263,29 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece)
+        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
         {
             try
             {
-                await EspeceRepository.Delete(espece.Id);
+                if (await CaptureDetailRepository.Insert(captureDetail) == null)
+                {
+                    Context.CaptureDetails.Attach(captureDetail);
+                    await Context.Entry(captureDetail).ReloadAsync();
+                }
+
+                if (capture.CaptureDetails == null)
+                {
+                    capture.CaptureDetails = new List<CaptureDetailsEntities>();
+                }
+                capture.CaptureDetails.Add(captureDetail);
+
+                if (await CaptureRepository.Update(capture.Id, capture) == null)
+                {
+                    Context.Captures.Attach(capture);
+                    await Context.Entry(capture).ReloadAsync();
+                }
+
+
                 await SaveChangesAsync();
                 return true;
             }
@@ -164,11 +296,20 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteSuccessAsync(SuccesEntities success)
+        public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
         {
             try
             {
-                await SuccessRepository.Delete(success.Id);
+                await CaptureDetailRepository.Delete(captureDetail.Id);
+                capture.CaptureDetails.Remove(captureDetail);
+
+                if (await CaptureRepository.Update(capture.Id, capture) == null)
+                {
+                    Context.Captures.Attach(capture);
+                    await Context.Entry(capture).ReloadAsync();
+                }
+
+                
                 await SaveChangesAsync();
                 return true;
             }
@@ -179,83 +320,22 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> AddSuccesStateAsync(SuccesStateEntities successState)
+        public async Task<bool> DeleteUser(UtilisateurEntities user, IEnumerable<CaptureEntities> captures, IEnumerable<SuccesStateEntities> successStates)
         {
             try
             {
-                await SuccessStateRepository.Insert(successState);
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
-            }
-        }
+                foreach (var capture in captures)
+                {
+                    await CaptureRepository.Delete(capture.Id);
+                }
 
-        public async Task<bool> DeleteSuccessStateAsync(SuccesStateEntities successState)
-        {
-            try
-            {
-                await SuccessStateRepository.Delete(successState.Id);
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
-            }
-        }
+                foreach (var successState in successStates)
+                {
+                    await SuccessStateRepository.Delete(successState.Id);
+                }
 
-        public async Task<bool> AddUserAsync(UtilisateurEntities user)
-        {
-            try
-            {
-                await UserRepository.Insert(user);
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
-            }
-        }
-
-        public async Task<bool> DeleteUserAsync(UtilisateurEntities user)
-        {
-            try
-            {
                 await UserRepository.Delete(user.Id);
-                await SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                await RejectChangesAsync();
-                return false;
-            }
-        }
 
-        public async Task<bool> LoginUserAsync(UtilisateurEntities user)
-        {
-            // Implémentation de la logique de connexion utilisateur
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> LogoutUserAsync(UtilisateurEntities user)
-        {
-            // Implémentation de la logique de déconnexion utilisateur
-            throw new NotImplementedException();
-        }
-
-        public async Task<bool> RegisterUserAsync(UtilisateurEntities user)
-        {
-            try
-            {
-                await UserRepository.Insert(user);
                 await SaveChangesAsync();
                 return true;
             }
