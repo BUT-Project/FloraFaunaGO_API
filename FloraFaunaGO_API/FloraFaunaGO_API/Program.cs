@@ -1,6 +1,8 @@
 using FloraFauna_GO_Entities;
+using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,6 +41,10 @@ builder.Services.AddSwaggerGen(options =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     options.IncludeXmlComments(xmlPath);
 });
+
+builder.Services.AddScoped<DbContextOptions<FloraFaunaGoDB>>();
+builder.Services.AddScoped<FloraFaunaService>(provider => new FloraFaunaService(provider.GetService<DbContextOptions<FloraFaunaGoDB>>()));
+
 
 var app = builder.Build();
 
