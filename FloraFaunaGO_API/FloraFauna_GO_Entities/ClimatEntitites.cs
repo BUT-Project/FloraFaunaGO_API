@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class Climat : BaseEntity
+    public class ClimatEntitites : BaseEntity
     {
         public string climatName { get; set; }
 

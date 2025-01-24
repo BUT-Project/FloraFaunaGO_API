@@ -20,9 +20,5 @@ public class LocalisationEntities : BaseEntity
 
     public EspeceEntities Espece { get; set; }
 
-    [Required]
-    public string CaptureDetailsId { get; set; }
-
-    public CaptureDetailsEntities CaptureDetails { get; set; }
-
+    public ICollection<CaptureDetailsEntities>? CaptureDetails { get; set; }
 }

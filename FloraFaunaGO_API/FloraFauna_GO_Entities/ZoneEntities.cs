@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class Zone
+    public class ZoneEntities
     {
         public string zoneIndication { get; set; }
 
