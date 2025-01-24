@@ -47,7 +47,7 @@ namespace FloraFauna_Go_Repository
 
         private ICaptureRepository<CaptureEntities> captureRepository;
 
-        public ICaptureDetailRepository<CaptureDetailsEntities, CaptureDetailsEntities> CaptureDetailRepository
+        public ICaptureDetailRepository<CaptureDetailsEntities> CaptureDetailRepository
         {
             get
             {
@@ -326,6 +326,10 @@ namespace FloraFauna_Go_Repository
             {
                 foreach (var capture in captures)
                 {
+                    foreach (var captureDetail in capture.CaptureDetails)
+                    {
+                        await CaptureDetailRepository.Delete(captureDetail.Id);
+                    }
                     await CaptureRepository.Delete(capture.Id);
                 }
 
