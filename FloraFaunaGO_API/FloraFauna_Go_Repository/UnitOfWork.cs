@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork : IUnitOfWork<EspeceEntities, EspeceEntities, CaptureEntities, CaptureEntities, CaptureDetailsEntities, CaptureDetailsEntities, UtilisateurEntities, UtilisateurEntities, SuccesEntities, SuccesEntities, SuccesStateEntities, SuccesStateEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -19,7 +19,7 @@ namespace FloraFauna_Go_Repository
             Context.Database.EnsureCreated();
         }
 
-        public IUserRepository<UtilisateurEntities, UtilisateurEntities> UserRepository
+        public IUserRepository<UtilisateurEntities> UserRepository
         {
             get
             {
@@ -31,9 +31,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private IUserRepository<UtilisateurEntities, UtilisateurEntities> userRepository;
+        private IUserRepository<UtilisateurEntities> userRepository;
 
-        public ICaptureRepository<CaptureEntities, CaptureEntities> CaptureRepository
+        public ICaptureRepository<CaptureEntities> CaptureRepository
         {
             get
             {
@@ -45,7 +45,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ICaptureRepository<CaptureEntities, CaptureEntities> captureRepository;
+        private ICaptureRepository<CaptureEntities> captureRepository;
 
         public ICaptureDetailRepository<CaptureDetailsEntities, CaptureDetailsEntities> CaptureDetailRepository
         {
@@ -59,9 +59,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ICaptureDetailRepository<CaptureDetailsEntities, CaptureDetailsEntities> captureDetailRepository;
+        private ICaptureDetailRepository<CaptureDetailsEntities> captureDetailRepository;
 
-        public IEspeceRepository<EspeceEntities, EspeceEntities> EspeceRepository
+        public IEspeceRepository<EspeceEntities> EspeceRepository
         {
             get
             {
@@ -73,9 +73,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private IEspeceRepository<EspeceEntities, EspeceEntities> especeRepository;
+        private IEspeceRepository<EspeceEntities> especeRepository;
 
-        public ISuccessRepository<SuccesEntities, SuccesEntities> SuccessRepository
+        public ISuccessRepository<SuccesEntities> SuccessRepository
         {
             get
             {
@@ -87,9 +87,9 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ISuccessRepository<SuccesEntities, SuccesEntities> successRepository;
+        private ISuccessRepository<SuccesEntities> successRepository;
 
-        public ISuccessStateRepository<SuccesStateEntities, SuccesStateEntities> SuccessStateRepository
+        public ISuccessStateRepository<SuccesStateEntities> SuccessStateRepository
         {
             get
             {
@@ -101,7 +101,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        private ISuccessStateRepository<SuccesStateEntities, SuccesStateEntities> successStateRepository;
+        private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
 
         public async Task<bool> AddNewCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
         {
@@ -319,6 +319,46 @@ namespace FloraFauna_Go_Repository
         {
             Dispose(true);
             GC.SuppressFinalize(this);
+        }
+
+        public Task<bool> AddSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AddCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteCaptureAsync(CaptureEntities capture, UtilisateurEntities user, IEnumerable<CaptureDetailsEntities> captureDetails)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> DeleteUser(UtilisateurEntities user, IEnumerable<CaptureEntities> captures, IEnumerable<SuccesStateEntities> successStates)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> AddCaptureAsync(CaptureEntities capture, UtilisateurEntities user, CaptureDetailsEntities captureDetail)
+        {
+            throw new NotImplementedException();
         }
     }
 }

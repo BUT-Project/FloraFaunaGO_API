@@ -24,9 +24,9 @@ public class EspeceEntities : BaseEntity
 
     public string Famille { get; set; }
 
-    public ZoneEntities Zone { get; set; }
+    public string Zone { get; set; }
 
-    public ClimatEntitites Climat { get; set; }
+    public string Climat { get; set; }
 
     public ICollection<LocalisationEntities>? Localisations { get; set; } = new Collection<LocalisationEntities>();
     

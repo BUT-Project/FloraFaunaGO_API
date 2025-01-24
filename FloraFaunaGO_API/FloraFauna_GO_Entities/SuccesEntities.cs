@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class SuccesEntities
+    public class SuccesEntities : BaseEntity
     {
         [Required]
         public string Nom { get; set; }

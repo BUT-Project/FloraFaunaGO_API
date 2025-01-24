@@ -18,7 +18,8 @@ public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, FullC
         Mappers.Reset();
     }
 
-    public FloraFaunaService(DbContextOptions<FloraFaunaGoDB> options) : this(new UnitOfWork(new FloraFaunaGoDB(options))){}
+    public FloraFaunaService(DbContextOptions<FloraFaunaGoDB> options)
+        : this(new UnitOfWork(new FloraFaunaGoDB(options))) { }
 
     public IUserRepository<FullUtilisateurDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
     public ICaptureRepository<FullCaptureDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
@@ -63,5 +64,47 @@ public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, FullC
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    public async Task<bool> AddSuccesStateAsync(FullSuccessStateDto successState, FullUtilisateurDto user, SuccessNormalDto success)
+    {
+        bool result = await DbUnitOfWork.AddSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
+        return result;
+    }
+
+    public async Task<bool> DeleteSuccesStateAsync(FullSuccessStateDto successState, FullUtilisateurDto user, SuccessNormalDto success)
+    {
+        bool result = await DbUnitOfWork.DeleteSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
+        return result;
+    }
+
+    public async Task<bool> AddCaptureAsync(FullCaptureDto capture, FullUtilisateurDto user)
+    {
+       bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities());
+       return result;
+    }
+
+    public async Task<bool> DeleteCaptureAsync(FullCaptureDto capture, FullUtilisateurDto user, IEnumerable<FullCaptureDetailDto> captureDetails)
+    {
+        bool result = await DbUnitOfWork.DeleteCaptureAsync(capture.ToEntities(), user.ToEntities(), captureDetails.Select(x => x.ToEntities()));
+        return result;
+    }
+
+    public async Task<bool> AddCaptureDetailAsync(FullCaptureDetailDto captureDetail, FullCaptureDto capture)
+    {
+        bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
+        return result;
+    }
+
+    public async Task<bool> DeleteCaptureDetailAsync(FullCaptureDetailDto captureDetail, FullCaptureDto capture)
+    {
+        bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
+        return result;
+    }
+
+    public async Task<bool> DeleteUser(FullUtilisateurDto user, IEnumerable<FullCaptureDto> captures, IEnumerable<FullSuccessStateDto> successStates)
+    {
+        bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(), captures.Select(c => c.ToEntities()), successStates.Select(x => x.ToEntities())); 
+        return result;
     }
 }
