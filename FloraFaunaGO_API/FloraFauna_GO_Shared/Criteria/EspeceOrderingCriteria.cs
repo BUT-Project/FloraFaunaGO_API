@@ -13,6 +13,6 @@ namespace FloraFauna_GO_Shared.Criteria
         ByFamille,
         ByRegime,
         ByClimat,
-        ByZone,
+        ByZone
     }
 }
