@@ -14,7 +14,7 @@ namespace FloraFauna_GO_Shared
         where TUserInput : class
         where TSuccessInput : class
         where TSuccessStateInput : class
-
+        //
         where TEspeceOutput : class
         where TCaptureOutput : class
         where TCaptureDetailOutput : class
@@ -29,8 +29,14 @@ namespace FloraFauna_GO_Shared
         IEspeceRepository<TEspeceInput, TEspeceOutput> EspeceRepository { get; }
         ISuccessRepository<TSuccessInput, TSuccessOutput> SuccessRepository { get; }
         ISuccessStateRepository<TSuccessStateInput, TSuccessStateOutput> SuccessStateRepository { get; }
-        
 
+        Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
+        Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
+        Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);
+        Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user, IEnumerable<TCaptureDetailInput> captureDetails);
+        Task<bool> AddCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> DeleteUser(TUserInput user, IEnumerable<TCaptureInput> captures, IEnumerable<TSuccessStateInput> successStates);
 
         Task<IEnumerable<object?>?> SaveChangesAsync();
         Task RejectChangesAsync();
@@ -51,7 +57,13 @@ namespace FloraFauna_GO_Shared
         ISuccessRepository<TSuccessInput> SuccessRepository { get; }
         ISuccessStateRepository<TSuccessStateInput> SuccessStateRepository { get; }
 
-
+        Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
+        Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
+        Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);
+        Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user, IEnumerable<TCaptureDetailInput> captureDetails);
+        Task<bool> AddCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
+        Task<bool> DeleteUser(TUserInput user, IEnumerable<TCaptureInput> captures, IEnumerable<TSuccessStateInput> successStates);
 
         Task<IEnumerable<object?>?> SaveChangesAsync();
         Task RejectChangesAsync();
