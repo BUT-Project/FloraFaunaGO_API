@@ -404,45 +404,5 @@ namespace FloraFauna_Go_Repository
             Dispose(true);
             GC.SuppressFinalize(this);
         }
-
-        public Task<bool> AddSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> AddCaptureAsync(CaptureEntities capture, UtilisateurEntities user)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteCaptureAsync(CaptureEntities capture, UtilisateurEntities user, IEnumerable<CaptureDetailsEntities> captureDetails)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> DeleteUser(UtilisateurEntities user, IEnumerable<CaptureEntities> captures, IEnumerable<SuccesStateEntities> successStates)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<bool> AddCaptureAsync(CaptureEntities capture, UtilisateurEntities user, CaptureDetailsEntities captureDetail)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
