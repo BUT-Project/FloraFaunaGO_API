@@ -8,7 +8,7 @@
 
 # Local History for Visual Studio Code
 .history/
-
+.idea/
 # Built Visual Studio Code Extensions
 *.vsix
 
@@ -385,6 +385,7 @@ healthchecksdb
 
 # Backup folder for Package Reference Convert tool in Visual Studio 2017
 MigrationBackup/
+Migrations/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
