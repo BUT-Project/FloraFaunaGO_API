@@ -38,7 +38,8 @@ public static class Extension
         {
             Latitude = entities.Latitude,
             Longitude = entities.Longitude,
-            Rayon = entities.Rayon
+            Rayon = entities.Rayon,
+            Id = entities.Id,
         };
 
         return entities.ToT(null, creator, null);
@@ -171,7 +172,7 @@ public static class Extension
         };
         Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
         {
-            dto.localisationNormalDtos = entities.Localisations.Select(loc => loc.ToDto()).ToArray();
+            dto.localisationNormalDtos = entities.Localisations.Select(loc => new LocalisationNormalDto() { Id = loc.LocalisationId }).ToArray();
         };
         return entities.ToT(null, creator, linker);
     }

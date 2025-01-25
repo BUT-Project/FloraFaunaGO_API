@@ -30,6 +30,11 @@ public class EspeceController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var espece = await EspeceRepository.GetById(id);
+        IEnumerable<LocalisationNormalDto> Localisation = espece.localisationNormalDtos;
+        espece.localisationNormalDtos = new LocalisationNormalDto[] {};
+        //foreach (var item in Localisation)
+        //    espece.localisationNormalDtos.Append(UnitOfWork.LocalisationRepository.getById(item.Id));
+
         return espece != null ? Ok(espece) : NotFound(id);
     }
 
