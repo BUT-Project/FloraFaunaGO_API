@@ -17,6 +17,8 @@ public class CaptureDetailsEntities : BaseEntity
     [Required]
     public LocalisationEntities Localisation { get; set; }
 
+    public string LocalisationId { get; set; }
+
     public CaptureEntities Capture { get; set; }
 
     [Required]
