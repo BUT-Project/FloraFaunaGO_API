@@ -14,9 +14,9 @@ public class CaptureController : ControllerBase
 
     private readonly ILogger<CaptureController> _logger;
 
-    public ICaptureRepository<FullCaptureDto, FullCaptureDto> CaptureRepository { get; private set; }
+    public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository { get; private set; }
 
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service)
     {
@@ -63,7 +63,7 @@ public class CaptureController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutCapture([FromQuery] string id, [FromBody] FullCaptureDto dto)
+    public async Task<IActionResult> PutCapture([FromQuery] string id, [FromBody] CaptureNormalDto dto)
     {
         var result = await CaptureRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

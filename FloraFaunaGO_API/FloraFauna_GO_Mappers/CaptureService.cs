@@ -1,11 +1,12 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class CaptureService : ICaptureRepository<FullCaptureDto, FullCaptureDto>
+internal class CaptureService : ICaptureRepository<CaptureNormalDto, FullCaptureDto>
 {
     private ICaptureRepository<CaptureEntities> Repository { get; set; }
 
@@ -20,16 +21,16 @@ internal class CaptureService : ICaptureRepository<FullCaptureDto, FullCaptureDt
         => (await Repository.GetAllCapture(criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<FullCaptureDto?> GetById(string id)
-        => (await Repository.GetById(id))?.ToDto();
+        => (await Repository.GetById(id))?.ToResponseDto();
 
     public async Task<Pagination<FullCaptureDto>> GetCaptureByNumero(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByNumero, int index = 0, int count = 15)
         => (await Repository.GetCaptureByNumero(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<FullCaptureDto?> Insert(FullCaptureDto item)
-        => (await Repository.Insert(item.ToEntities()))?.ToDto();
+    public async Task<FullCaptureDto?> Insert(CaptureNormalDto item)
+        => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();
 
-    public async Task<FullCaptureDto?> Update(string id, FullCaptureDto item)
-        => (await Repository.Update(id, item.ToEntities()))?.ToDto();
+    public async Task<FullCaptureDto?> Update(string id, CaptureNormalDto item)
+        => (await Repository.Update(id, item.ToEntities()))?.ToResponseDto();
 
     public async Task<Pagination<FullCaptureDto>> GetCaptureByUser(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser, int index = 0, int count = 15)
         => (await Repository.GetCaptureByUser(criteria, index, count)).ToPagingResponseDtos();

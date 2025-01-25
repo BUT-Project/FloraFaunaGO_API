@@ -13,7 +13,7 @@ public class SuccessControlleur : ControllerBase
 {
     private readonly ILogger<SuccessControlleur> _logger;
     public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository;
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
     
     public SuccessControlleur(ILogger<SuccessControlleur> logger, FloraFaunaService service) {
         _logger = logger;

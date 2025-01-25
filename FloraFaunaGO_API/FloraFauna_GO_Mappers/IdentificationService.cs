@@ -8,14 +8,14 @@ namespace FloraFauna_GO_Entities2Dto;
 
 public class IdentificationService
 {
-    private IEspeceRepository<FullEspeceDto, FullEspeceDto> Service { get; set; }
+    private IEspeceRepository<EspeceNormalDto, FullEspeceDto> Service { get; set; }
     private HttpClient client = new HttpClient();
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
     private const string API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
     private static readonly string apiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?api-key={API_KEY}";
 
-    public IdentificationService(IEspeceRepository<FullEspeceDto, FullEspeceDto> service)
+    public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
     {
         Service = service;
     }

@@ -1,4 +1,5 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace FloraFauna_GO_Dto.New;
 
 public class NewCaptureDetailDto
 {
-    public FullCaptureDetailDto CaptureDetail { get; set; }
-    public FullCaptureDto Capture { get; set; }
+    public CaptureDetailNormalDto CaptureDetail { get; set; }
+    public CaptureNormalDto Capture { get; set; }
 }

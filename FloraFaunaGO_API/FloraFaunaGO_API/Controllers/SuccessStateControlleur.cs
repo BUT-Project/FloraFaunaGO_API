@@ -11,8 +11,8 @@ namespace FloraFaunaGO_API.Controllers;
 public class SuccessStateControlleur : ControllerBase
 {
     private readonly ILogger<SuccessStateControlleur> _logger;
-    public ISuccessStateRepository<FullSuccessStateDto,  FullSuccessStateDto> Repository { get; set; }
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public ISuccessStateRepository<SuccessStateNormalDto,  FullSuccessStateDto> Repository { get; set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
     
     public SuccessStateControlleur(ILogger<SuccessStateControlleur> logger, FloraFaunaService service)
     {
@@ -62,7 +62,7 @@ public class SuccessStateControlleur : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutSuccessState([FromQuery] string id,[FromBody] FullSuccessStateDto dto)
+    public async Task<IActionResult> PutSuccessState([FromQuery] string id,[FromBody] SuccessStateNormalDto dto)
     {
         var result = await Repository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

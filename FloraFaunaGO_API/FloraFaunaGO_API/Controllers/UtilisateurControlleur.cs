@@ -12,9 +12,9 @@ public class UtilisateurControlleur : ControllerBase
 {
    private readonly ILogger<UtilisateurControlleur> _logger;
 
-    public IUserRepository<FullUtilisateurDto, FullUtilisateurDto> UserRepository { get; set; }
+    public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository { get; set; }
 
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service)
     {
@@ -59,7 +59,7 @@ public class UtilisateurControlleur : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostPlayer(FullUtilisateurDto dto)
+    public async Task<IActionResult> PostPlayer(UtilisateurNormalDto dto)
     {
         _ = await UserRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
@@ -72,7 +72,7 @@ public class UtilisateurControlleur : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] FullUtilisateurDto dto)
+    public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] UtilisateurNormalDto dto)
     {
         var result = await UserRepository.Update(id, dto);
         if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

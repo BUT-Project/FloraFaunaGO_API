@@ -12,8 +12,8 @@ namespace FloraFaunaGO_API.Controllers;
 public class CaptureDetailController : ControllerBase
 {
     private readonly ILogger<CaptureDetailController> _logger;
-    public ICaptureDetailRepository<FullCaptureDetailDto, FullCaptureDetailDto> CaptureDetailRepository { get; private set; }
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
     public CaptureDetailController(ILogger<CaptureDetailController> logger, FloraFaunaService service)
     {
         _logger = logger;
@@ -63,7 +63,7 @@ public class CaptureDetailController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutCaptureDetail([FromQuery] string id,[FromBody] FullCaptureDetailDto dto)
+    public async Task<IActionResult> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
     {
         var result = await CaptureDetailRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

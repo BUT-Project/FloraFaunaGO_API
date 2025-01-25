@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto,FullCaptureDetailDto,FullCaptureDetailDto,FullUtilisateurDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto>
+public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto>
 {
     
     private IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities> DbUnitOfWork { get; set; }
@@ -21,15 +21,15 @@ public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, FullC
     public FloraFaunaService(DbContextOptions<FloraFaunaGoDB> options)
         : this(new UnitOfWork(new FloraFaunaGoDB(options))) { }
 
-    public IUserRepository<FullUtilisateurDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
-    public ICaptureRepository<FullCaptureDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
-    public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
+    public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
+    public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
+    public IEspeceRepository<EspeceNormalDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
 
-    public ICaptureDetailRepository<FullCaptureDetailDto, FullCaptureDetailDto> CaptureDetailRepository => throw new NotImplementedException();
+    public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository => new CaptureDetailService(DbUnitOfWork.CaptureDetailRepository);
 
-    public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository => throw new NotImplementedException();
+    public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository => new SuccessService(DbUnitOfWork.SuccessRepository);
 
-    public ISuccessStateRepository<FullSuccessStateDto, FullSuccessStateDto> SuccessStateRepository => throw new NotImplementedException();
+    public ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto> SuccessStateRepository => new SuccessStateService(DbUnitOfWork.SuccessStateRepository);
 
     public async Task<IEnumerable<object?>?> SaveChangesAsync()
     {
@@ -66,43 +66,43 @@ public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, FullC
         GC.SuppressFinalize(this);
     }
 
-    public async Task<bool> AddSuccesStateAsync(FullSuccessStateDto successState, FullUtilisateurDto user, SuccessNormalDto success)
+    public async Task<bool> AddSuccesStateAsync(SuccessStateNormalDto successState, UtilisateurNormalDto user, SuccessNormalDto success)
     {
         bool result = await DbUnitOfWork.AddSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
         return result;
     }
 
-    public async Task<bool> DeleteSuccesStateAsync(FullSuccessStateDto successState, FullUtilisateurDto user, SuccessNormalDto success)
+    public async Task<bool> DeleteSuccesStateAsync(SuccessStateNormalDto successState, UtilisateurNormalDto user, SuccessNormalDto success)
     {
         bool result = await DbUnitOfWork.DeleteSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
         return result;
     }
 
-    public async Task<bool> AddCaptureAsync(FullCaptureDto capture, FullUtilisateurDto user)
+    public async Task<bool> AddCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user)
     {
        bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities());
        return result;
     }
 
-    public async Task<bool> DeleteCaptureAsync(FullCaptureDto capture, FullUtilisateurDto user, IEnumerable<FullCaptureDetailDto> captureDetails)
+    public async Task<bool> DeleteCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user, IEnumerable<CaptureDetailNormalDto> captureDetails)
     {
         bool result = await DbUnitOfWork.DeleteCaptureAsync(capture.ToEntities(), user.ToEntities(), captureDetails.Select(x => x.ToEntities()));
         return result;
     }
 
-    public async Task<bool> AddCaptureDetailAsync(FullCaptureDetailDto captureDetail, FullCaptureDto capture)
+    public async Task<bool> AddCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture)
     {
         bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
         return result;
     }
 
-    public async Task<bool> DeleteCaptureDetailAsync(FullCaptureDetailDto captureDetail, FullCaptureDto capture)
+    public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture)
     {
         bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
         return result;
     }
 
-    public async Task<bool> DeleteUser(FullUtilisateurDto user, IEnumerable<FullCaptureDto> captures, IEnumerable<FullSuccessStateDto> successStates)
+    public async Task<bool> DeleteUser(UtilisateurNormalDto user, IEnumerable<CaptureNormalDto> captures, IEnumerable<SuccessStateNormalDto> successStates)
     {
         bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(), captures.Select(c => c.ToEntities()), successStates.Select(x => x.ToEntities())); 
         return result;

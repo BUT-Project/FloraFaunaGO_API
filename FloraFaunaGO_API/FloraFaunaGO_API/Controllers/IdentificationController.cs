@@ -10,7 +10,7 @@ namespace FloraFaunaGO_API.Controllers;
 public class IdentificationController : ControllerBase
 {
     private readonly ILogger<IdentificationController> _logger;
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
     public IdentificationService Service { get; private set; }
 
     public IdentificationController(ILogger<CaptureController> logger, FloraFaunaService service)

@@ -14,8 +14,8 @@ public class EspeceController : ControllerBase
 {
     private readonly ILogger<EspeceController> _logger;
 
-    public IEspeceRepository<FullEspeceDto,FullEspeceDto> EspeceRepository { get; private set; }
-    public IUnitOfWork<FullEspeceDto, FullEspeceDto, FullCaptureDto, FullCaptureDto, FullCaptureDetailDto, FullCaptureDetailDto, FullUtilisateurDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, FullSuccessStateDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IEspeceRepository<EspeceNormalDto,FullEspeceDto> EspeceRepository { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
 
     public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service)
     {
@@ -79,7 +79,7 @@ public class EspeceController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
+    public async Task<IActionResult> PostEspece([FromBody] EspeceNormalDto dto)
     {
         var Toto = await EspeceRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
@@ -92,7 +92,7 @@ public class EspeceController : ControllerBase
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] FullEspeceDto dto)
+    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] EspeceNormalDto dto)
     {
         var result = await EspeceRepository.Update(id,dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
