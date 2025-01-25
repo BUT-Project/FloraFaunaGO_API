@@ -30,4 +30,7 @@ internal class CaptureService : ICaptureRepository<FullCaptureDto, FullCaptureDt
 
     public async Task<FullCaptureDto?> Update(string id, FullCaptureDto item)
         => (await Repository.Update(id, item.ToEntities()))?.ToDto();
+
+    public async Task<Pagination<FullCaptureDto>> GetCaptureByUser(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser, int index = 0, int count = 15)
+        => (await Repository.GetCaptureByUser(criteria, index, count)).ToPagingResponseDtos();
 }

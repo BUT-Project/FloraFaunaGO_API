@@ -32,7 +32,7 @@ namespace FloraFauna_GO_Shared
 
         Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
-        Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user, TCaptureDetailInput captureDetail);
+        Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);
         Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user, IEnumerable<TCaptureDetailInput> captureDetails);
         Task<bool> AddCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);
         Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture);

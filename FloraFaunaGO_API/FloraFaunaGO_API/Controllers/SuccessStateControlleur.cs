@@ -46,18 +46,18 @@ public class SuccessStateControlleur : ControllerBase
         return await GetSuccessStates(async () => await Repository.GetAllSuccessState(criterium, index, count));
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostSuccessState([FromBody] FullSuccessStateDto dto)
-    {
-        _ = await Repository.Insert(dto);
-        var inserted = await UnitOfWork.SaveChangesAsync();
+    //[HttpPost]
+    //[ProducesResponseType(StatusCodes.Status201Created)]
+    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+    //public async Task<IActionResult> PostSuccessState([FromBody] FullSuccessStateDto dto)
+    //{
+    //    _ = await Repository.Insert(dto);
+    //    var inserted = await UnitOfWork.SaveChangesAsync();
 
-        if((inserted?.Count() ?? -1) != 1) return BadRequest();
-        var insertedSuccessState = inserted?.SingleOrDefault();
-        return insertedSuccessState != null ? Created(nameof(PostSuccessState), insertedSuccessState) : BadRequest();
-    }
+    //    if((inserted?.Count() ?? -1) != 1) return BadRequest();
+    //    var insertedSuccessState = inserted?.SingleOrDefault();
+    //    return insertedSuccessState != null ? Created(nameof(PostSuccessState), insertedSuccessState) : BadRequest();
+    //}
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -69,13 +69,13 @@ public class SuccessStateControlleur : ControllerBase
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }
 
-    [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteSuccessState([FromQuery] string id)
-    {
-        bool result = await Repository.Delete(id);
-        if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-        return result ? Ok() : NotFound(id);
-    }
+    //[HttpDelete]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //public async Task<IActionResult> DeleteSuccessState([FromQuery] string id)
+    //{
+    //    bool result = await Repository.Delete(id);
+    //    if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
+    //    return result ? Ok() : NotFound(id);
+    //}
 }

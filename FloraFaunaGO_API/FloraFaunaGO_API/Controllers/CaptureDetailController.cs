@@ -47,18 +47,18 @@ public class CaptureDetailController : ControllerBase
         return await GetCaptureDetail(async () => await CaptureDetailRepository.GetAllCaptureDetail(criterium, index, count));
     }
 
-    [HttpPost]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostCaptureDetail([FromBody] FullCaptureDetailDto dto)
-    {
-        _ = await CaptureDetailRepository.Insert(dto);
-        var inserted = await UnitOfWork.SaveChangesAsync();
+    //[HttpPost]
+    //[ProducesResponseType(StatusCodes.Status201Created)]
+    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+    //public async Task<IActionResult> PostCaptureDetail([FromBody] FullCaptureDetailDto dto)
+    //{
+    //    _ = await CaptureDetailRepository.Insert(dto);
+    //    var inserted = await UnitOfWork.SaveChangesAsync();
 
-        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-        var insertedCaptureDetail = inserted.SingleOrDefault();
-        return insertedCaptureDetail != null ? CreatedAtAction(nameof(PostCaptureDetail),insertedCaptureDetail) : BadRequest();
-    }
+    //    if ((inserted?.Count() ?? -1) != 1) return BadRequest();
+    //    var insertedCaptureDetail = inserted.SingleOrDefault();
+    //    return insertedCaptureDetail != null ? CreatedAtAction(nameof(PostCaptureDetail),insertedCaptureDetail) : BadRequest();
+    //}
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -70,13 +70,13 @@ public class CaptureDetailController : ControllerBase
         return result != null ? Created(nameof(PutCaptureDetail), result) : NotFound(id);
     }
 
-    [HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteCaptureDetail([FromQuery] string id)
-    {
-        var result = await CaptureDetailRepository.Delete(id);
-        if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-        return result ? Ok() : NotFound(id);
-    }
+    //[HttpDelete]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //public async Task<IActionResult> DeleteCaptureDetail([FromQuery] string id)
+    //{
+    //    var result = await CaptureDetailRepository.Delete(id);
+    //    if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
+    //    return result ? Ok() : NotFound(id);
+    //}
 }
