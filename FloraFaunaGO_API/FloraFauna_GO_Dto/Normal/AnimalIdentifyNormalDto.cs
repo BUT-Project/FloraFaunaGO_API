@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -9,5 +10,5 @@ namespace FloraFauna_GO_Dto.Normal;
 
 public class AnimalIdentifyNormalDto
 {
-    public byte[] AskedImage { get; set; }
+    public IFormFile AskedImage { get; set; }
 }

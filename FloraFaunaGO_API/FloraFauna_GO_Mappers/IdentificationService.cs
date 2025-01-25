@@ -12,8 +12,6 @@ public class IdentificationService
     private HttpClient client = new HttpClient();
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
-    private readonly string imagepath = "C:\\Users\\allaurent13\\Documents\\Rose.jpg";
-
     private const string API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
     private static readonly string apiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?api-key={API_KEY}";
 
@@ -24,10 +22,12 @@ public class IdentificationService
 
     public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto)
     {
-        var image = new StreamContent(File.OpenRead(imagepath));
-        image.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+        using var memoryStream = new MemoryStream();
+        await dto.AskedImage.CopyToAsync(memoryStream);
+        var imageContent = new ByteArrayContent(memoryStream.ToArray());
+        imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(dto.AskedImage.ContentType);
 
-        form.Add(image, "images", Path.GetFileName(imagepath));
+        form.Add(imageContent, "images", dto.AskedImage.FileName);
 
         HttpResponseMessage response = await client.PostAsync(apiEndpoint, form);
         if (response.IsSuccessStatusCode)
@@ -49,7 +49,7 @@ public class IdentificationService
                     Zone = "Zone",
                     Climat = "Climat",
                     Regime = "Regime",
-                    Image = image.ReadAsByteArrayAsync().Result,
+                    Image = memoryStream.ToArray(),
                 },
                 localisationNormalDtos = null
             };
@@ -58,3 +58,4 @@ public class IdentificationService
         return null;
     }
 }
+

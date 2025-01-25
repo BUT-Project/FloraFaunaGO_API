@@ -81,7 +81,7 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
     {
-        _ = await EspeceRepository.Insert(dto);
+        var Toto = await EspeceRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
 
         if ((inserted?.Count() ?? -1) != 1) return BadRequest();
