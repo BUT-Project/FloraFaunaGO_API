@@ -26,7 +26,7 @@ public class UtilisateurEntities : BaseEntity
     [Required]
     public DateTime DateInscription { get; set; }
 
-    public ICollection<CaptureEntities>? Captures { get; set; } =  new Collection<CaptureEntities>();
+    public ICollection<CaptureEntities>? Captures { get; set; } =  new List<CaptureEntities>();
 
-    public ICollection<SuccesStateEntities>? SuccesState { get; set; } = new Collection<SuccesStateEntities>();
+    public ICollection<SuccesStateEntities>? SuccesState { get; set; } = new List<SuccesStateEntities>();
 }

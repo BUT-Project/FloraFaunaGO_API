@@ -16,7 +16,7 @@ public class CaptureEntities : BaseEntity
 
     public uint Numero { get; set; }
 
-    public ICollection<CaptureDetailsEntities> CaptureDetails = new Collection<CaptureDetailsEntities>();
+    public ICollection<CaptureDetailsEntities> CaptureDetails = new List<CaptureDetailsEntities>();
 
     [Required]
     public string EspeceId { get; set;  }

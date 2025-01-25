@@ -107,7 +107,7 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                successState.User = user;
+                successState.UtilisateurEntities = user;
                 successState.SuccesEntities = success;
 
                 if (await SuccessStateRepository.Insert(successState) == null)
@@ -140,11 +140,11 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(user).ReloadAsync();
                 }
 
-                if (success.State == null)
+                if (success.SuccesStates == null)
                 {
-                    success.State = new List<SuccesStateEntities>();
+                    success.SuccesStates = new List<SuccesStateEntities>();
                 }
-                success.State.Add(successState);
+                success.SuccesStates.Add(successState);
 
                 if (await SuccessRepository.Update(success.Id, success) == null)
                 {
@@ -175,9 +175,9 @@ namespace FloraFauna_Go_Repository
                 }
 
                 // Remove successState from the success's State collection
-                if (success.State != null)
+                if (success.SuccesStates != null)
                 {
-                    success.State.Remove(successState);
+                    success.SuccesStates.Remove(successState);
                 }
 
                 if (await UserRepository.Update(user.Id, user) == null)

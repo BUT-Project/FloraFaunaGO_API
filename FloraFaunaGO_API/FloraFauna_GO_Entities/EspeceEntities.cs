@@ -28,7 +28,9 @@ public class EspeceEntities : BaseEntity
 
     public string Climat { get; set; }
 
-    public ICollection<LocalisationEntities>? Localisations { get; set; } = new Collection<LocalisationEntities>();
-    
+    public ICollection<EspeceLocalisationEntities> Localisations { get; set; } = new List<EspeceLocalisationEntities>();
+
+    public ICollection<CaptureEntities> Captures { get; set; } = new List<CaptureEntities>();
+
     public string Regime { get; set; }
 }
