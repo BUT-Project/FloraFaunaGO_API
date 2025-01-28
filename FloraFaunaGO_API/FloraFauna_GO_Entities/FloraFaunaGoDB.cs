@@ -34,6 +34,14 @@ namespace FloraFauna_GO_Entities
         {
             base.OnModelCreating(modelBuilder);
 
+            modelBuilder.Entity<EspeceEntities>().HasKey(e => e.Id);
+            modelBuilder.Entity<CaptureEntities>().HasKey(c => c.Id);
+            modelBuilder.Entity<CaptureDetailsEntities>().HasKey(cd => cd.Id);
+            modelBuilder.Entity<LocalisationEntities>().HasKey(l => l.Id);
+            modelBuilder.Entity<UtilisateurEntities>().HasKey(u => u.Id);
+            modelBuilder.Entity<SuccesEntities>().HasKey(s => s.Id);
+            modelBuilder.Entity<SuccesStateEntities>().HasKey(ss => ss.Id);
+
             // EspeceEntities - LocalisationEntities (Many-to-Many)
             modelBuilder.Entity<EspeceLocalisationEntities>()
                         .HasKey(el => new { el.EspeceId, el.LocalisationId });

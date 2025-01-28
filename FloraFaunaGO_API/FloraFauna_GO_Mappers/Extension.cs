@@ -49,7 +49,6 @@ public static class Extension
     {
         Func<CaptureNormalDto, CaptureEntities> creator = (dto) => new CaptureEntities()
         {
-            Id = dto.Id,
             Photo = dto.photo,
         };
         return dto.ToU(Mappers.CaptureMapper, creator);
@@ -87,7 +86,6 @@ public static class Extension
     {
         Func<CaptureDetailNormalDto, CaptureDetailsEntities> creator = (dto) => new CaptureDetailsEntities()
         {
-            Id = dto.Id,
             Shiny = dto.Shiny,
         };
         return dto.ToU(Mappers.CaptureDetailMapper, creator);
@@ -181,7 +179,6 @@ public static class Extension
     {
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
-            Id = dto.Id,
             Pseudo = dto.Pseudo,
             Mail = dto.Mail,
             Hash_mdp = dto.Hash_mdp,
@@ -242,6 +239,7 @@ public static class Extension
             Objectif = entities.Objectif,
             Description = entities.Description,
             Nom = entities.Nom,
+            Id = entities.Id,
         };
         return entities.ToT(null, creator);
     }
@@ -262,6 +260,7 @@ public static class Extension
         {
             PercentSucces = entities.PercentSucces,
             IsSucces = entities.IsSucces,
+            Id = entities.Id,
         };
         return entities.ToT(null, creator);
     }
@@ -274,6 +273,7 @@ public static class Extension
             {
                 PercentSucces = entities.PercentSucces,
                 IsSucces = entities.IsSucces,
+                Id = entities.Id,
             },
         };
         Action<SuccesStateEntities, FullSuccessStateDto> linker = (entities, dto) =>

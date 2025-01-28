@@ -16,7 +16,7 @@ public class CaptureController : ControllerBase
 
     public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository { get; private set; }
 
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
     public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service)
     {

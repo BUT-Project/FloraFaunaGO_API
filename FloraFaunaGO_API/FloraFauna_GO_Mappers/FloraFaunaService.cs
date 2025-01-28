@@ -7,12 +7,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto>
+public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto>
 {
     
-    private IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities> DbUnitOfWork { get; set; }
+    private IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> DbUnitOfWork { get; set; }
 
-    public FloraFaunaService(IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities,UtilisateurEntities, SuccesEntities, SuccesStateEntities> dbUnitOfWork)
+    public FloraFaunaService(IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities,UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> dbUnitOfWork)
     {
         DbUnitOfWork = dbUnitOfWork;
         Mappers.Reset();
@@ -30,6 +30,8 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
     public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository => new SuccessService(DbUnitOfWork.SuccessRepository);
 
     public ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto> SuccessStateRepository => new SuccessStateService(DbUnitOfWork.SuccessStateRepository);
+
+    public ILocalisationRepository<LocalisationNormalDto, LocalisationNormalDto> LocalisationRepository => throw new NotImplementedException();
 
     public async Task<IEnumerable<object?>?> SaveChangesAsync()
     {
@@ -90,15 +92,15 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
         return result;
     }
 
-    public async Task<bool> AddCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture)
+    public async Task<bool> AddCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture, LocalisationNormalDto localisation)
     {
-        bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
+        bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities(), localisation.ToEntities());
         return result;
     }
 
-    public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture)
+    public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture, LocalisationNormalDto localisation)
     {
-        bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities());
+        bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities(), localisation.ToEntities());
         return result;
     }
 
@@ -106,5 +108,15 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
     {
         bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(), captures.Select(c => c.ToEntities()), successStates.Select(x => x.ToEntities())); 
         return result;
+    }
+
+    public Task<bool> AddEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
+    {
+        throw new NotImplementedException();
     }
 }

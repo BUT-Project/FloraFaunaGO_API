@@ -13,7 +13,7 @@ public class SuccessControlleur : ControllerBase
 {
     private readonly ILogger<SuccessControlleur> _logger;
     public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository;
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
     
     public SuccessControlleur(ILogger<SuccessControlleur> logger, FloraFaunaService service) {
         _logger = logger;
@@ -51,7 +51,7 @@ public class SuccessControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostEspece([FromBody] SuccessNormalDto dto)
     {
-        _ = await SuccessRepository.Insert(dto);
+        var Toto = await SuccessRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
 
         if ((inserted?.Count() ?? -1) != 1) return BadRequest();

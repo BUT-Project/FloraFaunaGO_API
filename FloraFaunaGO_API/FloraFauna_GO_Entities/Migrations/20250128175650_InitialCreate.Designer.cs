@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FloraFauna_GO_Entities.Migrations
 {
     [DbContext(typeof(FloraFaunaGoDB))]
-    [Migration("20250128141429_InitialCreate")]
+    [Migration("20250128175650_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

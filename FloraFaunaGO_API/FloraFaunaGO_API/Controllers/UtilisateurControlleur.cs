@@ -14,7 +14,7 @@ public class UtilisateurControlleur : ControllerBase
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository { get; set; }
 
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
     public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service)
     {

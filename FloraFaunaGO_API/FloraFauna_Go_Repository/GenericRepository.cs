@@ -1,4 +1,5 @@
-﻿using FloraFauna_GO_Shared;
+﻿using FloraFauna_GO_Entities;
+using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -71,7 +72,8 @@ namespace FloraFauna_Go_Repository
                 return Task.FromResult<TEntity?>(null);
             }
             var entry = Set.Add(item);
-            return Task.FromResult<TEntity?>(entry.Entity);
+            var toto = Task.FromResult<TEntity?>(entry.Entity);
+            return toto;
         }
 
         public virtual void Insert(params TEntity[] entities)

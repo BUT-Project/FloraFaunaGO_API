@@ -13,7 +13,7 @@ public class FloraFaunaController : ControllerBase
 {
     private readonly ILogger<FloraFaunaController> _logger;
 
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
     public FloraFaunaController(ILogger<FloraFaunaController> logger, FloraFaunaService service)
     {
@@ -76,7 +76,7 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> PostCaptureDetail([FromBody] NewCaptureDetailDto dto)
     {
         if (dto == null) return BadRequest();
-        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, dto.Capture);
+        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, dto.Capture, dto.Localisation);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
         var insertedCaptureDetail = inserted?.SingleOrDefault(a => a is FullCaptureDetailDto);
@@ -90,7 +90,8 @@ public class FloraFaunaController : ControllerBase
     {
         var captureDetail = await UnitOfWork.CaptureDetailRepository.GetById(id);
         var capture = await UnitOfWork.CaptureRepository.GetById(captureDetail.CaptureDetail.ToEntities().CaptureId);
-        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail,capture.Capture);
+        var localisation = await UnitOfWork.LocalisationRepository.GetById(captureDetail.CaptureDetail.ToEntities().LocalisationId);
+        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail,capture.Capture, localisation);
         return deleted ? Ok() : NotFound();
     }
 
