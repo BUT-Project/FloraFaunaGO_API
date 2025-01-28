@@ -38,7 +38,8 @@ namespace FloraFauna_GO_Entities.Migrations
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Latitude = table.Column<double>(type: "REAL", nullable: false),
                     Longitude = table.Column<double>(type: "REAL", nullable: false),
-                    Rayon = table.Column<double>(type: "REAL", nullable: false)
+                    Rayon = table.Column<double>(type: "REAL", nullable: false),
+                    CaptureDetailsId = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -187,7 +188,8 @@ namespace FloraFauna_GO_Entities.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_CaptureDetails_LocalisationId",
                 table: "CaptureDetails",
-                column: "LocalisationId");
+                column: "LocalisationId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Captures_EspeceId",

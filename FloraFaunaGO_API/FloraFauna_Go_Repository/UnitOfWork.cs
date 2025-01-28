@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
-    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities>
+    public class UnitOfWork : IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities>
     {
         private FloraFaunaGoDB Context { get; set; }
 
@@ -102,6 +102,19 @@ namespace FloraFauna_Go_Repository
         }
 
         private ISuccessStateRepository<SuccesStateEntities> successStateRepository;
+
+        public ILocalisationRepository<LocalisationEntities> LocalisationRepository
+        {
+            get
+            {
+                if (localisationRepository == null)
+                {
+                    localisationRepository = new LocalisationRepository(Context);
+                }
+                return localisationRepository;
+            }
+        }
+        private ILocalisationRepository<LocalisationEntities> localisationRepository;
 
         public async Task<bool> AddSuccesStateAsync(SuccesStateEntities successState, UtilisateurEntities user, SuccesEntities success)
         {
@@ -263,10 +276,20 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
+        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, 
+                                                        LocalisationEntities localisation)
         {
             try
             {
+                if (await LocalisationRepository.Insert(localisation) == null)
+                {
+                    Context.Localisation.Attach(localisation);
+                    await Context.Entry(localisation).ReloadAsync();
+                }
+
+                captureDetail.Localisation = localisation;
+                captureDetail.LocalisationId = localisation.Id;
+
                 if (await CaptureDetailRepository.Insert(captureDetail) == null)
                 {
                     Context.CaptureDetails.Attach(captureDetail);
@@ -296,12 +319,21 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture)
+        public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, 
+                                                          LocalisationEntities localisation)
         {
             try
             {
                 await CaptureDetailRepository.Delete(captureDetail.Id);
                 capture.CaptureDetails.Remove(captureDetail);
+
+                // Vérifier si la localisation est référencée par d'autres détails de capture
+                var isLocalisationReferenced = await Context.CaptureDetails.AnyAsync(cd => cd.LocalisationId == localisation.Id);
+
+                if (!isLocalisationReferenced)
+                {
+                    await LocalisationRepository.Delete(localisation.Id);
+                }
 
                 if (await CaptureRepository.Update(capture.Id, capture) == null)
                 {
@@ -310,6 +342,70 @@ namespace FloraFauna_Go_Repository
                 }
 
                 
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> AddEspeceAsync(EspeceEntities espece, LocalisationEntities localisation)
+        {
+            try
+            {
+                if (await LocalisationRepository.Insert(localisation) == null)
+                {
+                    Context.Localisation.Attach(localisation);
+                    await Context.Entry(localisation).ReloadAsync();
+                }
+
+                if (await EspeceRepository.Insert(espece) == null)
+                {
+                    Context.Espece.Attach(espece);
+                    await Context.Entry(espece).ReloadAsync();
+                }
+
+                var especeLocalisation = new EspeceLocalisationEntities
+                {
+                    EspeceId = espece.Id,
+                    LocalisationId = localisation.Id
+                };
+
+                Context.EspeceLocalisation.Add(especeLocalisation);
+
+                await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece, LocalisationEntities localisation)
+        {
+            try
+            {
+                var especeLocalisation = await Context.EspeceLocalisation
+                                         .FirstOrDefaultAsync(el => el.EspeceId == espece.Id && el.LocalisationId == localisation.Id);
+
+                if (especeLocalisation != null)
+                {
+                    Context.EspeceLocalisation.Remove(especeLocalisation);
+                }
+
+                await EspeceRepository.Delete(espece.Id);
+
+                var isLocalisationReferenced = await Context.EspeceLocalisation.AnyAsync(el => el.LocalisationId == localisation.Id);
+
+                if (!isLocalisationReferenced)
+                {
+                    await LocalisationRepository.Delete(localisation.Id);
+                }
                 await SaveChangesAsync();
                 return true;
             }

@@ -33,7 +33,7 @@ namespace FloraFauna_Go_Repository
         public async Task<Pagination<LocalisationEntities>> GetLocalisationByCaptureDetail(string idCaptureDetail, int index = 0, int count = 15)
         {
             IQueryable<LocalisationEntities> query = Set;
-            query = query.OrderBy(success => success.CapturesDetail.FirstOrDefault(cap => cap.Id == idCaptureDetail));
+            query = query.OrderBy(success => success.CapturesDetail.CaptureId == idCaptureDetail);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

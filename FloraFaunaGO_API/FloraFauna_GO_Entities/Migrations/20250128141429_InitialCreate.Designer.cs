@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FloraFauna_GO_Entities.Migrations
 {
     [DbContext(typeof(FloraFaunaGoDB))]
-    [Migration("20250125191530_InitialCreate")]
+    [Migration("20250128141429_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -43,7 +43,8 @@ namespace FloraFauna_GO_Entities.Migrations
 
                     b.HasIndex("CaptureId");
 
-                    b.HasIndex("LocalisationId");
+                    b.HasIndex("LocalisationId")
+                        .IsUnique();
 
                     b.ToTable("CaptureDetails");
                 });
@@ -137,6 +138,9 @@ namespace FloraFauna_GO_Entities.Migrations
             modelBuilder.Entity("FloraFauna_GO_Entities.LocalisationEntities", b =>
                 {
                     b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CaptureDetailsId")
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Latitude")
@@ -234,8 +238,8 @@ namespace FloraFauna_GO_Entities.Migrations
                         .IsRequired();
 
                     b.HasOne("FloraFauna_GO_Entities.LocalisationEntities", "Localisation")
-                        .WithMany("CapturesDetail")
-                        .HasForeignKey("LocalisationId")
+                        .WithOne("CapturesDetail")
+                        .HasForeignKey("FloraFauna_GO_Entities.CaptureDetailsEntities", "LocalisationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

@@ -48,11 +48,11 @@ namespace FloraFauna_GO_Entities
                 .WithMany(l => l.EspeceLocalisation)
                 .HasForeignKey(el => el.LocalisationId);
 
-            // LocalisationEntities - CaptureDetailsEntities (One-to-Many)
+            // LocalisationEntities - CaptureDetailsEntities (One-to-One)
             modelBuilder.Entity<LocalisationEntities>()
-                        .HasMany(l => l.CapturesDetail)
+                        .HasOne(l => l.CapturesDetail)
                         .WithOne(cd => cd.Localisation)
-                        .HasForeignKey(cd => cd.LocalisationId);
+                        .HasForeignKey<CaptureDetailsEntities>(cd => cd.LocalisationId);
 
             // CaptureEntities - CaptureDetailsEntities (One-to-Many)
             modelBuilder.Entity<CaptureEntities>()
