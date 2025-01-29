@@ -43,6 +43,10 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
                 if (obj is CaptureEntities) return (obj as CaptureEntities)?.ToDto();
                 if (obj is UtilisateurEntities) return (obj as UtilisateurEntities)?.ToDto();
                 if (obj is EspeceEntities) return (obj as EspeceEntities)?.ToDto();
+                if (obj is SuccesEntities) return (obj as SuccesEntities)?.ToDto();
+                if (obj is CaptureDetailsEntities) return (obj as CaptureDetailsEntities)?.ToDto();
+                if (obj is LocalisationEntities) return (obj as  LocalisationEntities)?.ToDto();
+                if (obj is SuccesStateEntities) return (obj as SuccesStateEntities)?.ToDto();
                 return null;
             }
             return result.Select(ToResponseDto);

@@ -67,10 +67,6 @@ namespace FloraFauna_Go_Repository
 
         public virtual Task<TEntity?> Insert(TEntity item)
         {
-            if (Set.Entry(item).IsKeySet)
-            {
-                return Task.FromResult<TEntity?>(null);
-            }
             var entry = Set.Add(item);
             var toto = Task.FromResult<TEntity?>(entry.Entity);
             return toto;

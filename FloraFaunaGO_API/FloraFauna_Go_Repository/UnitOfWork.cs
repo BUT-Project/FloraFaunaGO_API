@@ -481,7 +481,7 @@ namespace FloraFauna_Go_Repository
             {
                 entry.State = EntityState.Detached;
             }
-            return entries.Select(entry => entry.Entity).Where(e => e is EspeceEntities || e is CaptureEntities || e is UtilisateurEntities);
+            return entries.Select(entry => entry.Entity).Where(e => e is EspeceEntities || e is CaptureEntities || e is UtilisateurEntities || e is SuccesEntities || e is SuccesStateEntities || e is LocalisationEntities || e is CaptureDetailsEntities || e is EspeceLocalisationEntities);
         }
 
         private bool disposed = false;
