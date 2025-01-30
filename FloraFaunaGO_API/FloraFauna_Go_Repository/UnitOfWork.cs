@@ -352,7 +352,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> AddEspeceAsync(EspeceEntities espece, LocalisationEntities localisation)
+        public async Task<bool> AddEspeceAsync(EspeceEntities espece, IEnumerable<LocalisationEntities> localisation)
         {
             try
             {
@@ -386,7 +386,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece, LocalisationEntities localisation)
+        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece, IEnumerable<LocalisationEntities> localisation)
         {
             try
             {
