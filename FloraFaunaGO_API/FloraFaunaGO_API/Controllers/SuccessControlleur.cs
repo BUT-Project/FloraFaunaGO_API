@@ -64,7 +64,7 @@ public class SuccessControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PutEspece([FromQuery] string id,[FromBody] SuccessNormalDto dto)
     {
-        var result = await SuccessRepository.Update(dto.Id, dto);
+        var result = await SuccessRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutEspece), result) : NotFound();
     }

@@ -102,19 +102,19 @@ namespace FloraFauna_Go_Repository
             return Task.FromResult<TEntity?>(originalEntity);
         }
 
-        public virtual async Task<bool> Delete(string id)
+        public virtual Task<bool> Delete(string id)
         {
-            TEntity? entity = await Set.FindAsync(id);
+            TEntity? entity = Set.Find(id);
             if (entity == null)
             {
-                return false;
+                return Task.FromResult(false);
             }
             if (Context.Entry(entity).State == EntityState.Detached)
             {
                 Set.Attach(entity);
             }
             Set.Remove(entity);
-            return true;
+            return Task.FromResult(true);
         }
 
         public async Task RejectChangesAsync()
