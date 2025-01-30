@@ -115,13 +115,15 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
         return result;
     }
 
-    public Task<bool> AddEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
+    public async Task<bool> AddEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
     {
-        throw new NotImplementedException();
+        bool result = await DbUnitOfWork.AddEspeceAsync(espece.ToEntities(), localisation.ToEntities());
+        return result;
     }
 
-    public Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
+    public async Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, LocalisationNormalDto localisation)
     {
-        throw new NotImplementedException();
+        bool result = await DbUnitOfWork.DeleteEspeceAsync(espece.ToEntities(), localisation.ToEntities());
+        return result;
     }
 }

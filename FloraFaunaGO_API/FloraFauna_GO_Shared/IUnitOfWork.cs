@@ -40,8 +40,8 @@ namespace FloraFauna_GO_Shared
         Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user, IEnumerable<TCaptureDetailInput> captureDetails);
         Task<bool> AddCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture, TLocalisationInput localisation);
         Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture, TLocalisationInput localisation);
-        Task<bool> AddEspeceAsync(TEspeceInput espece, TLocalisationInput localisation);
-        Task<bool> DeleteEspeceAsync(TEspeceInput espece, TLocalisationInput localisation);
+        Task<bool> AddEspeceAsync(TEspeceInput espece, IEnumerable<TLocalisationInput> localisation);
+        Task<bool> DeleteEspeceAsync(TEspeceInput espece, IEnumerable<TLocalisationInput> localisation);
         Task<bool> DeleteUser(TUserInput user, IEnumerable<TCaptureInput> captures, IEnumerable<TSuccessStateInput> successStates);
 
         Task<IEnumerable<object?>?> SaveChangesAsync();
@@ -72,8 +72,8 @@ namespace FloraFauna_GO_Shared
         Task<bool> DeleteCaptureAsync(TCaptureInput capture, TUserInput user, IEnumerable<TCaptureDetailInput> captureDetails);
         Task<bool> AddCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture, TLocalisationInput localisation);
         Task<bool> DeleteCaptureDetailAsync(TCaptureDetailInput captureDetail, TCaptureInput capture, TLocalisationInput localisation);
-        Task<bool> AddEspeceAsync(TEspeceInput espece, TLocalisationInput localisation);
-        Task<bool> DeleteEspeceAsync(TEspeceInput espece, TLocalisationInput localisation);
+        Task<bool> AddEspeceAsync(TEspeceInput espece, IEnumerable<TLocalisationInput> localisation);
+        Task<bool> DeleteEspeceAsync(TEspeceInput espece, IEnumerable<TLocalisationInput> localisation);
         Task<bool> DeleteUser(TUserInput user, IEnumerable<TCaptureInput> captures, IEnumerable<TSuccessStateInput> successStates);
 
         Task<IEnumerable<object?>?> SaveChangesAsync();

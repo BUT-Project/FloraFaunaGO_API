@@ -105,4 +105,27 @@ public class FloraFaunaController : ControllerBase
         return deleted ? Ok() : NotFound();
     }
 
+    [HttpPost("espece")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PostEspece([FromBody] NewEspeceDto dto)
+    {
+        if (dto == null) return BadRequest();
+        _ = await UnitOfWork.AddEspeceAsync(dto.espece, dto.localisation);
+        var inserted = await UnitOfWork.SaveChangesAsync();
+        if ((inserted?.Count() ?? 0) == 0) return BadRequest();
+        var insertedEspece = inserted?.SingleOrDefault(a => a is FullEspeceDto);
+        return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
+    }
+
+    [HttpDelete("espece/{id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteEspece(string id)
+    {
+        var espece = await UnitOfWork.EspeceRepository.GetById(id);
+        var deleted = await UnitOfWork.DeleteEspeceAsync(espece.Espece, espece.localisationNormalDtos);
+        return deleted ? Ok() : NotFound();
+    }
+
 }
