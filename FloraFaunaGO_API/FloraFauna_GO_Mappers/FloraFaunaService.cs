@@ -33,6 +33,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public ILocalisationRepository<LocalisationNormalDto, LocalisationNormalDto> LocalisationRepository => throw new NotImplementedException();
 
+<<<<<<< HEAD
     public async Task<IEnumerable<object?>?> SaveChangesAsync()
     {
             var result =await DbUnitOfWork.SaveChangesAsync();
@@ -66,6 +67,45 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
     {
         Dispose(true);
         GC.SuppressFinalize(this);
+=======
+    public async Task<IEnumerable<object?>?> SaveChangesAsync()
+    {
+            var result =await DbUnitOfWork.SaveChangesAsync();
+            if (result == null) return null;
+
+            static object? ToResponseDto(Object? obj)
+            {
+                if (obj is CaptureEntities) return (obj as CaptureEntities)?.ToDto();
+                if (obj is UtilisateurEntities) return (obj as UtilisateurEntities)?.ToDto();
+                if (obj is EspeceEntities) return (obj as EspeceEntities)?.ToDto();
+                if (obj is SuccesEntities) return (obj as SuccesEntities)?.ToDto();
+                if (obj is CaptureDetailsEntities) return (obj as CaptureDetailsEntities)?.ToDto();
+                if (obj is LocalisationEntities) return (obj as  LocalisationEntities)?.ToDto();
+                if (obj is SuccesStateEntities) return (obj as SuccesStateEntities)?.ToDto();
+                return null;
+            }
+            return result.Select(ToResponseDto);
+    }
+
+    public async Task RejectChangesAsync()
+    {
+        await DbUnitOfWork.RejectChangesAsync();
+    }
+    
+    private bool disposed = false;
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!this.disposed && disposing)
+        {
+            DbUnitOfWork.Dispose();
+        }
+        this.disposed = true;
+    }
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+>>>>>>> 2ea31a478c1a917146b3da0a7fcd984ebb6dca17
     }
 
     public async Task<bool> AddSuccesStateAsync(SuccessStateNormalDto successState, UtilisateurNormalDto user, SuccessNormalDto success)

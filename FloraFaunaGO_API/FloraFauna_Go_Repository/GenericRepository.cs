@@ -67,10 +67,6 @@ namespace FloraFauna_Go_Repository
 
         public virtual Task<TEntity?> Insert(TEntity item)
         {
-            if (Set.Entry(item).IsKeySet)
-            {
-                return Task.FromResult<TEntity?>(null);
-            }
             var entry = Set.Add(item);
             var toto = Task.FromResult<TEntity?>(entry.Entity);
             return toto;
@@ -97,8 +93,8 @@ namespace FloraFauna_Go_Repository
                                         .Properties[0]?.Name;
 
             var values = typeof(TEntity).GetProperties()
-                                        .Where(item => item.Name != keyName && item.CanWrite)
-                                        .ToDictionary(item => item.Name, item => item.GetValue(item));
+                                        .Where(promp => promp.Name != keyName && promp.CanWrite)
+                                        .ToDictionary(promp => promp.Name, promp => promp.GetValue(item));
             
             originalEntry.CurrentValues.SetValues(values);
             Set.Attach(originalEntity);
