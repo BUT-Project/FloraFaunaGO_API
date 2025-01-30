@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFauna_Go_Repository
 {
@@ -356,10 +357,13 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                if (await LocalisationRepository.Insert(localisation) == null)
+                foreach (var localisationEntity in localisation)
                 {
-                    Context.Localisation.Attach(localisation);
-                    await Context.Entry(localisation).ReloadAsync();
+                    if (await LocalisationRepository.Insert(localisationEntity) == null)
+                    {
+                        Context.Localisation.Attach(localisationEntity);
+                        await Context.Entry(localisation).ReloadAsync();
+                    }
                 }
 
                 if (await EspeceRepository.Insert(espece) == null)
@@ -368,13 +372,15 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(espece).ReloadAsync();
                 }
 
-                var especeLocalisation = new EspeceLocalisationEntities
+                foreach (var loc in localisation)
                 {
-                    EspeceId = espece.Id,
-                    LocalisationId = localisation.Id
-                };
-
-                Context.EspeceLocalisation.Add(especeLocalisation);
+                    var especeLocalisation = new EspeceLocalisationEntities
+                    {
+                        EspeceId = espece.Id,
+                        LocalisationId = loc.Id
+                    };
+                    Context.EspeceLocalisation.Add(especeLocalisation);
+                }
 
                 await SaveChangesAsync();
                 return true;
@@ -386,26 +392,45 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece, IEnumerable<LocalisationEntities> localisation)
+        public async Task<bool> DeleteEspeceAsync(EspeceEntities espece, IEnumerable<LocalisationEntities> localisations)
         {
             try
             {
-                var especeLocalisation = await Context.EspeceLocalisation
-                                         .FirstOrDefaultAsync(el => el.EspeceId == espece.Id && el.LocalisationId == localisation.Id);
-
-                if (especeLocalisation != null)
+                foreach (var localisation in localisations)
                 {
-                    Context.EspeceLocalisation.Remove(especeLocalisation);
+                    var especeLocalisations = await Context.EspeceLocalisation
+                        .Where(el => el.EspeceId == espece.Id && el.LocalisationId == localisation.Id)
+                        .ToListAsync();
+
+                    foreach (var especeLocalisation in especeLocalisations)
+                    {
+                        Context.EspeceLocalisation.Remove(especeLocalisation);
+                    }
+
+                    var localisationEntity = await Context.Localisation
+                        .Include(l => l.EspeceLocalisation)
+                        .FirstOrDefaultAsync(l => l.Id == localisation.Id);
+
+                    if (localisationEntity != null)
+                    {
+                        var especeLocalisationToRemove = localisationEntity.EspeceLocalisation
+                            .Where(el => el.EspeceId == espece.Id)
+                            .ToList();
+
+                        foreach (var el in especeLocalisationToRemove)
+                        {
+                            localisationEntity.EspeceLocalisation.Remove(el);
+                        }
+
+                        if (!localisationEntity.EspeceLocalisation.Any())
+                        {
+                            Context.Localisation.Remove(localisationEntity);
+                        }
+                    }
                 }
 
                 await EspeceRepository.Delete(espece.Id);
 
-                var isLocalisationReferenced = await Context.EspeceLocalisation.AnyAsync(el => el.LocalisationId == localisation.Id);
-
-                if (!isLocalisationReferenced)
-                {
-                    await LocalisationRepository.Delete(localisation.Id);
-                }
                 await SaveChangesAsync();
                 return true;
             }
