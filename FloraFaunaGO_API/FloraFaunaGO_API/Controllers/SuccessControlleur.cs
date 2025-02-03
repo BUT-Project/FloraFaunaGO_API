@@ -49,30 +49,30 @@ public class SuccessControlleur : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostEspece([FromBody] SuccessNormalDto dto)
+    public async Task<IActionResult> PostSuccess([FromBody] SuccessNormalDto dto)
     {
         var Toto = await SuccessRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
 
         if ((inserted?.Count() ?? -1) != 1) return BadRequest();
         var insertedSuccess = inserted.SingleOrDefault();
-        return insertedSuccess != null ? CreatedAtAction(nameof(PostEspece), insertedSuccess) : BadRequest();
+        return insertedSuccess != null ? CreatedAtAction(nameof(PostSuccess), insertedSuccess) : BadRequest();
     }
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutEspece([FromQuery] string id,[FromBody] SuccessNormalDto dto)
+    public async Task<IActionResult> PutSuccess([FromQuery] string id,[FromBody] SuccessNormalDto dto)
     {
         var result = await SuccessRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
-        return result != null ? Created(nameof(PutEspece), result) : NotFound();
+        return result != null ? Created(nameof(PutSuccess), result) : NotFound();
     }
 
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteEspece([FromQuery] string id)
+    public async Task<IActionResult> DeleteSuccess([FromQuery] string id)
     {
         bool result = await SuccessRepository.Delete(id);
         if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
