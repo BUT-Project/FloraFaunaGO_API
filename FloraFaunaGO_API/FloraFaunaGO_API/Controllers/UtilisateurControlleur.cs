@@ -95,7 +95,7 @@ public class UtilisateurControlleur : ControllerBase
         throw new NotImplementedException();
     }
 
-    [HttpDelete]
+    /*[HttpDelete]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> DeletePlayer([FromQuery] string id)
@@ -103,5 +103,5 @@ public class UtilisateurControlleur : ControllerBase
         bool result = await UserRepository.Delete(id);
         if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
         return result ? Ok() : NotFound(id);
-    }
+    }*/
 }

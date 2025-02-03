@@ -5,6 +5,7 @@ using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -31,9 +32,9 @@ public class EspeceController : ControllerBase
     {
         var espece = await EspeceRepository.GetById(id);
         IEnumerable<LocalisationNormalDto> Localisation = espece.localisationNormalDtos;
-        espece.localisationNormalDtos = new LocalisationNormalDto[] {};
-        //foreach (var item in Localisation)
-        //    espece.localisationNormalDtos.Append(UnitOfWork.LocalisationRepository.getById(item.Id));
+        espece.localisationNormalDtos = [];
+        foreach (var item in Localisation)
+            espece.localisationNormalDtos.Append(await UnitOfWork.LocalisationRepository.GetById(item.Id));
 
         return espece != null ? Ok(espece) : NotFound(id);
     }
@@ -81,7 +82,7 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
-    [HttpPost]
+    /*[HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostEspece([FromBody] EspeceNormalDto dto)
@@ -92,7 +93,7 @@ public class EspeceController : ControllerBase
         if ((inserted?.Count() ?? -1) != 1) return BadRequest();
         var insertedEspece = inserted?.SingleOrDefault();
         return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
-    }
+    }*/
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -104,7 +105,7 @@ public class EspeceController : ControllerBase
         return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }
 
-    [HttpDelete]
+    /*[HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteEspece([FromQuery] string id)
@@ -112,5 +113,5 @@ public class EspeceController : ControllerBase
         bool result = await EspeceRepository.Delete(id);
         if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
         return result ? Ok() : NotFound(id);
-    }
+    }*/
 }
