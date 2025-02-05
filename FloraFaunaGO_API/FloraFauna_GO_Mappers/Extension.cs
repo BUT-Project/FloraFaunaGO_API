@@ -179,7 +179,6 @@ public static class Extension
     {
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
-            Id = dto.Id,
             Pseudo = dto.Pseudo,
             Mail = dto.Mail,
             Hash_mdp = dto.Hash_mdp,
