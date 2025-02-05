@@ -179,12 +179,26 @@ public static class Extension
     {
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
-            Id = dto.Id,
             Pseudo = dto.Pseudo,
             Mail = dto.Mail,
             Hash_mdp = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
         };
+
+        return dto.ToU(Mappers.UtilisateurMapper, creator);
+    }
+
+    public static UtilisateurEntities ToEntities(this UtilisateurNormalDto dto, string id)
+    {
+        Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
+        {
+            Id = id,
+            Pseudo = dto.Pseudo,
+            Mail = dto.Mail,
+            Hash_mdp = dto.Hash_mdp,
+            DateInscription = dto.DateInscription,
+        };
+
         return dto.ToU(Mappers.UtilisateurMapper, creator);
     }
 

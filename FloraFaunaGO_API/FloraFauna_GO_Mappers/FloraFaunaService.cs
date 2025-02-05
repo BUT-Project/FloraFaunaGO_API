@@ -87,7 +87,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> AddCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user)
     {
-       bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities());
+       bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities(user.Id));
        return result;
     }
 
