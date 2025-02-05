@@ -56,7 +56,7 @@ public class FloraFaunaController : ControllerBase
         _ = await UnitOfWork.AddCaptureAsync(dto, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
-        var insertedCapture = inserted?.SingleOrDefault(a => a is FullCaptureDto);
+        var insertedCapture = inserted?.SingleOrDefault(a => a is CaptureNormalDto);
         return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture) 
             : BadRequest();
     }

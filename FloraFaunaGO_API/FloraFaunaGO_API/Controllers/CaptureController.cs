@@ -2,7 +2,9 @@
 using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
+using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
@@ -45,6 +47,22 @@ public class CaptureController : ControllerBase
     public async Task<IActionResult> GetCaptureByUser(string id)
     {
         throw new NotImplementedException();
+    }
+
+    private async Task<IActionResult> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
+    {
+        var result = await func();
+        return result.Items.Any() ? Ok(result) : NoContent();
+    }
+
+    [HttpGet("all")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetAllCapture([FromQuery] CaptureOrderingCriteria criterium = CaptureOrderingCriteria.None,
+                                                  [FromQuery] int index = 0,
+                                                  [FromQuery] int count = 10)
+    {
+        return await GetCapture(async () => await CaptureRepository.GetAllCapture(CaptureOrderingCriteria.None, index, count));
     }
 
     //[HttpPost]
