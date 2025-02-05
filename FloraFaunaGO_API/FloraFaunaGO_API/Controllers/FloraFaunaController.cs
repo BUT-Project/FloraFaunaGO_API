@@ -49,7 +49,7 @@ public class FloraFaunaController : ControllerBase
     [HttpPost("capture/idUser={iduser}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostCapture([FromBody] CaptureNormalDto dto, [FromQuery] string iduser)
+    public async Task<IActionResult> PostCapture([FromBody] CaptureNormalDto dto, string iduser)
     {
         if (dto == null) return BadRequest();
         var user = await UnitOfWork.UserRepository.GetById(iduser);
