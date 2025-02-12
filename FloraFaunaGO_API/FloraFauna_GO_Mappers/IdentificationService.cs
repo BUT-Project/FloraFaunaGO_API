@@ -22,36 +22,41 @@ public class IdentificationService
 
     public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto)
     {
-        using var memoryStream = new MemoryStream();
-        await dto.AskedImage.CopyToAsync(memoryStream);
-        var imageContent = new ByteArrayContent(memoryStream.ToArray());
-        imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(dto.AskedImage.ContentType);
+        var imageContent = new ByteArrayContent(dto.AskedImage);
+        imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
 
-        form.Add(imageContent, "images", dto.AskedImage.FileName);
+        // Create a new form for each request to avoid accumulating data
+        using var form = new MultipartFormDataContent();
+        form.Add(imageContent, "images", "image.jpg");
 
         HttpResponseMessage response = await client.PostAsync(apiEndpoint, form);
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
-            IdentificationResultDto dtoResult = JsonSerializer.Deserialize<IdentificationResultDto>(jsonResponse);
+            Console.WriteLine("Réponse brute de l'API : " + jsonResponse);
+            IdentificationResultDto dtoResult = JsonSerializer.Deserialize<IdentificationResultDto>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            ResultDto resultDto = dtoResult.Results.OrderByDescending(r => r.Score).FirstOrDefault();
             var allEspeces = await Service.GetAllEspece();
-            var espece = allEspeces.Items.FirstOrDefault(e => e.Espece.Nom_Scientifique == dtoResult.ScientificNameWithoutAuthor);
+            var espece = allEspeces.Items.FirstOrDefault(e => e.Espece.Nom_Scientifique == resultDto.Species.ScientificName);
+
             if (espece != null)
                 return espece;
+
             espece = new FullEspeceDto
             {
                 Espece = new EspeceNormalDto
                 {
-                    Nom = dtoResult.ScientificNameWithoutAuthor,
-                    Nom_Scientifique = dtoResult.ScientificNameWithoutAuthor,
-                    Description = "Description",
-                    Famille = dtoResult.Family.ScientificNameWithoutAuthor,
-                    Zone = "Zone",
-                    Climat = "Climat",
-                    Regime = "Regime",
-                    Image = memoryStream.ToArray(),
+                    Nom = resultDto.Species.CommonNames?.FirstOrDefault() ?? "Nom inconnu",
+                    Nom_Scientifique = resultDto.Species.ScientificName,
+                    Description = $"Espèce de la famille {resultDto.Species.Family?.ScientificNameWithoutAuthor ?? "inconnue"}.",
+                    Image = dto.AskedImage,
+                    Image3D = null,
+                    Famille = resultDto.Species.Family?.ScientificName ?? "Inconnue",
+                    Zone = "À définir",
+                    Climat = "À définir",
+                    Regime = "À définir"
                 },
-                localisationNormalDtos = null
+                localisationNormalDtos = []
             };
             return espece;
         }

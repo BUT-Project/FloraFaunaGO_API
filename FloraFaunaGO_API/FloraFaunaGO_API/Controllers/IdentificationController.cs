@@ -20,7 +20,6 @@ public class IdentificationController : ControllerBase
     }
 
     [HttpPost]
-    [Consumes("multipart/form-data")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AskToIdentifyAPI([FromBody] AnimalIdentifyNormalDto dto)
