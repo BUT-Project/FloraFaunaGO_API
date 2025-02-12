@@ -1,5 +1,11 @@
 ﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
+using FloraFauna_GO_Entities2Dto;
+using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -9,75 +15,103 @@ public class EspeceController : ControllerBase
 {
     private readonly ILogger<EspeceController> _logger;
 
-    [HttpGet("{id}")]
+    public IEspeceRepository<EspeceNormalDto,FullEspeceDto> EspeceRepository { get; private set; }
+    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
+
+    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service)
+    {
+        _logger = logger;
+        UnitOfWork = service;
+        EspeceRepository = UnitOfWork.EspeceRepository;
+    }
+
+    [HttpGet ("id={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
     {
-        throw new NotImplementedException();
+        var espece = await EspeceRepository.GetById(id);
+        IEnumerable<LocalisationNormalDto> Localisation = espece.localisationNormalDtos;
+        espece.localisationNormalDtos = [];
+        foreach (var item in Localisation)
+            espece.localisationNormalDtos.Append(await UnitOfWork.LocalisationRepository.GetById(item.Id));
+
+        return espece != null ? Ok(espece) : NotFound(id);
     }
 
-    [HttpGet("{name}")]
+    [HttpGet("name={name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByName(string name)
     {
-        throw new NotImplementedException();
+        var espece = await EspeceRepository.GetEspeceByName( EspeceOrderingCriteria.ByNom);
+        return espece != null ? Ok(espece) : NotFound(name);
     }
 
-    [HttpGet("all")]
+    private async Task<IActionResult> GetEspeces(Func<Task<Pagination<FullEspeceDto>>> func)
+    {
+        var result = await func();
+        return result.Items.Any() ? Ok(result) : NoContent();
+    }
+
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllEspece()
+    public async Task<IActionResult> GetAllEspece([FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.None, 
+                                                  [FromQuery] int index = 0, 
+                                                  [FromQuery] int count = 10)
     {
-        throw new NotImplementedException();
+        return await GetEspeces(async () => await EspeceRepository.GetAllEspece(EspeceOrderingCriteria.None, index, count));
     }
 
-    [HttpGet("famille/{famille}")]
+    [HttpGet("famille={famille}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByFamille(string famille)
     {
-        throw new NotImplementedException();
+        var espece = await EspeceRepository.GetEspeceByFamile( EspeceOrderingCriteria.ByFamille);
+        return espece != null ? Ok(espece) : NotFound(famille);
     }
 
-    [HttpGet("regimeAlimentaire/{regime_alimentaire}")]
+    [HttpGet("regimeAlimentaire={regime_alimentaire}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByRegimeAlimentaire(string regime_alimentaire)
+    public async Task<IActionResult> GetByRegimeAlimentaire(string regimeAlimentaire)
     {
-        throw new NotImplementedException();
+        var espece = await EspeceRepository.GetEspeceByRegime(EspeceOrderingCriteria.ByRegime);
+        return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
-    [HttpGet("habitat/{idHabitat}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByIdHabitat(string idHabitat)
-    {
-        throw new NotImplementedException();
-    }
-
-    [HttpPost]
+    /*[HttpPost]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
+    public async Task<IActionResult> PostEspece([FromBody] EspeceNormalDto dto)
     {
-        throw new NotImplementedException();
-    }
+        var Toto = await EspeceRepository.Insert(dto);
+        var inserted = await UnitOfWork.SaveChangesAsync();
+
+        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
+        var insertedEspece = inserted?.SingleOrDefault();
+        return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
+    }*/
 
     [HttpPut]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] FullEspeceDto dto)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] EspeceNormalDto dto)
     {
-        throw new NotImplementedException();
+        var result = await EspeceRepository.Update(id,dto);
+        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
+        return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }
 
-    [HttpDelete]
+    /*[HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteEspece([FromQuery] string id)
     {
-        throw new NotImplementedException();
-    }
+        bool result = await EspeceRepository.Delete(id);
+        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
+        return result ? Ok() : NotFound(id);
+    }*/
 }

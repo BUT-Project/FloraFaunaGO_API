@@ -2,7 +2,7 @@
 
 public class UtilisateurNormalDto
 {
-    public Guid Id { get; set; }
+    public string? Id { get; set; }
     public string? Pseudo { get; set; }
 
     public string? Mail { get; set; }

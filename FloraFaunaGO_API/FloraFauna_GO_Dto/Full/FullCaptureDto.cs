@@ -1,14 +1,20 @@
 ﻿using FloraFauna_GO_Dto.Normal;
-using FloraFaunaGO_Entities.Enum;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto.Full;
-
-public class FullCaptureDto
+namespace FloraFauna_GO_Dto.Full
 {
-    public CaptureNormalDto capture { get; set; }
-    public FullCaptureDetailDto[]? CaptureDetails { get; set; }
+    public class FullCaptureDto
+    {
+        public CaptureNormalDto Capture { get; set; }
+        public FullCaptureDetailDto[]? CaptureDetails { get; set; }
 
-    public Famille[]? familles { get; set; }
+        public FullEspeceDto Espece { get; set; }
 
-    public Regime_Alimentaire Regime_Alimentaire { get; set; }
+        public FullUtilisateurDto Utilisateur { get; set; }
+    }
 }
