@@ -13,10 +13,9 @@ public class UnitTest1
     public void ToEntities_Should_Map_FullEspeceDto_To_EspeceEntities()
     {
         // Arrange
-        FullEspeceDto especeDto = new FullEspeceDto
+        EspeceNormalDto especeDto = new EspeceNormalDto()
         {
-            Espece = new EspeceNormalDto { /* Remplissez les propriétés pertinentes */ },
-            localisationNormalDtos = new[] { new LocalisationNormalDto() } 
+            Nom = "Lion", Nom_Scientifique = "Panthera leo"
         };
 
         // Act
@@ -42,7 +41,7 @@ public class UnitTest1
 
         // Assert
         Assert.IsNotNull(dtos);
-        Assert.IsInstanceOfType<FullEspeceDto>(dtos);
+        Assert.IsInstanceOfType<EspeceNormalDto>(dtos);
         // Vérifiez les propriétés spécifiques, si besoin
     }
 
@@ -77,7 +76,7 @@ public class UnitTest1
         };
 
         // Act
-        var captureEntity = captureDto.ToEntities();
+        var captureEntity = captureDto.Capture.ToEntities();
 
         // Assert
         Assert.IsNotNull(captureEntity);
@@ -115,15 +114,7 @@ public class UnitTest1
                         Image = new byte[] { },
                         Nom = "Nom",
                         Nom_scientifique = "nom science",
-                        Localisations = new[]
-                    {
-                        new LocalisationEntities()
-                        {
-                            Longitude = 0,
-                            Latitude = 0,
-                            Rayon = 0,
-                        },
-                    },
+                        Localisations = new List<EspeceLocalisationEntities>()
                     }
                 };
 
@@ -132,7 +123,7 @@ public class UnitTest1
 
         // Assert
         Assert.IsNotNull(captureDto);
-        Assert.IsInstanceOfType<FullCaptureDto>(captureDto);
+        Assert.IsInstanceOfType<CaptureNormalDto>(captureDto);
     }
 
     [TestMethod]
