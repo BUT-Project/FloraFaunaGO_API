@@ -2,73 +2,28 @@ using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
+using FloraFaunaGO_API.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddDbContext<FloraFaunaGoDB>();
-builder.Services.AddScoped<IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities>, UnitOfWork>();
-builder.Services.AddScoped<IUserRepository<UtilisateurEntities>, UserRepository>();
-builder.Services.AddScoped<ICaptureRepository<CaptureEntities>, CaptureRepository>();
-builder.Services.AddScoped<IEspeceRepository<EspeceEntities>, EspeceRepository>();
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+builder.Logging.AddConsole();
+builder.WebHost.ConfigureKestrel(serverOptions =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo
-    {
-        Version = "v1",
-        Title = "FloraFaunaGO API",
-        Description = "API documentation for FloraFaunaGO",
-        TermsOfService = new Uri("https://example.com/terms"),
-        Contact = new OpenApiContact
-        {
-            Name = "Example Contact",
-            Url = new Uri("https://example.com/contact")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Example License",
-            Url = new Uri("https://example.com/license")
-        }
-    });
-
-    var xmlFile = $"{System.Reflection.Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    options.IncludeXmlComments(xmlPath);
+    serverOptions.Limits.MaxRequestBodySize = long.MaxValue;
 });
 
-builder.Services.AddScoped<DbContextOptions<FloraFaunaGoDB>>();
-builder.Services.AddScoped<FloraFaunaService>(provider => new FloraFaunaService(provider.GetService<DbContextOptions<FloraFaunaGoDB>>()));
+var init = new AppBootstrap(builder.Configuration);
 
+init.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (builder.Environment.IsDevelopment())
-{
-    
-    app.UseSwagger(option =>
-    {
-        option.SerializeAsV2 = true;
-    });
-    app.UseSwaggerUI(options => // UseSwaggerUI is called only in Development.
-    {
-        options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
-        options.RoutePrefix = string.Empty;
-    });
-}
+init.Configure(app, app.Environment);
 
-app.UseHttpsRedirection();
+var context = app.Services.GetService<FloraFaunaGoDB>();
 
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.MapSwagger().RequireAuthorization();
+context!.Database.EnsureCreated();
 
 app.Run();
