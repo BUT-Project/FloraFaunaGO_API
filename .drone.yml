@@ -67,7 +67,7 @@ steps:
     depends_on: [build,tests]
 
   - name: generate-and-deploy-docs
-    image: hub.codefirst.iut.uca.fr/maxime.batista/codefirst-docdeployer
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-docdeployer
     failure: ignore
     commands:
       - /entrypoint.sh -l docs/doxygen -t doxygen
@@ -78,6 +78,7 @@ steps:
 
 volumes:
   - name: docs
+    path: /docs
     temp: {}
 
 ---
