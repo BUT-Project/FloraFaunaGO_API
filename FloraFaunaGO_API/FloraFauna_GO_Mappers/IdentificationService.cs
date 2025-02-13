@@ -12,24 +12,36 @@ public class IdentificationService
     private HttpClient client = new HttpClient();
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
-    private const string API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
-    private static readonly string apiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?api-key={API_KEY}";
+    private const string PLANT_API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
+    private static readonly string plantApiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?lang=fr&api-key={PLANT_API_KEY}";
 
     public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
     {
         Service = service;
     }
 
-    public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto)
+    public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto, EspeceType type)
     {
         var imageContent = new ByteArrayContent(dto.AskedImage);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
 
-        // Create a new form for each request to avoid accumulating data
-        using var form = new MultipartFormDataContent();
-        form.Add(imageContent, "images", "image.jpg");
+        switch (type)
+        {
+            case EspeceType.Plant:
+                form.Add(imageContent, "images", "image.jpg");
+                return await identifyPlant(form, dto.AskedImage);
+            case EspeceType.Animal:
+                return null;
+            case EspeceType.Insect:
+                return null;
+            default:
+                return null;
+        }
+    }
 
-        HttpResponseMessage response = await client.PostAsync(apiEndpoint, form);
+    private async Task<FullEspeceDto> identifyPlant(MultipartFormDataContent form, byte[] image)
+    {
+        HttpResponseMessage response = await client.PostAsync(plantApiEndpoint, form);
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
@@ -49,7 +61,7 @@ public class IdentificationService
                     Nom = resultDto.Species.CommonNames?.FirstOrDefault() ?? "Nom inconnu",
                     Nom_Scientifique = resultDto.Species.ScientificName,
                     Description = $"Espèce de la famille {resultDto.Species.Family?.ScientificNameWithoutAuthor ?? "inconnue"}.",
-                    Image = dto.AskedImage,
+                    Image = image,
                     Image3D = null,
                     Famille = resultDto.Species.Family?.ScientificName ?? "Inconnue",
                     Zone = "À définir",
