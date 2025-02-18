@@ -1,51 +1,30 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection.Metadata;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace FloraFauna_GO_Entities;
 
 public class CaptureEntities : BaseEntity
 {
-    public ICollection<CaptureDetailsEntities> CaptureDetails = new Collection<CaptureDetailsEntities>();
-
-    public EspeceEntities Espece = new();
-
-    public Blob Photo { get; set; }
+    public byte[] Photo { get; set; }
 
     public uint Numero { get; set; }
 
-    public bool AddCaptureDetail(CaptureDetailsEntities item)
-    {
-        var found = false;
-        CaptureDetails.ToList().ForEach(cde =>
-        {
-            if (cde.Id == item.Id)
-                found = true;
-        });
-        if (!found) CaptureDetails.Add(item);
-        return found;
-    }
+    public ICollection<CaptureDetailsEntities> CaptureDetails = new List<CaptureDetailsEntities>();
 
-    public bool RemoveCaptureDetails(CaptureDetailsEntities item)
-    {
-        var found = false;
-        CaptureDetails.ToList().ForEach(cde =>
-        {
-            if (cde.Id == item.Id)
-                found = true;
-        });
-        if (found) CaptureDetails.Remove(item);
-        return found;
-    }
+    [Required]
+    public string EspeceId { get; set;  }
 
-    public CaptureDetailsEntities? RechCaptureDetails(string id)
-    {
-        CaptureDetailsEntities? captureDetails = null;
-        var found = false;
-        CaptureDetails.ToList().ForEach(cde =>
-        {
-            if (cde.Id == id)
-                captureDetails = cde;
-        });
-        return captureDetails;
-    }
+    public EspeceEntities Espece { get; set; }
+
+    [Required]
+    public string UtilisateurId { get; set; }
+
+    public UtilisateurEntities Utilisateur { get; set; }
 }

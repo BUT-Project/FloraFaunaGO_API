@@ -2,7 +2,7 @@
 
 public class CaptureDetailNormalDto
 {
-    public Guid Id { get; set; }
+    public string? Id { get; set; }
 
     public bool Shiny { get; set; }
 }

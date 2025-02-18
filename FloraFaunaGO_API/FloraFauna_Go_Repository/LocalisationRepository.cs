@@ -1,0 +1,65 @@
+﻿using FloraFauna_GO_Entities;
+using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Criteria;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace FloraFauna_Go_Repository
+{
+    public class LocalisationRepository : GenericRepository<LocalisationEntities>, ILocalisationRepository<LocalisationEntities>
+    {
+        public LocalisationRepository(FloraFaunaGoDB context) : base(context) { }
+
+        public async Task<Pagination<LocalisationEntities>> GetAllLocalisation(int index = 0, int count = 15)
+        {
+            IQueryable<LocalisationEntities> query = Set;
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<LocalisationEntities>()
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+
+        public async Task<Pagination<LocalisationEntities>> GetLocalisationByCaptureDetail(string idCaptureDetail, int index = 0, int count = 15)
+        {
+            IQueryable<LocalisationEntities> query = Set;
+            query = query.OrderBy(success => success.CapturesDetail.CaptureId == idCaptureDetail);
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+            return new Pagination<LocalisationEntities>()
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+
+        public async Task<Pagination<LocalisationEntities>> GetLocalisationByEspece(string idEspece, int index = 0, int count = 15)
+        {
+            IQueryable<LocalisationEntities> query = Set;
+            query = query.OrderBy(success => success.EspeceLocalisation.FirstOrDefault(espece => espece.EspeceId == idEspece));
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+            return new Pagination<LocalisationEntities>()
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+    }
+}
