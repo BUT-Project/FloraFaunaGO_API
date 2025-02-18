@@ -19,12 +19,15 @@ public class IdentificationController : ControllerBase
         Service = new IdentificationService(UnitOfWork.EspeceRepository);
     }
 
-    [HttpPost]
+    [HttpPost("{especeType}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AskToIdentifyAPI([FromBody] AnimalIdentifyNormalDto dto)
+    public async Task<IActionResult> AskToIdentifyAPI(string especeType, [FromBody] AnimalIdentifyNormalDto dto)
     {
-        var result = await Service.identify(dto);
+        if (!Enum.TryParse(especeType, true, out EspeceType type))
+            return BadRequest("Action invalide.");
+
+        var result = await Service.identify(dto, type);
         return result != null ? Ok(result) : NoContent();
     }
 }

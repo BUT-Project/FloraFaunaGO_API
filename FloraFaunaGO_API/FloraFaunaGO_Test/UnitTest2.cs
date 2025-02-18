@@ -26,14 +26,13 @@ namespace FloraFaunaGO_Test
             };
 
             // Act
-            var entities = especeDto.ToEntities();
+            var entities = especeDto.Espece.ToEntities();
 
             // Assert
             Assert.IsNotNull(entities);
             Assert.IsInstanceOfType(entities, typeof(EspeceEntities));
             Assert.AreEqual(especeDto.Espece.Nom, entities.Nom);
             Assert.AreEqual(especeDto.Espece.Nom_Scientifique, entities.Nom_scientifique);
-            Assert.AreEqual(especeDto.localisationNormalDtos.Length, entities.Localisations.Count);
         }
 
         [TestMethod]
@@ -44,7 +43,7 @@ namespace FloraFaunaGO_Test
             {
                 Nom = "Lion",
                 Nom_scientifique = "Panthera leo",
-                Localisations = new List<LocalisationEntities> { new LocalisationEntities { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
+                Localisations = new List<EspeceLocalisationEntities> { new EspeceLocalisationEntities {  } }
             };
 
             // Act
@@ -52,10 +51,9 @@ namespace FloraFaunaGO_Test
 
             // Assert
             Assert.IsNotNull(dto);
-            Assert.IsInstanceOfType(dto, typeof(FullEspeceDto));
-            Assert.AreEqual(especeEntity.Nom, dto.Espece.Nom);
-            Assert.AreEqual(especeEntity.Nom_scientifique, dto.Espece.Nom_Scientifique);
-            Assert.AreEqual(especeEntity.Localisations.Count, dto.localisationNormalDtos.Length);
+            Assert.IsInstanceOfType(dto, typeof(EspeceNormalDto));
+            Assert.AreEqual(especeEntity.Nom, dto.Nom);
+            Assert.AreEqual(especeEntity.Nom_scientifique, dto.Nom_Scientifique);
         }
 
         [TestMethod]
@@ -81,12 +79,12 @@ namespace FloraFaunaGO_Test
             };
 
             // Act
-            var captureEntity = captureDto.ToEntities();
+            var captureEntity = captureDto.Capture.ToEntities();
+            captureEntity.CaptureDetails = captureDto.CaptureDetails.Select(cd => cd.CaptureDetail.ToEntities()).ToList();
 
             // Assert
             Assert.IsNotNull(captureEntity);
             Assert.IsInstanceOfType(captureEntity, typeof(CaptureEntities));
-            Assert.AreEqual(captureDto.Capture.Id, captureEntity.Id);
             Assert.AreEqual(captureDto.Capture.photo, captureEntity.Photo);
             Assert.AreEqual(captureDto.CaptureDetails.Length, captureEntity.CaptureDetails.Count);
         }
@@ -103,13 +101,12 @@ namespace FloraFaunaGO_Test
                 {
                     Nom = "Lion",
                     Nom_scientifique = "Panthera leo",
-                    Localisations = new List<LocalisationEntities> { new LocalisationEntities { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
+                    Localisations = new List<EspeceLocalisationEntities> { }
                 },
                 CaptureDetails = new List<CaptureDetailsEntities>
                 {
                     new CaptureDetailsEntities
                     {
-                        Id = "1",
                         Shiny = true,
                         Localisation = new LocalisationEntities { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 }
                     }
@@ -121,18 +118,16 @@ namespace FloraFaunaGO_Test
 
             // Assert
             Assert.IsNotNull(captureDto);
-            Assert.IsInstanceOfType(captureDto, typeof(FullCaptureDto));
-            Assert.AreEqual(captureEntity.Id, captureDto.Capture.Id);
-            Assert.AreEqual(captureEntity.Photo, captureDto.Capture.photo);
-            Assert.AreEqual(captureEntity.CaptureDetails.Count, captureDto.CaptureDetails.Length);
+            Assert.IsInstanceOfType(captureDto, typeof(CaptureNormalDto));
+            Assert.AreEqual(captureEntity.Photo, captureDto.photo);
         }
 
         [TestMethod]
         public void Mapper_Should_Store_And_Return_Correct_Mappings()
         {
             // Arrange
-            var mapper = new Mapper<FullEspeceDto, EspeceEntities>();
-            var dto = new FullEspeceDto { Espece = new EspeceNormalDto { Nom = "Lion" } };
+            var mapper = new Mapper<EspeceNormalDto, EspeceEntities>();
+            var dto =  new EspeceNormalDto { Nom = "Lion" };
             var entity = new EspeceEntities { Nom = "Lion" };
 
             // Act
@@ -150,8 +145,8 @@ namespace FloraFaunaGO_Test
         public void Mapper_Reset_Should_Clear_All_Mappings()
         {
             // Arrange
-            var mapper = new Mapper<FullEspeceDto, EspeceEntities>();
-            var dto = new FullEspeceDto { Espece = new EspeceNormalDto { Nom = "Lion" } };
+            var mapper = new Mapper<EspeceNormalDto, EspeceEntities>();
+            var dto = new EspeceNormalDto { Nom = "Lion" } ;
             var entity = new EspeceEntities { Nom = "Lion" };
             mapper.AddMapping(dto, entity);
 
