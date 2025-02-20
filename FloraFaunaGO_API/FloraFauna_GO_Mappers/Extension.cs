@@ -247,6 +247,19 @@ public static class Extension
         return dto.ToU(Mappers.SuccessMapper, creator);
     }
 
+    public static SuccesEntities ToEntities(this SuccessNormalDto dto, string id)
+    {
+        Func<SuccessNormalDto, SuccesEntities> creator = (dto) => new SuccesEntities()
+        {
+            Id = id,
+            Nom = dto.Nom,
+            Objectif = dto.Objectif,
+            Description = dto.Description,
+        };
+
+        return dto.ToU(Mappers.SuccessMapper, creator);
+    }
+
     public static SuccessNormalDto ToDto(this SuccesEntities entities)
     {
         Func<SuccesEntities, SuccessNormalDto> creator = (entities) => new SuccessNormalDto()
@@ -356,6 +369,17 @@ public static class Extension
     public static Pagination<SuccessNormalDto> ToPagingResponseDtos(this Pagination<SuccesEntities> entities)
     {
         return new Pagination<SuccessNormalDto>
+        {
+            PageIndex = entities.PageIndex,
+            CountPerPage = entities.CountPerPage,
+            TotalCount = entities.TotalCount,
+            Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    public static Pagination<LocalisationNormalDto> ToPagingResponseDtos(this Pagination<LocalisationEntities> entities)
+    {
+        return new Pagination<LocalisationNormalDto>
         {
             PageIndex = entities.PageIndex,
             CountPerPage = entities.CountPerPage,

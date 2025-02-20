@@ -121,25 +121,13 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                successState.UtilisateurEntities = user;
-                successState.SuccesEntities = success;
+                successState.SuccesEntitiesId = success.Id;
+                successState.UtilisateurId = user.Id;
 
                 if (await SuccessStateRepository.Insert(successState) == null)
                 {
                     Context.SuccesState.Attach(successState);
                     await Context.Entry(successState).ReloadAsync();
-                }
-
-                if (await UserRepository.Insert(user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
-
-                if (await SuccessRepository.Insert(success) == null)
-                {
-                    Context.Succes.Attach(success);
-                    await Context.Entry(success).ReloadAsync();
                 }
 
                 if (user.SuccesState == null)
@@ -166,7 +154,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(success).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -206,7 +194,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(success).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -240,7 +228,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(user).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -267,7 +255,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(user).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -310,7 +298,7 @@ namespace FloraFauna_Go_Repository
                 }
 
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -343,7 +331,7 @@ namespace FloraFauna_Go_Repository
                 }
 
                 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -382,7 +370,7 @@ namespace FloraFauna_Go_Repository
                     Context.EspeceLocalisation.Add(especeLocalisation);
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)

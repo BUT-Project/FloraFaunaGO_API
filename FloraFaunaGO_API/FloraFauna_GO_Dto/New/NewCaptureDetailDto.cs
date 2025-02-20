@@ -11,7 +11,5 @@ namespace FloraFauna_GO_Dto.New;
 public class NewCaptureDetailDto
 {
     public CaptureDetailNormalDto CaptureDetail { get; set; }
-    public CaptureNormalDto Capture { get; set; }
-
     public LocalisationNormalDto Localisation { get; set; }
 }

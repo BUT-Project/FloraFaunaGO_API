@@ -31,7 +31,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto> SuccessStateRepository => new SuccessStateService(DbUnitOfWork.SuccessStateRepository);
 
-    public ILocalisationRepository<LocalisationNormalDto, LocalisationNormalDto> LocalisationRepository => throw new NotImplementedException();
+    public ILocalisationRepository<LocalisationNormalDto, LocalisationNormalDto> LocalisationRepository => new LocalisationService(DbUnitOfWork.LocalisationRepository);
 
     public async Task<IEnumerable<object?>?> SaveChangesAsync()
     {
@@ -75,7 +75,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> AddSuccesStateAsync(SuccessStateNormalDto successState, UtilisateurNormalDto user, SuccessNormalDto success)
     {
-        bool result = await DbUnitOfWork.AddSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
+        bool result = await DbUnitOfWork.AddSuccesStateAsync(successState.ToEntities(), user.ToEntities(user.Id), success.ToEntities(success.Id));
         return result;
     }
 

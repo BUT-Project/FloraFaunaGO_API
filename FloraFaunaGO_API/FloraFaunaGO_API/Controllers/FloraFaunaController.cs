@@ -21,16 +21,18 @@ public class FloraFaunaController : ControllerBase
         UnitOfWork = service;
     }
 
-    [HttpPost("success/state")]
+    [HttpPost("success/state/idUser={iduser}&idSuccess={idsuccess}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostSuccessState([FromBody] NewSuccessStateDto dto)
+    public async Task<IActionResult> PostSuccessState(string idsuccess, string iduser, [FromBody] SuccessStateNormalDto dto)
     {
         if(dto == null) return BadRequest();
-        _ = await UnitOfWork.AddSuccesStateAsync(dto.State, dto.Utilisateur, dto.Success);
+        var user = await UnitOfWork.UserRepository.GetById(iduser);
+        var success = await UnitOfWork.SuccessRepository.GetById(idsuccess);
+        _ = await UnitOfWork.AddSuccesStateAsync(dto, user.Utilisateur, success);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
-        var insertedState = inserted?.SingleOrDefault(a => a is FullSuccessStateDto);
+        var insertedState = inserted;
         return insertedState != null ? CreatedAtAction(nameof(PostSuccessState), insertedState) : BadRequest();
     }
 
@@ -56,7 +58,7 @@ public class FloraFaunaController : ControllerBase
         _ = await UnitOfWork.AddCaptureAsync(dto, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
-        var insertedCapture = inserted?.SingleOrDefault(a => a is CaptureNormalDto);
+        var insertedCapture = inserted;
         return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture) 
             : BadRequest();
     }
@@ -72,16 +74,17 @@ public class FloraFaunaController : ControllerBase
         return deleted ? Ok() : NotFound();
     }
 
-    [HttpPost("capturedetail")]
+    [HttpPost("capturedetail/idSuccess={idCapture}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostCaptureDetail([FromBody] NewCaptureDetailDto dto)
+    public async Task<IActionResult> PostCaptureDetail([FromBody] NewCaptureDetailDto dto, string idCapture)
     {
         if (dto == null) return BadRequest();
-        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, dto.Capture, dto.Localisation);
+        var capture = await UnitOfWork.CaptureRepository.GetById(idCapture);
+        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, capture.Capture, dto.Localisation);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
-        var insertedCaptureDetail = inserted?.SingleOrDefault(a => a is FullCaptureDetailDto);
+        var insertedCaptureDetail = inserted;
         return insertedCaptureDetail != null ? CreatedAtAction(nameof(PostCaptureDetail), insertedCaptureDetail) : BadRequest();
     }
 
@@ -116,7 +119,7 @@ public class FloraFaunaController : ControllerBase
         _ = await UnitOfWork.AddEspeceAsync(dto.espece, dto.localisation);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
-        var insertedEspece = inserted?.SingleOrDefault(a => a is FullEspeceDto);
+        var insertedEspece = inserted;
         return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
     }
 
