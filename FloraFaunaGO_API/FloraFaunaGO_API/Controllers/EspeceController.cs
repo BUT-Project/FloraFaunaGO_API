@@ -32,7 +32,8 @@ public class EspeceController : ControllerBase
     {
         var espece = await EspeceRepository.GetById(id);
         var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id);
-        espece.localisationNormalDtos = localisations.Items.ToArray();
+        if (espece != null)
+            espece.localisationNormalDtos = localisations.Items.ToArray();
 
         return espece != null ? Ok(espece) : NotFound(id);
     }

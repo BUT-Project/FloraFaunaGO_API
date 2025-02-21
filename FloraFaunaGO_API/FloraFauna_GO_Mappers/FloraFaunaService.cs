@@ -99,7 +99,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> AddCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture, LocalisationNormalDto localisation)
     {
-        bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities(), localisation.ToEntities());
+        bool result = await DbUnitOfWork.AddCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities(capture.Id), localisation.ToEntities());
         return result;
     }
 

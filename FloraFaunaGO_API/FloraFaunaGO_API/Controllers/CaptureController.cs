@@ -38,6 +38,12 @@ public class CaptureController : ControllerBase
     public async Task<IActionResult> GetCaptureById(string id)
     {
         var capture = await CaptureRepository.GetById(id);
+        if (capture != null)
+        {
+            capture.Espece = await UnitOfWork.EspeceRepository.GetById(capture.Espece.Espece.Id);
+            var tmp = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(CaptureDetailOrderingCriteria.None);
+            capture.CaptureDetails = tmp.Items.ToArray();
+        }
         return capture != null ? Ok(capture) : NotFound();
     }
 
@@ -52,6 +58,10 @@ public class CaptureController : ControllerBase
     private async Task<IActionResult> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.Espece = await UnitOfWork.EspeceRepository.GetById(item.Espece.Espece.Id);
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 

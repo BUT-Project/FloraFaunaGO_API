@@ -208,6 +208,7 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
+                capture.UtilisateurId = user.Id;
                 if (await CaptureRepository.Insert(capture) == null)
                 {
                     Context.Captures.Attach(capture);
@@ -265,8 +266,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, 
-                                                        LocalisationEntities localisation)
+        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, LocalisationEntities localisation)
         {
             try
             {
@@ -276,8 +276,9 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(localisation).ReloadAsync();
                 }
 
-                captureDetail.Localisation = localisation;
                 captureDetail.LocalisationId = localisation.Id;
+                captureDetail.CaptureId = capture.Id;
+
 
                 if (await CaptureDetailRepository.Insert(captureDetail) == null)
                 {
@@ -286,16 +287,15 @@ namespace FloraFauna_Go_Repository
                 }
 
                 if (capture.CaptureDetails == null)
-                {
                     capture.CaptureDetails = new List<CaptureDetailsEntities>();
-                }
+
                 capture.CaptureDetails.Add(captureDetail);
 
-                if (await CaptureRepository.Update(capture.Id, capture) == null)
-                {
-                    Context.Captures.Attach(capture);
-                    await Context.Entry(capture).ReloadAsync();
-                }
+                //if (await CaptureRepository.Update(capture.Id, capture) == null)
+                //{
+                //    Context.Captures.Attach(capture);
+                //    await Context.Entry(capture).ReloadAsync();
+                //}
 
 
                 //await SaveChangesAsync();

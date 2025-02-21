@@ -34,6 +34,10 @@ public class CaptureDetailController : ControllerBase
     private async Task<IActionResult> GetCaptureDetail(Func<Task<Pagination<FullCaptureDetailDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(item.localisationNormalDtos.Id);
+        }
         return result != null ? Ok(result) : NoContent();
     }
 
