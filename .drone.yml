@@ -74,7 +74,7 @@ steps:
     when:
       event:
         - push
-    depends_on: [ build ]
+    depends_on: [ build, swagger ]
 
 volumes:
   - name: docs
