@@ -26,12 +26,15 @@ internal class SuccessService : ISuccessRepository<SuccessNormalDto, SuccessNorm
     public async Task<SuccessNormalDto?> GetById(string id)
         => (await Repository.GetById(id))?.ToDto();
 
-    public async Task<Pagination<SuccessNormalDto>> GetSuccessByName(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName, int index = 0, int count = 10)
-        => (await Repository.GetSuccessByName(criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<SuccessNormalDto>> GetSuccessByName(string name,SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName, int index = 0, int count = 10)
+        => (await Repository.GetSuccessByName(name,criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<SuccessNormalDto?> Insert(SuccessNormalDto item)
         => (await Repository.Insert(item.ToEntities()))?.ToDto();
 
     public async Task<SuccessNormalDto?> Update(string id, SuccessNormalDto item)
         => (await Repository.Update(id, item.ToEntities()))?.ToDto();
+
+    public async Task<Pagination<SuccessNormalDto>> GetSuccessBySuccessState(string id, SuccessOrderingCreteria criteria = SuccessOrderingCreteria.None, int index = 0, int count = 10)
+        => (await Repository.GetSuccessBySuccessState(id, criteria, index, count)).ToPagingResponseDtos();
 }

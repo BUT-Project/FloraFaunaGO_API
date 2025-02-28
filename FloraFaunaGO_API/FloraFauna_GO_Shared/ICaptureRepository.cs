@@ -17,7 +17,7 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetCaptureByNumero(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByNumero,
             int index = 0, int count = 15);
 
-        Task<Pagination<Toutput>> GetCaptureByUser(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser,
+        Task<Pagination<Toutput>> GetCaptureByUser(string id,CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser,
             int index = 0, int count = 15);
     }
 

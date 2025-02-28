@@ -26,8 +26,8 @@ internal class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNorm
     public async Task<FullCaptureDetailDto?> GetById(string id)
         => (await Repository.GetById(id))?.ToResponseDto();
 
-    public async Task<Pagination<FullCaptureDetailDto>> GetCaptureDetailByCapture(CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
-        => (await Repository.GetCaptureDetailByCapture(criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<FullCaptureDetailDto>> GetCaptureDetailByCapture(string id, CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
+        => (await Repository.GetCaptureDetailByCapture(id,criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<Pagination<FullCaptureDetailDto>> GetCaptureDetailByDate(CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCaptureDate, int index = 0, int count = 15)
         => (await Repository.GetCaptureDetailByDate(criteria, index, count)).ToPagingResponseDtos();

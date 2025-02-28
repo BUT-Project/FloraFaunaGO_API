@@ -14,7 +14,7 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, 
             int index = 0, int count = 15);
 
-        Task<Pagination<Toutput>> GetEspeceByName(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom,
+        Task<Pagination<Toutput>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom,
             int index=0, int count = 15);
 
         Task<Pagination<Toutput>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille,

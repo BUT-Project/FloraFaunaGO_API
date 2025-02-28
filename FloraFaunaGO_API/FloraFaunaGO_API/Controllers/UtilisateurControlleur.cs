@@ -29,6 +29,10 @@ public class UtilisateurControlleur : ControllerBase
     public async Task<IActionResult> GetPlayerById(string id)
     {
         var user = await UserRepository.GetById(id);
+        if(user != null) { 
+            user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
+            user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
+        }
         return user != null ? Ok(user) : NotFound(id);
     }
 
@@ -43,6 +47,11 @@ public class UtilisateurControlleur : ControllerBase
     private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
         var result = await func();
+        foreach(var user in result.Items)
+        {
+            user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
+            user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 

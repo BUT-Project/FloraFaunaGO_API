@@ -14,6 +14,7 @@ public class IdentificationService
 
     private const string PLANT_API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
     private static readonly string plantApiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?lang=fr&api-key={PLANT_API_KEY}";
+    private static readonly string insectApiEndpoint = $"https://insect.kindwise.com/api/v1/identification";
 
     public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
     {

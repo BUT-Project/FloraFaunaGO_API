@@ -4,6 +4,7 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 namespace FloraFaunaGO_API.Controllers;
 
 [ApiController]
@@ -21,18 +22,31 @@ public class SuccessStateControlleur : ControllerBase
         Repository = service.SuccessStateRepository;
     }
 
-    [HttpGet("id={id}")]
+    [HttpGet("idSuccess={idSuccess}&&idUser={idUser}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<IActionResult> GetById(string idSuccess, string idUser)
     {
-        var result = await Repository.GetById(id);
-        return result != null ? Ok(result) : NotFound(id);
+        try
+        {
+            var result = await Repository.GetSuccessStateByUser_Success(idUser, idSuccess);
+            return result != null ? Ok(result) : NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        return NotFound();
     }
 
     private async Task<IActionResult> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.FirstOrDefault();
+            item.User = (await UnitOfWork.UserRepository.GetUserBySuccessState(item.State.Id)).Items.First().Utilisateur;
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 

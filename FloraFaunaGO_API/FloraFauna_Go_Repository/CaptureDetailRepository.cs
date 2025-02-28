@@ -30,10 +30,11 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<CaptureDetailsEntities>> GetCaptureDetailByCapture(CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
+        public async Task<Pagination<CaptureDetailsEntities>> GetCaptureDetailByCapture(string id,CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
         {
             IQueryable<CaptureDetailsEntities> query = Set;
-            query = query.OrderBy(captureDetail => captureDetail.CaptureId);
+            query = query.Where(captureDetail => captureDetail.CaptureId == id);
+            /*query = query.OrderBy(captureDetail => captureDetail.CaptureId);*/
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

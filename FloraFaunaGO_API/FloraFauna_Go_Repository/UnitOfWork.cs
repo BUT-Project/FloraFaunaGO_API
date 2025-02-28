@@ -168,7 +168,7 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                await SuccessStateRepository.Delete(successState.Id);
+                //await SuccessStateRepository.Delete(successState.Id);
 
                 // Remove successState from the user's SuccesState collection
                 if (user.SuccesState != null)
@@ -442,10 +442,10 @@ namespace FloraFauna_Go_Repository
                     await CaptureRepository.Delete(capture.Id);
                 }
 
-                foreach (var successState in successStates)
-                {
-                    await SuccessStateRepository.Delete(successState.Id);
-                }
+                //foreach (var successState in successStates)
+                //{
+                //    await SuccessStateRepository.Delete(successState.Id);
+                //}
 
                 await UserRepository.Delete(user.Id);
 

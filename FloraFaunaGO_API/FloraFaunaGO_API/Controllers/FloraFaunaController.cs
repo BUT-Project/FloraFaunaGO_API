@@ -69,8 +69,9 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteCapture(string id)
     {
         var capture = await UnitOfWork.CaptureRepository.GetById(id);
-        var user = await UnitOfWork.UserRepository.GetById(capture.Utilisateur.Utilisateur.ToEntities().Id);
-        var deleted = await UnitOfWork.DeleteCaptureAsync(capture.Capture, user.Utilisateur, capture.CaptureDetails.Select(cd => cd.CaptureDetail).ToArray());
+        var user = await UnitOfWork.UserRepository.GetById(capture.idUtilisateur);
+        var captureDetails = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(id);
+        var deleted = await UnitOfWork.DeleteCaptureAsync(capture.Capture, user!.Utilisateur, captureDetails?.Items?.Select(cd => cd.CaptureDetail).ToList() ?? new List<CaptureDetailNormalDto>());
         return deleted ? Ok() : NotFound();
     }
 
@@ -106,7 +107,7 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteUtilisateur(string id)
     {
         var user = await UnitOfWork.UserRepository.GetById(id);
-        var deleted = await UnitOfWork.DeleteUser(user.Utilisateur, user.Capture.Select(cd => cd.Capture).ToArray(), user.SuccessState.Select(success => success.State).ToArray());
+        var deleted = await UnitOfWork.DeleteUser(user.Utilisateur, user.Capture.ToList(), user.SuccessState.ToList());
         return deleted ? Ok() : NotFound();
     }
 

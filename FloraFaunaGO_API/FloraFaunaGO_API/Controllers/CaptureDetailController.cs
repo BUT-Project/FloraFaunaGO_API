@@ -27,6 +27,8 @@ public class CaptureDetailController : ControllerBase
     public async Task<IActionResult> GetById(string id)
     {
         var result = await CaptureDetailRepository.GetById(id);
+        var localisation = await UnitOfWork.LocalisationRepository.GetById(result.localisationNormalDtos.Id);
+        result.localisationNormalDtos = localisation;
         if (result == null) return NotFound();
         return Ok(result);
     }

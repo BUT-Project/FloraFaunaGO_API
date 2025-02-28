@@ -10,7 +10,7 @@ namespace FloraFauna_GO_Dto.Full;
 public class FullUtilisateurDto
 {
     public UtilisateurNormalDto Utilisateur { get; set; }
-    public FullCaptureDto[]? Capture { get; set; }
+    public CaptureNormalDto[]? Capture { get; set; }
 
-    public FullSuccessStateDto[]? SuccessState { get; set; }
+    public SuccessStateNormalDto[]? SuccessState { get; set; }
 }

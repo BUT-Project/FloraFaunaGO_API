@@ -35,6 +35,9 @@ internal class UserService : IUserRepository<UtilisateurNormalDto, FullUtilisate
     public async Task<Pagination<FullUtilisateurDto>> GetUserMail(UserOrderingCriteria criteria = UserOrderingCriteria.Mail, int index = 0, int count = 5)
         => (await Repository.GetUserMail(criteria, index, count)).ToPagingResponseDtos();
 
+    public async Task<Pagination<FullUtilisateurDto>> GetUserBySuccessState(string id, UserOrderingCriteria criteria = UserOrderingCriteria.None, int index = 0, int count = 5)
+        => (await Repository.GetUserBySuccessState(id, criteria, index, count)).ToPagingResponseDtos();
+
     public async Task<FullUtilisateurDto?> Insert(UtilisateurNormalDto item)
         => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();
 

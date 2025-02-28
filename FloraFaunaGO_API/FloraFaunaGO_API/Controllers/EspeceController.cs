@@ -1,6 +1,7 @@
 ﻿using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
+using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -43,13 +44,25 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByName(string name)
     {
-        var espece = await EspeceRepository.GetEspeceByName( EspeceOrderingCriteria.ByNom);
+        var espece = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
+        if (espece != null)
+        {
+            var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(espece.Items.First().Espece.Id);
+            espece.Items.First().localisationNormalDtos = localisations.Items.ToArray();
+        }
         return espece != null ? Ok(espece) : NotFound(name);
     }
 
     private async Task<IActionResult> GetEspeces(Func<Task<Pagination<FullEspeceDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.localisationNormalDtos = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(item.Espece.Id)).Items.ToArray();
+            for (int i = 0; i < item.localisationNormalDtos.Length; i++)
+                item.localisationNormalDtos[i] = await UnitOfWork.LocalisationRepository.GetById(item.localisationNormalDtos[i].Id);
+
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 

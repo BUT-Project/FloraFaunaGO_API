@@ -109,8 +109,8 @@ public static class Extension
         };
         Action<CaptureEntities, FullCaptureDto> linker = (entities, dto) =>
         {
-            dto.Espece = new FullEspeceDto() { Espece = new EspeceNormalDto() { Id = entities.EspeceId } };
-            dto.CaptureDetails = entities.CaptureDetails.Select(cd => cd.ToResponseDto()).ToArray();
+            dto.Capture.IdEspece = entities.EspeceId;
+            dto.idUtilisateur = entities.UtilisateurId;
         };
         return entities.ToT(null,creator, linker);
     }
@@ -291,8 +291,8 @@ public static class Extension
         };
         Action<UtilisateurEntities, FullUtilisateurDto> linker = (entities, dto) =>
         {
-            dto.Capture = entities.Captures.Select(c => c.ToResponseDto()).ToArray();
-            dto.SuccessState = entities.SuccesState.Select(s => s.ToResponseDto()).ToArray();
+            dto.Capture = entities.Captures.Select(c => c.ToDto()).ToArray();
+            dto.SuccessState = entities.SuccesState.Select(s => s.ToDto()).ToArray();
         };
         return entities.ToT(null, creator, linker);
     }
@@ -347,7 +347,6 @@ public static class Extension
     {
         Func<SuccessStateNormalDto, SuccesStateEntities> creator = (dto) => new SuccesStateEntities()
         {
-            Id = id,
             PercentSucces = dto.PercentSucces,
             IsSucces = dto.IsSucces,
         };
@@ -373,14 +372,9 @@ public static class Extension
             {
                 PercentSucces = entities.PercentSucces,
                 IsSucces = entities.IsSucces,
-                Id = entities.Id,
             },
         };
-        Action<SuccesStateEntities, FullSuccessStateDto> linker = (entities, dto) =>
-        {
-            dto.Success = entities.SuccesEntities.ToDto();
-        };
-        return entities.ToT(null, creator, linker);
+        return entities.ToT(null, creator, null);
     }
 
     public static Pagination<FullEspeceDto> ToPagingResponseDtos(this Pagination<EspeceEntities> entities)
