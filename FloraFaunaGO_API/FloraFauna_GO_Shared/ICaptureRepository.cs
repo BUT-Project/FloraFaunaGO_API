@@ -19,6 +19,9 @@ namespace FloraFauna_GO_Shared
 
         Task<Pagination<Toutput>> GetCaptureByUser(string id,CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser,
             int index = 0, int count = 15);
+
+        Task<Pagination<Toutput>> GetCaptureByCaptureDetail(string id, CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None,
+            int index = 0, int count = 15);
     }
 
     public interface ICaptureRepository<T> : ICaptureRepository<T, T>

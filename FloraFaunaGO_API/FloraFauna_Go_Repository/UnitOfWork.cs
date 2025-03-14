@@ -256,7 +256,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(user).ReloadAsync();
                 }
 
-                //await SaveChangesAsync();
+                await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -313,8 +313,11 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                await CaptureDetailRepository.Delete(captureDetail.Id);
-                capture.CaptureDetails.Remove(captureDetail);
+                
+                captureDetail.LocalisationId = localisation.Id;
+                captureDetail.CaptureId = capture.Id;
+                captureDetail.Capture = capture;
+                captureDetail.Localisation = localisation;
 
                 // Vérifier si la localisation est référencée par d'autres détails de capture
                 var isLocalisationReferenced = await Context.CaptureDetails.AnyAsync(cd => cd.LocalisationId == localisation.Id);
@@ -330,8 +333,11 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(capture).ReloadAsync();
                 }
 
-                
-                //await SaveChangesAsync();
+                await CaptureDetailRepository.Delete(captureDetail.Id);
+                capture.CaptureDetails.Remove(captureDetail);
+
+
+                await SaveChangesAsync();
                 return true;
             }
             catch (Exception)

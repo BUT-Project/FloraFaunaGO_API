@@ -30,6 +30,25 @@ namespace FloraFauna_Go_Repository
             };
         }
 
+        public async Task<Pagination<CaptureEntities>> GetCaptureByCaptureDetail(string id, CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None, int index = 0, int count = 15)
+        {
+            IQueryable<CaptureEntities> query = Set;
+
+            query = query.Where(capture => capture.CaptureDetails.Any(detail => detail.Id == id));
+            /*query = query.OrderBy(capture => capture.UtilisateurId);*/
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
+            return new Pagination<CaptureEntities>
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+
         public async Task<Pagination<CaptureEntities>> GetCaptureByNumero(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByNumero, int index = 0, int count = 15)
         {
             IQueryable<CaptureEntities> query = Set;

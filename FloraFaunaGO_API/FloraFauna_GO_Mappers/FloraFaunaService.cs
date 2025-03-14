@@ -4,6 +4,7 @@ using FloraFauna_GO_Entities;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace FloraFauna_GO_Entities2Dto;
 
@@ -93,7 +94,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> DeleteCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user, IEnumerable<CaptureDetailNormalDto> captureDetails)
     {
-        bool result = await DbUnitOfWork.DeleteCaptureAsync(capture.ToEntities(), user.ToEntities(), captureDetails.Select(x => x.ToEntities()));
+        bool result = await DbUnitOfWork.DeleteCaptureAsync(capture.ToEntities(capture.Id), user.ToEntities(user.Id), captureDetails.Select(x => x.ToEntities(x.Id)));
         return result;
     }
 
@@ -105,7 +106,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailNormalDto captureDetail, CaptureNormalDto capture, LocalisationNormalDto localisation)
     {
-        bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(), capture.ToEntities(), localisation.ToEntities());
+        bool result = await DbUnitOfWork.DeleteCaptureDetailAsync(captureDetail.ToEntities(captureDetail.Id), capture.ToEntities(capture.Id), localisation.ToEntities(localisation.Id));
         return result;
     }
 

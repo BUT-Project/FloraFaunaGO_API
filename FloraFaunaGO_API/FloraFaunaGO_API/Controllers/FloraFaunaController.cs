@@ -95,8 +95,8 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteCaptureDetail(string id)
     {
         var captureDetail = await UnitOfWork.CaptureDetailRepository.GetById(id);
-        var capture = await UnitOfWork.CaptureRepository.GetById(captureDetail.CaptureDetail.ToEntities().CaptureId);
-        var localisation = await UnitOfWork.LocalisationRepository.GetById(captureDetail.CaptureDetail.ToEntities().LocalisationId);
+        var capture = (await UnitOfWork.CaptureRepository.GetCaptureByCaptureDetail(id)).Items.FirstOrDefault();
+        var localisation = (await UnitOfWork.LocalisationRepository.GetLocalisationByCaptureDetail(id)).Items.FirstOrDefault();
         var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail,capture.Capture, localisation);
         return deleted ? Ok() : NotFound();
     }

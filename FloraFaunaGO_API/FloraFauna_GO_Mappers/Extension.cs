@@ -68,7 +68,7 @@ public static class Extension
             {
                 new CaptureDetailsEntities()
                 {
-                    Localisation = dto.LocalisationNormalDto!.ToEntities(),
+                    Localisation = dto.LocalisationNormalDto != null ? dto.LocalisationNormalDto.ToEntities() : null,
                     Shiny = dto.Shiny ?? false
                 }
             },
