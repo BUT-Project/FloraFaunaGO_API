@@ -82,7 +82,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> DeleteSuccesStateAsync(SuccessStateNormalDto successState, UtilisateurNormalDto user, SuccessNormalDto success)
     {
-        bool result = await DbUnitOfWork.DeleteSuccesStateAsync(successState.ToEntities(), user.ToEntities(), success.ToEntities());
+        bool result = await DbUnitOfWork.DeleteSuccesStateAsync(successState.ToEntities(successState.Id), user.ToEntities(user.Id), success.ToEntities(success.Id));
         return result;
     }
 
@@ -112,7 +112,13 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> DeleteUser(UtilisateurNormalDto user, IEnumerable<CaptureNormalDto> captures, IEnumerable<SuccessStateNormalDto> successStates)
     {
-        bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(), captures.Select(c => c.ToEntities()), successStates.Select(x => x.ToEntities())); 
+        var captureDto = captures.Select(c => c.ToEntities(c.Id));
+        foreach (var capture in captureDto)
+        {
+            var captureDetails = await CaptureDetailRepository.GetCaptureDetailByCapture(capture.Id);
+            var localisations = captureDetails.Items.Select(cd => cd.localisationNormalDtos);
+        }
+        bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(user.Id), captureDto, successStates.Select(x => x.ToEntities(x.Id))); 
         return result;
     }
 

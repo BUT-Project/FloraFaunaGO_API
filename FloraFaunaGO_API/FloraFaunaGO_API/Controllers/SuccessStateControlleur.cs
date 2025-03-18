@@ -22,14 +22,17 @@ public class SuccessStateControlleur : ControllerBase
         Repository = service.SuccessStateRepository;
     }
 
-    [HttpGet("idSuccess={idSuccess}&&idUser={idUser}")]
+    [HttpGet("id={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string idSuccess, string idUser)
+    public async Task<IActionResult> GetById(string id)
     {
         try
         {
-            var result = await Repository.GetSuccessStateByUser_Success(idUser, idSuccess);
+            var result = await Repository.GetById(id);
+            if (result == null) return NotFound();
+            result.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(id)).Items.FirstOrDefault();
+            result.User = (await UnitOfWork.UserRepository.GetUserBySuccessState(id)).Items.FirstOrDefault().Utilisateur;
             return result != null ? Ok(result) : NoContent();
         }
         catch (Exception e)

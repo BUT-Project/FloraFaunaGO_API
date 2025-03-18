@@ -42,8 +42,9 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteSuccessState(string id)
     {
         var successState = await UnitOfWork.SuccessStateRepository.GetById(id);
-        var user = await UnitOfWork.UserRepository.GetById(successState.State.ToEntities().UtilisateurId);
-        var success = await UnitOfWork.SuccessRepository.GetById(successState!.Success.Id!);
+        if (successState == null) return NotFound();
+        var user = (await UnitOfWork.UserRepository.GetUserBySuccessState(id)).Items.FirstOrDefault();
+        var success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(id)).Items.FirstOrDefault();
         var deleted = await UnitOfWork.DeleteSuccesStateAsync(successState.State, user.Utilisateur, success);
         return deleted ? Ok() : NotFound();
     }
@@ -107,6 +108,9 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteUtilisateur(string id)
     {
         var user = await UnitOfWork.UserRepository.GetById(id);
+        if (user == null) return NotFound();
+        user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(id)).Items.Select(c => c.Capture).ToArray();
+        user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(id)).Items.Select(s => s.State).ToArray();
         var deleted = await UnitOfWork.DeleteUser(user.Utilisateur, user.Capture.ToList(), user.SuccessState.ToList());
         return deleted ? Ok() : NotFound();
     }

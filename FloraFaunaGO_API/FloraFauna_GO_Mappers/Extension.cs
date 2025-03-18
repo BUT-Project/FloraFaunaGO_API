@@ -82,7 +82,7 @@ public static class Extension
         {
             Id = id,
             Photo = dto.photo,
-            EspeceId = dto.IdEspece,
+            EspeceId = dto.IdEspece
         };
         return dto.ToU(Mappers.CaptureMapper, creator);
     }
@@ -347,6 +347,7 @@ public static class Extension
     {
         Func<SuccessStateNormalDto, SuccesStateEntities> creator = (dto) => new SuccesStateEntities()
         {
+            Id = id,
             PercentSucces = dto.PercentSucces,
             IsSucces = dto.IsSucces,
         };
@@ -370,6 +371,7 @@ public static class Extension
         {
             State = new SuccessStateNormalDto()
             {
+                Id = entities.Id,
                 PercentSucces = entities.PercentSucces,
                 IsSucces = entities.IsSucces,
             },

@@ -168,7 +168,12 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                //await SuccessStateRepository.Delete(successState.Id);
+                await SuccessStateRepository.Delete(successState.Id);
+
+                successState.UtilisateurId = user.Id;
+                successState.SuccesEntitiesId = success.Id;
+                successState.UtilisateurEntities = user;
+                successState.SuccesEntities = success;
 
                 // Remove successState from the user's SuccesState collection
                 if (user.SuccesState != null)
@@ -194,7 +199,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(success).ReloadAsync();
                 }
 
-                //await SaveChangesAsync();
+                await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -441,17 +446,13 @@ namespace FloraFauna_Go_Repository
             {
                 foreach (var capture in captures)
                 {
-                    foreach (var captureDetail in capture.CaptureDetails)
-                    {
-                        await CaptureDetailRepository.Delete(captureDetail.Id);
-                    }
-                    await CaptureRepository.Delete(capture.Id);
+                    await DeleteCaptureAsync(capture, user, (await CaptureDetailRepository.GetCaptureDetailByCapture(capture.Id)).Items);
                 }
 
-                //foreach (var successState in successStates)
-                //{
-                //    await SuccessStateRepository.Delete(successState.Id);
-                //}
+                foreach (var successState in successStates)
+                {
+                    await DeleteSuccesStateAsync(successState, user, (await SuccessRepository.GetSuccessBySuccessState(successState.Id)).Items.FirstOrDefault());
+                }
 
                 await UserRepository.Delete(user.Id);
 
