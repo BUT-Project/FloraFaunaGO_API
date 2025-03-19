@@ -43,4 +43,7 @@ internal class UserService : IUserRepository<UtilisateurNormalDto, FullUtilisate
 
     public async Task<FullUtilisateurDto?> Update(string id, UtilisateurNormalDto item)
         => (await Repository.Update(id, item.ToEntities()))?.ToResponseDto();
+
+    public async Task<Pagination<FullUtilisateurDto>> GetUserByCapture(string id, UserOrderingCriteria criteria = UserOrderingCriteria.None, int index = 0, int count = 5)
+        => (await Repository.GetUserByCapture(id, criteria, index, count)).ToPagingResponseDtos();
 }

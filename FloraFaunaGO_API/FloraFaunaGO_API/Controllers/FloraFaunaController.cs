@@ -134,6 +134,8 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> DeleteEspece(string id)
     {
         var espece = await UnitOfWork.EspeceRepository.GetById(id);
+        if (espece == null) return NotFound();
+        espece.localisationNormalDtos = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id)).Items.ToArray();
         var deleted = await UnitOfWork.DeleteEspeceAsync(espece.Espece, espece.localisationNormalDtos);
         return deleted ? Ok() : NotFound();
     }

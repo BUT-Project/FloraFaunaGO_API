@@ -130,7 +130,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, IEnumerable<LocalisationNormalDto> localisations)
     {
-        bool result = await DbUnitOfWork.DeleteEspeceAsync(espece.ToEntities(), localisations.Select(l => l.ToEntities()));
+        bool result = await DbUnitOfWork.DeleteEspeceAsync(espece.ToEntities(espece.Id), localisations.Select(l => l.ToEntities(l.Id)));
         return result;
     }
 }

@@ -395,6 +395,13 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
+                /*
+                 Delete Order:
+                1. Delete EspeceLocalisation (idEspece & idLocalisation)
+                2. Delete Capture (CaptureDetail with it -> use DeleteCaptureAsync)
+                3. Delete Localisation associated with
+                4. Delete Espece
+                 */
                 foreach (var localisation in localisations)
                 {
                     var especeLocalisations = await Context.EspeceLocalisation
@@ -426,6 +433,17 @@ namespace FloraFauna_Go_Repository
                             Context.Localisation.Remove(localisationEntity);
                         }
                     }
+                }
+
+                var captures = await Context.Captures
+                    .Include(c => c.CaptureDetails)
+                    .Where(c => c.EspeceId == espece.Id)
+                    .ToListAsync();
+
+                foreach (var capturing in captures) {
+                    var CaptureDetails = (await CaptureDetailRepository.GetCaptureDetailByCapture(capturing.Id)).Items.ToList();
+                    var Utilisateur = (await UserRepository.GetUserByCapture(capturing.Id)).Items.FirstOrDefault();
+                    await DeleteCaptureAsync(capturing, Utilisateur, CaptureDetails);
                 }
 
                 await EspeceRepository.Delete(espece.Id);
