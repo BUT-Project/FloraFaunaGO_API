@@ -26,7 +26,7 @@ public class EspeceController : ControllerBase
         EspeceRepository = UnitOfWork.EspeceRepository;
     }
 
-    [HttpGet ("id={id}")]
+    [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
@@ -94,36 +94,13 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
-    /*[HttpPost]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostEspece([FromBody] EspeceNormalDto dto)
-    {
-        var Toto = await EspeceRepository.Insert(dto);
-        var inserted = await UnitOfWork.SaveChangesAsync();
-
-        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-        var insertedEspece = inserted?.SingleOrDefault();
-        return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
-    }*/
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] EspeceNormalDto dto)
+    public async Task<IActionResult> PutEspece(string id, [FromBody] EspeceNormalDto dto)
     {
         var result = await EspeceRepository.Update(id,dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }
-
-    /*[HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteEspece([FromQuery] string id)
-    {
-        bool result = await EspeceRepository.Delete(id);
-        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-        return result ? Ok() : NotFound(id);
-    }*/
 }

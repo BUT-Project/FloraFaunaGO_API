@@ -46,4 +46,7 @@ internal class UserService : IUserRepository<UtilisateurNormalDto, FullUtilisate
 
     public async Task<Pagination<FullUtilisateurDto>> GetUserByCapture(string id, UserOrderingCriteria criteria = UserOrderingCriteria.None, int index = 0, int count = 5)
         => (await Repository.GetUserByCapture(id, criteria, index, count)).ToPagingResponseDtos();
+
+    public async Task<Pagination<FullUtilisateurDto>> GetUserByMail(string mail, UserOrderingCriteria criteria = UserOrderingCriteria.Mail, int index = 0, int count = 5)
+        => (await Repository.GetUserByMail(mail, criteria, index, count)).ToPagingResponseDtos();
 }

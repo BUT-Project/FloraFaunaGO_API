@@ -21,7 +21,7 @@ public class SuccessControlleur : ControllerBase
         SuccessRepository = service.SuccessRepository;
     }
 
-    [HttpGet("id={id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
@@ -59,20 +59,20 @@ public class SuccessControlleur : ControllerBase
         return insertedSuccess != null ? CreatedAtAction(nameof(PostSuccess), insertedSuccess) : BadRequest();
     }
 
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutSuccess([FromQuery] string id,[FromBody] SuccessNormalDto dto)
+    public async Task<IActionResult> PutSuccess(string id,[FromBody] SuccessNormalDto dto)
     {
         var result = await SuccessRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccess), result) : NotFound();
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteSuccess([FromQuery] string id)
+    public async Task<IActionResult> DeleteSuccess(string id)
     {
         bool result = await SuccessRepository.Delete(id);
         if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);

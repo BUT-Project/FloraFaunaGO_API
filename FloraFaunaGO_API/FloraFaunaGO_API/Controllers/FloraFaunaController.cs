@@ -55,6 +55,17 @@ public class FloraFaunaController : ControllerBase
     public async Task<IActionResult> PostCapture([FromBody] NewCaptureDto dto, string iduser, string idespece)
     {
         if (dto == null) return BadRequest();
+        var capture = (await UnitOfWork.CaptureRepository.GetCaptureByEspece(idespece)).Items.Where(c => c.idUtilisateur == iduser).FirstOrDefault();
+        if (capture != null)
+        {
+            return await PostCaptureDetail(
+                new NewCaptureDetailDto()
+                {
+                    Localisation = dto.LocalisationNormalDto,
+                    CaptureDetail = new CaptureDetailNormalDto() { Shiny = dto.Shiny }
+                },
+                capture.Capture.Id ?? string.Empty);
+        }
         var user = await UnitOfWork.UserRepository.GetById(iduser);
         _ = await UnitOfWork.AddCaptureAsync(new CaptureNormalDto() { Id = dto.Id, photo = dto.photo, IdEspece = idespece, LocalisationNormalDto = dto.LocalisationNormalDto }, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();

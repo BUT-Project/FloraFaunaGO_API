@@ -38,7 +38,7 @@ public class CaptureController : ControllerBase
     /// <response code="400">Product has missing/invalid values</response>
     /// <response code="500">Oops! Can't create your product right now</response>
 */
-    [HttpGet ("id={id}")]
+    [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureById(string id)
@@ -56,7 +56,7 @@ public class CaptureController : ControllerBase
         return capture != null ? Ok(capture) : NotFound();
     }
 
-    [HttpGet ("user={id}")]
+    [HttpGet ("idUser={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureByUser(string id)
@@ -92,7 +92,7 @@ public class CaptureController : ControllerBase
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 
-    [HttpGet("all")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllCapture([FromQuery] CaptureOrderingCriteria criterium = CaptureOrderingCriteria.None,
@@ -102,23 +102,10 @@ public class CaptureController : ControllerBase
         return await GetCapture(async () => await CaptureRepository.GetAllCapture(CaptureOrderingCriteria.None, index, count));
     }
 
-    //[HttpPost]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //public async Task<IActionResult> PostCapture([FromBody] FullCaptureDto dto)
-    //{
-    //    var capture = await CaptureRepository.Insert(dto);
-    //    var inserted = await UnitOfWork.SaveChangesAsync();
-
-    //    if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-    //    var insertedCapture = inserted?.SingleOrDefault();
-    //    return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture) : BadRequest();
-    //}
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutCapture([FromQuery] string id, [FromBody] EditCaptureDto dto)
+    public async Task<IActionResult> PutCapture(string id, [FromBody] EditCaptureDto dto)
     {
         var capture = await CaptureRepository.GetById(id);
         if (dto.idEspece != null) capture.Capture.IdEspece = dto.idEspece;
@@ -127,14 +114,4 @@ public class CaptureController : ControllerBase
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutCapture), result) : NotFound(id);
     }
-
-    //[HttpDelete]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> DeleteCapture([FromQuery] string id)
-    //{
-    //    bool result = await CaptureRepository.Delete(id);
-    //    if(await  UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-    //    return result ? Ok(result) : NotFound(id);
-    //}
 }

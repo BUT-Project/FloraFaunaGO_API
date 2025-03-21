@@ -21,7 +21,7 @@ public class CaptureDetailController : ControllerBase
         CaptureDetailRepository = service.CaptureDetailRepository;
     }
 
-    [HttpGet ("id={id}")]
+    [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
@@ -53,20 +53,7 @@ public class CaptureDetailController : ControllerBase
         return await GetCaptureDetail(async () => await CaptureDetailRepository.GetAllCaptureDetail(criterium, index, count));
     }
 
-    //[HttpPost]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> PostCaptureDetail([FromBody] FullCaptureDetailDto dto)
-    //{
-    //    _ = await CaptureDetailRepository.Insert(dto);
-    //    var inserted = await UnitOfWork.SaveChangesAsync();
-
-    //    if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-    //    var insertedCaptureDetail = inserted.SingleOrDefault();
-    //    return insertedCaptureDetail != null ? CreatedAtAction(nameof(PostCaptureDetail),insertedCaptureDetail) : BadRequest();
-    //}
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
@@ -75,14 +62,4 @@ public class CaptureDetailController : ControllerBase
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutCaptureDetail), result) : NotFound(id);
     }
-
-    //[HttpDelete]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> DeleteCaptureDetail([FromQuery] string id)
-    //{
-    //    var result = await CaptureDetailRepository.Delete(id);
-    //    if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-    //    return result ? Ok() : NotFound(id);
-    //}
 }
