@@ -24,17 +24,24 @@ internal class SuccessStateService : ISuccessStateRepository<SuccessStateNormalD
         => (await Repository.GetAllSuccessState(criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<FullSuccessStateDto?> GetById(string id)
-        => (await Repository.GetById(id))?.ToResponseDto();
+    {
+        var result = await Repository.GetById(id);
+        return result?.ToResponseDto();
+    }
+        //=> (await Repository.GetById(id))?.ToResponseDto();
 
     public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateBySuccess(SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.BySuccess, int index = 0, int count = 10)
         => (await Repository.GetSuccessStateBySuccess(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateByUser(SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
-        => (await Repository.GetSuccessStateByUser(criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateByUser(string id,SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
+        => (await Repository.GetSuccessStateByUser(id,criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<FullSuccessStateDto?> Insert(SuccessStateNormalDto item)
         => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();
 
     public async Task<FullSuccessStateDto?> Update(string id, SuccessStateNormalDto item)
         => (await Repository.Update(id, item.ToEntities()))?.ToResponseDto();
+
+    public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateByUser_Success(string idSuccess, string idUser, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
+        => (await Repository.GetSuccessStateByUser_Success(idSuccess, idUser, criteria, index, count)).ToPagingResponseDtos();
 }

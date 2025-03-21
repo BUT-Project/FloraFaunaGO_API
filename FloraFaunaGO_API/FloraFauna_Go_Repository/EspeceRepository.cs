@@ -94,11 +94,12 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<EspeceEntities>> GetEspeceByName(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
+        public async Task<Pagination<EspeceEntities>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
         {
             IQueryable<EspeceEntities> query = Set;
 
-            query = query.OrderBy(espece => espece.Nom);
+            query = query.Where(espece => espece.Nom == name);
+            /*query = query.OrderBy(espece => espece.Nom);*/
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

@@ -92,7 +92,8 @@ namespace FloraFauna_GO_Entities
                 .HasForeignKey(ss => ss.SuccesEntitiesId);
 
             modelBuilder.Entity<SuccesStateEntities>()
-                .HasKey(ss => new { ss.SuccesEntitiesId, ss.UtilisateurId });
+                .HasIndex(ss => new { ss.SuccesEntitiesId, ss.UtilisateurId })
+                .IsUnique();
         }
     }
 }

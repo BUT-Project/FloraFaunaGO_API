@@ -121,25 +121,13 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                successState.UtilisateurEntities = user;
-                successState.SuccesEntities = success;
+                successState.SuccesEntitiesId = success.Id;
+                successState.UtilisateurId = user.Id;
 
                 if (await SuccessStateRepository.Insert(successState) == null)
                 {
                     Context.SuccesState.Attach(successState);
                     await Context.Entry(successState).ReloadAsync();
-                }
-
-                if (await UserRepository.Insert(user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
-
-                if (await SuccessRepository.Insert(success) == null)
-                {
-                    Context.Succes.Attach(success);
-                    await Context.Entry(success).ReloadAsync();
                 }
 
                 if (user.SuccesState == null)
@@ -166,7 +154,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(success).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -181,6 +169,11 @@ namespace FloraFauna_Go_Repository
             try
             {
                 await SuccessStateRepository.Delete(successState.Id);
+
+                successState.UtilisateurId = user.Id;
+                successState.SuccesEntitiesId = success.Id;
+                successState.UtilisateurEntities = user;
+                successState.SuccesEntities = success;
 
                 // Remove successState from the user's SuccesState collection
                 if (user.SuccesState != null)
@@ -220,6 +213,7 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
+                capture.UtilisateurId = user.Id;
                 if (await CaptureRepository.Insert(capture) == null)
                 {
                     Context.Captures.Attach(capture);
@@ -240,7 +234,7 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(user).ReloadAsync();
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -277,8 +271,7 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, 
-                                                        LocalisationEntities localisation)
+        public async Task<bool> AddCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, LocalisationEntities localisation)
         {
             try
             {
@@ -288,8 +281,9 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(localisation).ReloadAsync();
                 }
 
-                captureDetail.Localisation = localisation;
                 captureDetail.LocalisationId = localisation.Id;
+                captureDetail.CaptureId = capture.Id;
+
 
                 if (await CaptureDetailRepository.Insert(captureDetail) == null)
                 {
@@ -298,19 +292,18 @@ namespace FloraFauna_Go_Repository
                 }
 
                 if (capture.CaptureDetails == null)
-                {
                     capture.CaptureDetails = new List<CaptureDetailsEntities>();
-                }
+
                 capture.CaptureDetails.Add(captureDetail);
 
-                if (await CaptureRepository.Update(capture.Id, capture) == null)
-                {
-                    Context.Captures.Attach(capture);
-                    await Context.Entry(capture).ReloadAsync();
-                }
+                //if (await CaptureRepository.Update(capture.Id, capture) == null)
+                //{
+                //    Context.Captures.Attach(capture);
+                //    await Context.Entry(capture).ReloadAsync();
+                //}
 
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -325,8 +318,11 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
-                await CaptureDetailRepository.Delete(captureDetail.Id);
-                capture.CaptureDetails.Remove(captureDetail);
+                
+                captureDetail.LocalisationId = localisation.Id;
+                captureDetail.CaptureId = capture.Id;
+                captureDetail.Capture = capture;
+                captureDetail.Localisation = localisation;
 
                 // Vérifier si la localisation est référencée par d'autres détails de capture
                 var isLocalisationReferenced = await Context.CaptureDetails.AnyAsync(cd => cd.LocalisationId == localisation.Id);
@@ -342,7 +338,10 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(capture).ReloadAsync();
                 }
 
-                
+                await CaptureDetailRepository.Delete(captureDetail.Id);
+                capture.CaptureDetails.Remove(captureDetail);
+
+
                 await SaveChangesAsync();
                 return true;
             }
@@ -382,7 +381,7 @@ namespace FloraFauna_Go_Repository
                     Context.EspeceLocalisation.Add(especeLocalisation);
                 }
 
-                await SaveChangesAsync();
+                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -396,6 +395,13 @@ namespace FloraFauna_Go_Repository
         {
             try
             {
+                /*
+                 Delete Order:
+                1. Delete EspeceLocalisation (idEspece & idLocalisation)
+                2. Delete Capture (CaptureDetail with it -> use DeleteCaptureAsync)
+                3. Delete Localisation associated with
+                4. Delete Espece
+                 */
                 foreach (var localisation in localisations)
                 {
                     var especeLocalisations = await Context.EspeceLocalisation
@@ -429,6 +435,17 @@ namespace FloraFauna_Go_Repository
                     }
                 }
 
+                var captures = await Context.Captures
+                    .Include(c => c.CaptureDetails)
+                    .Where(c => c.EspeceId == espece.Id)
+                    .ToListAsync();
+
+                foreach (var capturing in captures) {
+                    var CaptureDetails = (await CaptureDetailRepository.GetCaptureDetailByCapture(capturing.Id)).Items.ToList();
+                    var Utilisateur = (await UserRepository.GetUserByCapture(capturing.Id)).Items.FirstOrDefault();
+                    await DeleteCaptureAsync(capturing, Utilisateur, CaptureDetails);
+                }
+
                 await EspeceRepository.Delete(espece.Id);
 
                 await SaveChangesAsync();
@@ -447,16 +464,12 @@ namespace FloraFauna_Go_Repository
             {
                 foreach (var capture in captures)
                 {
-                    foreach (var captureDetail in capture.CaptureDetails)
-                    {
-                        await CaptureDetailRepository.Delete(captureDetail.Id);
-                    }
-                    await CaptureRepository.Delete(capture.Id);
+                    await DeleteCaptureAsync(capture, user, (await CaptureDetailRepository.GetCaptureDetailByCapture(capture.Id)).Items);
                 }
 
                 foreach (var successState in successStates)
                 {
-                    await SuccessStateRepository.Delete(successState.Id);
+                    await DeleteSuccesStateAsync(successState, user, (await SuccessRepository.GetSuccessBySuccessState(successState.Id)).Items.FirstOrDefault());
                 }
 
                 await UserRepository.Delete(user.Id);

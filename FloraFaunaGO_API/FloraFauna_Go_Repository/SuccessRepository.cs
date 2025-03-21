@@ -30,13 +30,30 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<SuccesEntities>> GetSuccessByName(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName, int index = 0, int count = 10)
+        public async Task<Pagination<SuccesEntities>> GetSuccessByName(string name, SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName, int index = 0, int count = 10)
         {
             IQueryable<SuccesEntities> query = Set;
             query = query.OrderBy(success => success.Nom);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
+            return new Pagination<SuccesEntities>()
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items
+            };
+        }
+
+        public async Task<Pagination<SuccesEntities>> GetSuccessBySuccessState(string id, SuccessOrderingCreteria criteria = SuccessOrderingCreteria.None, int index = 0, int count = 10)
+        {
+            IQueryable<SuccesEntities> query = Set;
+            query = query.Where(success => success.SuccesStates.Any(sState => sState.Id == id));
+
+            var totalCount = await query.CountAsync();
+            var items = await query.Skip(index * count).Take(count).ToListAsync();
+
             return new Pagination<SuccesEntities>()
             {
                 TotalCount = totalCount,

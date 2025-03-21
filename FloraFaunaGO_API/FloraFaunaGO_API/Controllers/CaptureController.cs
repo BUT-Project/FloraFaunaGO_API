@@ -1,4 +1,5 @@
 ﻿
+using FloraFauna_GO_Dto.Edit;
 using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
@@ -6,6 +7,7 @@ using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -26,36 +28,71 @@ public class CaptureController : ControllerBase
         UnitOfWork = service;
         CaptureRepository = service.CaptureRepository;
     }
-
+/*
     /// <summary>
     /// get Capture by id
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
-    [HttpGet ("id={id}")]
+    /// <param name="id">identifiant de capture</param>
+    /// <remarks>Cool</remarks>
+    /// <response code="200">Product created</response>
+    /// <response code="400">Product has missing/invalid values</response>
+    /// <response code="500">Oops! Can't create your product right now</response>
+*/
+    [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureById(string id)
     {
         var capture = await CaptureRepository.GetById(id);
+        if (capture != null)
+        {
+            var cd = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(capture.Capture.Id, CaptureDetailOrderingCriteria.None);
+            capture.CaptureDetails = cd.Items.ToList();
+            foreach (var item in capture.CaptureDetails)
+            {
+                item.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(item.localisationNormalDtos.Id);
+            }
+        }
         return capture != null ? Ok(capture) : NotFound();
     }
 
-    [HttpGet ("user={id}")]
+    [HttpGet ("idUser={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureByUser(string id)
     {
-        throw new NotImplementedException();
+        var capture = await CaptureRepository.GetCaptureByUser(id, CaptureOrderingCriteria.ByUser);
+        if (capture != null && !capture.Items.IsNullOrEmpty())
+        {
+            foreach (var item in capture.Items)
+            {
+                var cd = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(item.Capture.Id, CaptureDetailOrderingCriteria.None);
+                item.CaptureDetails = cd.Items.ToList();
+                foreach (var captureDetail in item.CaptureDetails)
+                {
+                    captureDetail.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(captureDetail.localisationNormalDtos.Id);
+                }
+            }
+        }
+        return capture != null ? Ok(capture) : NotFound();
     }
 
     private async Task<IActionResult> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
     {
         var result = await func();
+        foreach(var item in result.Items)
+        {
+            var cd = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(item.Capture.Id, CaptureDetailOrderingCriteria.None);
+            item.CaptureDetails = cd.Items.ToList();
+            foreach (var captureDetail in item.CaptureDetails)
+            {
+                captureDetail.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(captureDetail.localisationNormalDtos.Id);
+            }
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 
-    [HttpGet("all")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllCapture([FromQuery] CaptureOrderingCriteria criterium = CaptureOrderingCriteria.None,
@@ -65,36 +102,16 @@ public class CaptureController : ControllerBase
         return await GetCapture(async () => await CaptureRepository.GetAllCapture(CaptureOrderingCriteria.None, index, count));
     }
 
-    //[HttpPost]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //public async Task<IActionResult> PostCapture([FromBody] FullCaptureDto dto)
-    //{
-    //    var capture = await CaptureRepository.Insert(dto);
-    //    var inserted = await UnitOfWork.SaveChangesAsync();
-
-    //    if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-    //    var insertedCapture = inserted?.SingleOrDefault();
-    //    return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture) : BadRequest();
-    //}
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutCapture([FromQuery] string id, [FromBody] CaptureNormalDto dto)
+    public async Task<IActionResult> PutCapture(string id, [FromBody] EditCaptureDto dto)
     {
-        var result = await CaptureRepository.Update(id, dto);
+        var capture = await CaptureRepository.GetById(id);
+        if (dto.idEspece != null) capture.Capture.IdEspece = dto.idEspece;
+        if (dto.photo != null) capture.Capture.photo = dto.photo;
+        var result = await CaptureRepository.Update(id, capture.Capture);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutCapture), result) : NotFound(id);
     }
-
-    //[HttpDelete]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> DeleteCapture([FromQuery] string id)
-    //{
-    //    bool result = await CaptureRepository.Delete(id);
-    //    if(await  UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-    //    return result ? Ok(result) : NotFound(id);
-    //}
 }

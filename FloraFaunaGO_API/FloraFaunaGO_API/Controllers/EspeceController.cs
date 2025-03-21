@@ -1,6 +1,7 @@
 ﻿using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
+using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -25,16 +26,15 @@ public class EspeceController : ControllerBase
         EspeceRepository = UnitOfWork.EspeceRepository;
     }
 
-    [HttpGet ("id={id}")]
+    [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
     {
         var espece = await EspeceRepository.GetById(id);
-        IEnumerable<LocalisationNormalDto> Localisation = espece.localisationNormalDtos;
-        espece.localisationNormalDtos = [];
-        foreach (var item in Localisation)
-            espece.localisationNormalDtos.Append(await UnitOfWork.LocalisationRepository.GetById(item.Id));
+        var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id);
+        if (espece != null)
+            espece.localisationNormalDtos = localisations.Items.ToArray();
 
         return espece != null ? Ok(espece) : NotFound(id);
     }
@@ -44,13 +44,25 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByName(string name)
     {
-        var espece = await EspeceRepository.GetEspeceByName( EspeceOrderingCriteria.ByNom);
+        var espece = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
+        if (espece != null)
+        {
+            var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(espece.Items.First().Espece.Id);
+            espece.Items.First().localisationNormalDtos = localisations.Items.ToArray();
+        }
         return espece != null ? Ok(espece) : NotFound(name);
     }
 
     private async Task<IActionResult> GetEspeces(Func<Task<Pagination<FullEspeceDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.localisationNormalDtos = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(item.Espece.Id)).Items.ToArray();
+            for (int i = 0; i < item.localisationNormalDtos.Length; i++)
+                item.localisationNormalDtos[i] = await UnitOfWork.LocalisationRepository.GetById(item.localisationNormalDtos[i].Id);
+
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 
@@ -82,36 +94,13 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
-    /*[HttpPost]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostEspece([FromBody] EspeceNormalDto dto)
-    {
-        var Toto = await EspeceRepository.Insert(dto);
-        var inserted = await UnitOfWork.SaveChangesAsync();
-
-        if ((inserted?.Count() ?? -1) != 1) return BadRequest();
-        var insertedEspece = inserted?.SingleOrDefault();
-        return insertedEspece != null ? CreatedAtAction(nameof(PostEspece), insertedEspece) : BadRequest();
-    }*/
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> PutEspece([FromQuery] string id, [FromBody] EspeceNormalDto dto)
+    public async Task<IActionResult> PutEspece(string id, [FromBody] EspeceNormalDto dto)
     {
         var result = await EspeceRepository.Update(id,dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }
-
-    /*[HttpDelete]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteEspece([FromQuery] string id)
-    {
-        bool result = await EspeceRepository.Delete(id);
-        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-        return result ? Ok() : NotFound(id);
-    }*/
 }

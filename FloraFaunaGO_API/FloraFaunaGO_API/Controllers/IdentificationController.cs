@@ -19,7 +19,7 @@ public class IdentificationController : ControllerBase
         Service = new IdentificationService(UnitOfWork.EspeceRepository);
     }
 
-    [HttpPost("{especeType}")]
+    [HttpGet("{especeType}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> AskToIdentifyAPI(string especeType, [FromBody] AnimalIdentifyNormalDto dto)

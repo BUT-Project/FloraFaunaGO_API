@@ -47,10 +47,10 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<SuccesStateEntities>> GetSuccessStateByUser(SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
+        public async Task<Pagination<SuccesStateEntities>> GetSuccessStateByUser(string id, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
         {
             IQueryable<SuccesStateEntities> query = Set;
-            query = query.OrderBy(success => success.UtilisateurId);
+            query = query.Where(success => success.UtilisateurId == id);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
@@ -62,6 +62,23 @@ namespace FloraFauna_Go_Repository
                 CountPerPage = count,
                 Items = items
             };
+        }
+
+        public Task<Pagination<SuccesStateEntities>> GetSuccessStateByUser_Success(string idSuccess, string idUser, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
+        {
+            IQueryable<SuccesStateEntities> query = Set;
+            query = query.Where(success => success.UtilisateurId == idUser && success.SuccesEntitiesId == idSuccess);
+
+            var totalCount = query.Count();
+            var items = query.Skip(index * count).Take(count).ToListAsync();
+
+            return Task.FromResult(new Pagination<SuccesStateEntities>()
+            {
+                TotalCount = totalCount,
+                PageIndex = index,
+                CountPerPage = count,
+                Items = items.Result
+            });
         }
     }
 }

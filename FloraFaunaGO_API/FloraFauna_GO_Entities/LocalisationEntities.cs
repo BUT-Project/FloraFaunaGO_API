@@ -15,6 +15,6 @@ public class LocalisationEntities : BaseEntity
     public double Rayon { get; set; }
 
     public ICollection<EspeceLocalisationEntities>? EspeceLocalisation { get; set; } = new List<EspeceLocalisationEntities>();
-    public CaptureDetailsEntities? CapturesDetail { get; set; } = new CaptureDetailsEntities();
+    public CaptureDetailsEntities? CapturesDetail { get; set; }
     public string? CaptureDetailsId { get; set; }
 }

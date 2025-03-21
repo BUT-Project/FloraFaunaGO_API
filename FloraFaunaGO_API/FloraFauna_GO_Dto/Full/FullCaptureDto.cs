@@ -11,10 +11,9 @@ namespace FloraFauna_GO_Dto.Full
     public class FullCaptureDto
     {
         public CaptureNormalDto Capture { get; set; }
-        public FullCaptureDetailDto[]? CaptureDetails { get; set; }
 
-        public FullEspeceDto Espece { get; set; }
+        public List<FullCaptureDetailDto> CaptureDetails { get; set; } = new List<FullCaptureDetailDto>();
 
-        public FullUtilisateurDto Utilisateur { get; set; }
+        public string idUtilisateur { get; set; }
     }
 }

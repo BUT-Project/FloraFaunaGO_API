@@ -13,7 +13,9 @@ public class IdentificationService
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
     private const string PLANT_API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
+    private const string INSECT_API_KEY = "RYhPBNogMQ3V3v89QnnV4Qmyxh7KN5dKS3we9ljdtvPYdrY17u";
     private static readonly string plantApiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?lang=fr&api-key={PLANT_API_KEY}";
+    private static readonly string insectApiEndpoint = $"https://insect.kindwise.com/api/v1/identification";
 
     public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
     {

@@ -4,6 +4,7 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic;
 namespace FloraFaunaGO_API.Controllers;
 
 [ApiController]
@@ -21,18 +22,34 @@ public class SuccessStateControlleur : ControllerBase
         Repository = service.SuccessStateRepository;
     }
 
-    [HttpGet("id={id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(string id)
     {
-        var result = await Repository.GetById(id);
-        return result != null ? Ok(result) : NotFound(id);
+        try
+        {
+            var result = await Repository.GetById(id);
+            if (result == null) return NotFound();
+            result.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(id)).Items.FirstOrDefault();
+            result.User = (await UnitOfWork.UserRepository.GetUserBySuccessState(id)).Items.FirstOrDefault().Utilisateur;
+            return result != null ? Ok(result) : NoContent();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
+        }
+        return NotFound();
     }
 
     private async Task<IActionResult> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
     {
         var result = await func();
+        foreach (var item in result.Items)
+        {
+            item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.FirstOrDefault();
+            item.User = (await UnitOfWork.UserRepository.GetUserBySuccessState(item.State.Id)).Items.First().Utilisateur;
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 
@@ -46,36 +63,13 @@ public class SuccessStateControlleur : ControllerBase
         return await GetSuccessStates(async () => await Repository.GetAllSuccessState(criterium, index, count));
     }
 
-    //[HttpPost]
-    //[ProducesResponseType(StatusCodes.Status201Created)]
-    //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-    //public async Task<IActionResult> PostSuccessState([FromBody] FullSuccessStateDto dto)
-    //{
-    //    _ = await Repository.Insert(dto);
-    //    var inserted = await UnitOfWork.SaveChangesAsync();
-
-    //    if((inserted?.Count() ?? -1) != 1) return BadRequest();
-    //    var insertedSuccessState = inserted?.SingleOrDefault();
-    //    return insertedSuccessState != null ? Created(nameof(PostSuccessState), insertedSuccessState) : BadRequest();
-    //}
-
-    [HttpPut]
+    [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutSuccessState([FromQuery] string id,[FromBody] SuccessStateNormalDto dto)
+    public async Task<IActionResult> PutSuccessState(string id,[FromBody] SuccessStateNormalDto dto)
     {
         var result = await Repository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }
-
-    //[HttpDelete]
-    //[ProducesResponseType(StatusCodes.Status200OK)]
-    //[ProducesResponseType(StatusCodes.Status404NotFound)]
-    //public async Task<IActionResult> DeleteSuccessState([FromQuery] string id)
-    //{
-    //    bool result = await Repository.Delete(id);
-    //    if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-    //    return result ? Ok() : NotFound(id);
-    //}
 }

@@ -14,7 +14,10 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetAllSuccess(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.None,
             int index = 0, int count = 10);
 
-        Task<Pagination<Toutput>> GetSuccessByName(SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName,
+        Task<Pagination<Toutput>> GetSuccessByName(string name,SuccessOrderingCreteria criteria = SuccessOrderingCreteria.ByName,
+                int index = 0, int count = 10);
+
+        Task<Pagination<Toutput>> GetSuccessBySuccessState(string id,SuccessOrderingCreteria criteria = SuccessOrderingCreteria.None,
                 int index = 0, int count = 10);
     }
 

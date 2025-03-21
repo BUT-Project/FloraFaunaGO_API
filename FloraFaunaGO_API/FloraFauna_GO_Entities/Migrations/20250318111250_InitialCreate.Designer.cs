@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FloraFauna_GO_Entities.Migrations
 {
     [DbContext(typeof(FloraFaunaGoDB))]
-    [Migration("20250128175650_InitialCreate")]
+    [Migration("20250318111250_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -180,12 +180,6 @@ namespace FloraFauna_GO_Entities.Migrations
 
             modelBuilder.Entity("FloraFauna_GO_Entities.SuccesStateEntities", b =>
                 {
-                    b.Property<string>("SuccesEntitiesId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("UtilisateurId")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
@@ -195,9 +189,20 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<double>("PercentSucces")
                         .HasColumnType("REAL");
 
-                    b.HasKey("SuccesEntitiesId", "UtilisateurId");
+                    b.Property<string>("SuccesEntitiesId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UtilisateurId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("UtilisateurId");
+
+                    b.HasIndex("SuccesEntitiesId", "UtilisateurId")
+                        .IsUnique();
 
                     b.ToTable("SuccesState");
                 });

@@ -11,4 +11,6 @@ public class FullSuccessStateDto
 {
     public SuccessStateNormalDto State { get; set; }
     public SuccessNormalDto Success { get; set; }
+
+    public UtilisateurNormalDto User { get; set; }
 }

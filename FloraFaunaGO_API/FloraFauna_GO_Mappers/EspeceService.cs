@@ -25,8 +25,8 @@ internal class EspeceService : IEspeceRepository<EspeceNormalDto, FullEspeceDto>
     public async Task<Pagination<FullEspeceDto>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille, int index = 0, int count = 15)
         => (await Repository.GetEspeceByFamile(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<Pagination<FullEspeceDto>> GetEspeceByName(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
-        => (await Repository.GetEspeceByName(criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<FullEspeceDto>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
+        => (await Repository.GetEspeceByName(name,criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<Pagination<FullEspeceDto>> GetEspeceByRegime(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByRegime, int index = 0, int count = 15)
         => (await Repository.GetEspeceByRegime(criteria, index, count)).ToPagingResponseDtos();

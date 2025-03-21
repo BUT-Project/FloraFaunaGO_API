@@ -1,4 +1,6 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto;
+using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.New;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
@@ -23,16 +25,20 @@ public class UtilisateurControlleur : ControllerBase
         UserRepository = service.UserRepository;
     }
 
-    [HttpGet("id={id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerById(string id)
     {
         var user = await UserRepository.GetById(id);
+        if(user != null) { 
+            user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
+            user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
+        }
         return user != null ? Ok(user) : NotFound(id);
     }
 
-    [HttpGet("pseudo={pseudo}")]
+    [HttpGet("{pseudo}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
@@ -43,10 +49,15 @@ public class UtilisateurControlleur : ControllerBase
     private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
         var result = await func();
+        foreach(var user in result.Items)
+        {
+            user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
+            user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
+        }
         return result.Items.Any() ? Ok(result) : NoContent();
     }
 
-    [HttpGet("all")]
+    [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
@@ -69,7 +80,7 @@ public class UtilisateurControlleur : ControllerBase
         return insertedUser != null ? Created(nameof(PostPlayer), insertedUser) : NotFound();
     }
 
-    [HttpPut]
+    [HttpPut ("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] UtilisateurNormalDto dto)
@@ -82,9 +93,14 @@ public class UtilisateurControlleur : ControllerBase
     [HttpPut("login")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Login([FromBody] FullUtilisateurDto dto)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        throw new NotImplementedException();
+        var user = (await UserRepository.GetUserByMail(dto.Mail)).Items.FirstOrDefault();
+        var hash = dto.Password; // TODO: hash password
+
+        if (user == null || user.Utilisateur.Hash_mdp != hash) return NotFound();
+        user.Utilisateur.Hash_mdp = null;
+        return Ok(user);
     }
 
     [HttpPut("logout")]
@@ -95,13 +111,21 @@ public class UtilisateurControlleur : ControllerBase
         throw new NotImplementedException();
     }
 
-    /*[HttpDelete]
+    [HttpPut("register")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> DeletePlayer([FromQuery] string id)
+    public async Task<IActionResult> Register([FromBody] NewUtilisateurDto dto)
     {
-        bool result = await UserRepository.Delete(id);
-        if(await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);
-        return result ? Ok() : NotFound(id);
-    }*/
+        if (dto == null) return BadRequest();
+        if ((await UserRepository.GetAllUser()).Items.Any(u => u.Utilisateur.Mail == dto.Mail || u.Utilisateur.Pseudo == dto.Pseudo)) 
+            return BadRequest("Identifiant already use");
+        var user = new UtilisateurNormalDto()
+        {
+            Mail = dto.Mail,
+            Pseudo = dto.Pseudo,
+            Hash_mdp = dto.password, // TODO: hash password
+            DateInscription = DateTime.Now,
+        };
+        return Ok(await PostPlayer(user));
+    }
 }

@@ -49,7 +49,8 @@ namespace FloraFauna_Go_Repository
         public async Task<Pagination<LocalisationEntities>> GetLocalisationByEspece(string idEspece, int index = 0, int count = 15)
         {
             IQueryable<LocalisationEntities> query = Set;
-            query = query.OrderBy(success => success.EspeceLocalisation.FirstOrDefault(espece => espece.EspeceId == idEspece));
+            query = query.Where(success => success.EspeceLocalisation.Any(espece => espece.EspeceId == idEspece));
+            /*query = query.OrderBy(success => success.EspeceLocalisation.FirstOrDefault(espece => espece.EspeceId == idEspece));*/
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

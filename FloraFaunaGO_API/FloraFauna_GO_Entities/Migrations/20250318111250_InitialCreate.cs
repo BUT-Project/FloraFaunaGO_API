@@ -130,15 +130,15 @@ namespace FloraFauna_GO_Entities.Migrations
                 name: "SuccesState",
                 columns: table => new
                 {
-                    SuccesEntitiesId = table.Column<string>(type: "TEXT", nullable: false),
-                    UtilisateurId = table.Column<string>(type: "TEXT", nullable: false),
+                    Id = table.Column<string>(type: "TEXT", nullable: false),
                     PercentSucces = table.Column<double>(type: "REAL", nullable: false),
                     IsSucces = table.Column<bool>(type: "INTEGER", nullable: false),
-                    Id = table.Column<string>(type: "TEXT", nullable: true)
+                    SuccesEntitiesId = table.Column<string>(type: "TEXT", nullable: false),
+                    UtilisateurId = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SuccesState", x => new { x.SuccesEntitiesId, x.UtilisateurId });
+                    table.PrimaryKey("PK_SuccesState", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SuccesState_Succes_SuccesEntitiesId",
                         column: x => x.SuccesEntitiesId,
@@ -205,6 +205,12 @@ namespace FloraFauna_GO_Entities.Migrations
                 name: "IX_EspeceLocalisation_LocalisationId",
                 table: "EspeceLocalisation",
                 column: "LocalisationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SuccesState_SuccesEntitiesId_UtilisateurId",
+                table: "SuccesState",
+                columns: new[] { "SuccesEntitiesId", "UtilisateurId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SuccesState_UtilisateurId",
