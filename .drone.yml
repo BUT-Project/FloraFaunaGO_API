@@ -45,7 +45,7 @@ steps:
     depends_on: [ tests ]
 
   - name: swagger
-    image: mcr.microsoft.com/dotnet/sdk:7.0
+    image: mcr.microsoft.com/dotnet/sdk:8.0
     failure: ignore
     volumes:
       - name: docs
@@ -74,7 +74,7 @@ steps:
     when:
       event:
         - push
-    depends_on: [ build ]
+    depends_on: [ build, swagger ]
 
 volumes:
   - name: docs
