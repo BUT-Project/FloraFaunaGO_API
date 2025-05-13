@@ -19,9 +19,10 @@ public class IdentificationController : ControllerBase
         Service = new IdentificationService(UnitOfWork.EspeceRepository);
     }
 
-    [HttpGet("{especeType}")]
+    [HttpPost("{especeType}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> AskToIdentifyAPI(string especeType, [FromBody] AnimalIdentifyNormalDto dto)
     {
         if (!Enum.TryParse(especeType, true, out EspeceType type))
