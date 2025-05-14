@@ -43,7 +43,7 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine("====================================================");
                 services.AddDbContext<FloraFaunaGoDB>(options =>
                         options.UseMySql($"{connectionString}", new MySqlServerVersion(new Version(10, 11, 1)))
-                    , ServiceLifetime.Scoped);
+                    , ServiceLifetime.Singleton);
                 break;
             default:
                 Console.WriteLine("====== RUNNING USING THE IN SQLITE DATABASE ======");
@@ -83,7 +83,7 @@ public class AppBootstrap(IConfiguration configuration)
                 break;
         }
 
-        services.AddScoped<FloraFaunaService>(provider =>
+        services.AddSingleton<FloraFaunaService>(provider =>
             new FloraFaunaService(provider
                 .GetRequiredService<
                     IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
