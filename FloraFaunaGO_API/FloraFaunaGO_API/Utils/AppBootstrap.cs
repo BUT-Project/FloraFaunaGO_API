@@ -83,7 +83,7 @@ public class AppBootstrap(IConfiguration configuration)
                 break;
         }
 
-        services.AddSingleton<FloraFaunaService>(provider =>
+        services.AddScoped<FloraFaunaService>(provider =>
             new FloraFaunaService(provider
                 .GetRequiredService<
                     IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,

@@ -74,7 +74,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(false);
         GC.SuppressFinalize(this);
     }
 
