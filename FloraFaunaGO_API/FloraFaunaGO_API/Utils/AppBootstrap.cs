@@ -42,8 +42,8 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine(connectionString);
                 Console.WriteLine("====================================================");
                 services.AddDbContext<FloraFaunaGoDB>(options =>
-                        options.UseMySql($"{connectionString}", new MySqlServerVersion(new Version(10, 11, 1)))
-                    , ServiceLifetime.Singleton);
+                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
+                        ServiceLifetime.Singleton);
                 break;
             default:
                 Console.WriteLine("====== RUNNING USING THE IN SQLITE DATABASE ======");
