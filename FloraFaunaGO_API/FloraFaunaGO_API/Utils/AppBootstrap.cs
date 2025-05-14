@@ -65,7 +65,7 @@ public class AppBootstrap(IConfiguration configuration)
         {
             case "BDD":
                 services
-                    .AddSingleton<
+                    .AddScoped<
                         IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                             SuccesEntities, SuccesStateEntities, LocalisationEntities>>(provider =>
                         new UnitOfWork(provider.GetRequiredService<FloraFaunaGoDB>()));
@@ -73,7 +73,7 @@ public class AppBootstrap(IConfiguration configuration)
 
             default:
                 services
-                    .AddSingleton<
+                    .AddScoped<
                         IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                             SuccesEntities, SuccesStateEntities, LocalisationEntities>>(provider =>
                     {
