@@ -16,6 +16,10 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
     public FloraFaunaService(IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities,UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> dbUnitOfWork)
     {
         DbUnitOfWork = dbUnitOfWork;
+        if (DbUnitOfWork == null) {
+            Console.WriteLine("it's null");
+        }
+
         Mappers.Reset();
     }
 
