@@ -2,9 +2,12 @@
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
+
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/identification")]
 public class IdentificationController : ControllerBase

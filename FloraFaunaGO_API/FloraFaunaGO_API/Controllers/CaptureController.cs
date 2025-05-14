@@ -6,11 +6,13 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFaunaGO_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/capture/")]
 public class CaptureController : ControllerBase
@@ -62,7 +64,7 @@ public class CaptureController : ControllerBase
     public async Task<IActionResult> GetCaptureByUser(string id)
     {
         var capture = await CaptureRepository.GetCaptureByUser(id, CaptureOrderingCriteria.ByUser);
-        if (capture != null && !capture.Items.IsNullOrEmpty())
+        if (capture != null && capture.Items.Count() == 0)
         {
             foreach (var item in capture.Items)
             {

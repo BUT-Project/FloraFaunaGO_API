@@ -6,6 +6,10 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace FloraFaunaGO_API.Controllers;
 [ApiController]
@@ -99,8 +103,9 @@ public class UtilisateurControlleur : ControllerBase
         var hash = dto.Password; // TODO: hash password
 
         if (user == null || user.Utilisateur.Hash_mdp != hash) return NotFound();
-        user.Utilisateur.Hash_mdp = null;
-        return Ok(user);
+
+        var token = GenerateJwtToken(user.Utilisateur.Id, user.Utilisateur.Mail);
+        return Ok(new { Token = token });
     }
 
     [HttpPut("logout")]
@@ -112,13 +117,14 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPut("register")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Register([FromBody] NewUtilisateurDto dto)
     {
         if (dto == null) return BadRequest();
-        if ((await UserRepository.GetAllUser()).Items.Any(u => u.Utilisateur.Mail == dto.Mail || u.Utilisateur.Pseudo == dto.Pseudo)) 
+        if ((await UserRepository.GetAllUser()).Items.Any(u => u.Utilisateur.Mail == dto.Mail || u.Utilisateur.Pseudo == dto.Pseudo))
             return BadRequest("Identifiant already use");
+
         var user = new UtilisateurNormalDto()
         {
             Mail = dto.Mail,
@@ -126,6 +132,37 @@ public class UtilisateurControlleur : ControllerBase
             Hash_mdp = dto.password, // TODO: hash password
             DateInscription = DateTime.Now,
         };
-        return Ok(await PostPlayer(user));
+
+        var result = await PostPlayer(user);
+        if (result is CreatedResult)
+        {
+            var token = GenerateJwtToken(user.Id, user.Mail);
+            return Ok(new { Token = token });
+        }
+
+        return BadRequest();
+    }
+
+    private string GenerateJwtToken(string userId, string userEmail)
+    {
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("votre-cle-secrete"));
+        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        var claims = new[]
+        {
+        new Claim(JwtRegisteredClaimNames.Sub, userId),
+        new Claim(JwtRegisteredClaimNames.Email, userEmail),
+        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+    };
+
+        var token = new JwtSecurityToken(
+            issuer: "FloraFaunaIssuer",
+            audience: "FloraFaunaAudience",
+            claims: claims,
+            expires: DateTime.UtcNow.AddHours(1),
+            signingCredentials: credentials
+        );
+
+        return new JwtSecurityTokenHandler().WriteToken(token);
     }
 }
