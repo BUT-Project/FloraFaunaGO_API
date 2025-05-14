@@ -42,8 +42,8 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine(connectionString);
                 Console.WriteLine("====================================================");
                 services.AddDbContext<FloraFaunaGoDB>(options =>
-                    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)),
-                        ServiceLifetime.Singleton);
+                        options.UseMySql($"{connectionString}", new MySqlServerVersion(new Version(10, 11, 1)))
+                    , ServiceLifetime.Scoped);
                 break;
             default:
                 Console.WriteLine("====== RUNNING USING THE IN SQLITE DATABASE ======");
@@ -65,7 +65,7 @@ public class AppBootstrap(IConfiguration configuration)
         {
             case "BDD":
                 services
-                    .AddScoped<
+                    .AddSingleton<
                         IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                             SuccesEntities, SuccesStateEntities, LocalisationEntities>>(provider =>
                         new UnitOfWork(provider.GetRequiredService<FloraFaunaGoDB>()));
@@ -73,7 +73,7 @@ public class AppBootstrap(IConfiguration configuration)
 
             default:
                 services
-                    .AddScoped<
+                    .AddSingleton<
                         IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                             SuccesEntities, SuccesStateEntities, LocalisationEntities>>(provider =>
                     {
