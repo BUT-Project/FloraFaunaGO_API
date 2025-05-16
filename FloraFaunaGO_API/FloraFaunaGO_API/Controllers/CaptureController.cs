@@ -41,6 +41,7 @@ public class CaptureController : ControllerBase
     /// <response code="500">Oops! Can't create your product right now</response>
 */
     [HttpGet ("{id}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetCaptureById(string id)

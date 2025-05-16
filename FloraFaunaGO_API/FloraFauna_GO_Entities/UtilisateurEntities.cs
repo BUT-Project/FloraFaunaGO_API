@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities;
 
-public class UtilisateurEntities : BaseEntity
+public class UtilisateurEntities : IdentityUser
 {
     [Required]
     [MaxLength(50)]

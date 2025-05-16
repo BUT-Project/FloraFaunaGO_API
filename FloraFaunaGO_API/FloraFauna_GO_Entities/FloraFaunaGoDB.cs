@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class FloraFaunaGoDB : DbContext
+    public class FloraFaunaGoDB : IdentityDbContext<UtilisateurEntities>
     {
         public virtual DbSet<EspeceEntities> Espece { get; set; }
         public virtual DbSet<CaptureEntities> Captures { get; set; }

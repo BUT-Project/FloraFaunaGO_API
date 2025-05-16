@@ -11,12 +11,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityApiEndpoints<UtilisateurEntities>()
+    .AddEntityFrameworkStores<FloraFaunaGoDB>();
+
 // Add services to the container.
 builder.Services.AddDbContext<FloraFaunaGoDB>();
-
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<FloraFaunaGoDB>()
-    .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
 {
@@ -39,12 +40,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
-
-
-builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 
@@ -96,14 +92,18 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+
 builder.Services.AddScoped<IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities>, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository<UtilisateurEntities>, UserRepository>();
 builder.Services.AddScoped<ICaptureRepository<CaptureEntities>, CaptureRepository>();
 builder.Services.AddScoped<IEspeceRepository<EspeceEntities>, EspeceRepository>();
-builder.Services.AddScoped<DbContextOptions<FloraFaunaGoDB>>();
 builder.Services.AddScoped<FloraFaunaService>(provider => new FloraFaunaService(provider.GetService<DbContextOptions<FloraFaunaGoDB>>()));
 
+builder.Services.AddControllers();
+
 var app = builder.Build();
+
+app.MapIdentityApi<UtilisateurEntities>();
 
 // Configure the HTTP request pipeline.
 if (builder.Environment.IsDevelopment())

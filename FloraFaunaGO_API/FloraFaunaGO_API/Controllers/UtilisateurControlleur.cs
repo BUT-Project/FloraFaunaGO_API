@@ -5,7 +5,9 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -16,20 +18,25 @@ namespace FloraFaunaGO_API.Controllers;
 [Route("FloraFaunaGo_API/utilisateur/")]
 public class UtilisateurControlleur : ControllerBase
 {
-   private readonly ILogger<UtilisateurControlleur> _logger;
+    private readonly ILogger<UtilisateurControlleur> _logger;
+
+    // Permet d'accéder au appsettingJson pour avoir la key du token
+    private readonly IConfiguration _configuration;
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository { get; set; }
 
     public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service)
+    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service, IConfiguration configuration)
     {
         _logger = logger;
         UnitOfWork = service;
         UserRepository = service.UserRepository;
+        _configuration = configuration;
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerById(string id)
@@ -42,13 +49,13 @@ public class UtilisateurControlleur : ControllerBase
         return user != null ? Ok(user) : NotFound(id);
     }
 
-    [HttpGet("{pseudo}")]
+    /*[HttpGet("{pseudo}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
     {
         throw new NotImplementedException();
-    }
+    }*/
 
     private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
@@ -62,6 +69,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
@@ -72,6 +80,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PostPlayer(UtilisateurNormalDto dto)
@@ -85,6 +94,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPut ("{id}")]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] UtilisateurNormalDto dto)
@@ -95,6 +105,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPut("login")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Login([FromBody] LoginDto dto)
@@ -105,20 +116,28 @@ public class UtilisateurControlleur : ControllerBase
         if (user == null || user.Utilisateur.Hash_mdp != hash) return NotFound();
 
         var token = GenerateJwtToken(user.Utilisateur.Id, user.Utilisateur.Mail);
-        return Ok(new { Token = token });
+        var refreshToken = GenerateRefreshToken();
+
+        return Ok(new
+        {
+            UserId = user.Utilisateur.Id,
+            Token = token,
+            RefreshToken = refreshToken
+        });
     }
 
-    [HttpPut("logout")]
+    /*[HttpPut("logout")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> Logout()
     {
         throw new NotImplementedException();
-    }
+    }*/
 
     [HttpPut("register")]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> Register([FromBody] NewUtilisateurDto dto)
     {
         if (dto == null) return BadRequest();
@@ -136,16 +155,53 @@ public class UtilisateurControlleur : ControllerBase
         var result = await PostPlayer(user);
         if (result is CreatedResult)
         {
-            var token = GenerateJwtToken(user.Id, user.Mail);
-            return Ok(new { Token = token });
+            // Récupère l'utilisateur inséré (id généré)
+            var insertedUser = (result as CreatedResult)?.Value as UtilisateurNormalDto ?? user;
+            var token = GenerateJwtToken(insertedUser.Id, insertedUser.Mail);
+            var refreshToken = GenerateRefreshToken();
+
+            return Ok(new
+            {
+                UserId = insertedUser.Id,
+                Token = token,
+                RefreshToken = refreshToken
+            });
         }
 
         return BadRequest();
     }
 
+    [HttpPost("refresh")]
+    [Authorize]
+    public IActionResult RefreshToken()
+    {
+        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+        var userEmail = User.FindFirstValue(JwtRegisteredClaimNames.Email);
+
+        if (userId == null || userEmail == null)
+            return Unauthorized();
+
+        var token = GenerateJwtToken(userId, userEmail);
+        return Ok(new { Token = token });
+    }
+
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
+    {
+        var user = (await UserRepository.GetUserByMail(dto.Mail)).Items.FirstOrDefault();
+        if (user == null)
+            return NotFound();
+
+        user.Utilisateur.Hash_mdp = dto.NewPassword; // TODO: hasher le mot de passe
+        await UserRepository.Update(user.Utilisateur.Id, user.Utilisateur);
+        await UnitOfWork.SaveChangesAsync();
+
+        return Ok();
+    }
+
     private string GenerateJwtToken(string userId, string userEmail)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("votre-cle-secrete"));
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
         var claims = new[]
@@ -156,13 +212,18 @@ public class UtilisateurControlleur : ControllerBase
     };
 
         var token = new JwtSecurityToken(
-            issuer: "FloraFaunaIssuer",
-            audience: "FloraFaunaAudience",
+            issuer: _configuration["Jwt:Issuer"],
+            audience: _configuration["Jwt:Issuer"],
             claims: claims,
             expires: DateTime.UtcNow.AddHours(1),
             signingCredentials: credentials
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    private string GenerateRefreshToken()
+    {
+        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
     }
 }
