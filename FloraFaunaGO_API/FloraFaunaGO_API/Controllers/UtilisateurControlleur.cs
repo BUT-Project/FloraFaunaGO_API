@@ -38,13 +38,13 @@ public class UtilisateurControlleur : ControllerBase
         return user != null ? Ok(user) : NotFound(id);
     }
 
-    [HttpGet("{pseudo}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
-    {
-        throw new NotImplementedException();
-    }
+    //[HttpGet("{pseudo}")]
+    //[ProducesResponseType(StatusCodes.Status200OK)]
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
+    //{
+    //    throw new NotImplementedException();
+    //}
 
     private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
@@ -83,7 +83,7 @@ public class UtilisateurControlleur : ControllerBase
     [HttpPut ("{id}")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutPlayer([FromQuery] string id, [FromBody] UtilisateurNormalDto dto)
+    public async Task<IActionResult> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)
     {
         var result = await UserRepository.Update(id, dto);
         if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

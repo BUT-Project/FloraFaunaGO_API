@@ -67,6 +67,7 @@ public class FloraFaunaController : ControllerBase
                 capture.Capture.Id ?? string.Empty);
         }
         var user = await UnitOfWork.UserRepository.GetById(iduser);
+        // need to fix : when capture is created a capture detail have to be create
         _ = await UnitOfWork.AddCaptureAsync(new CaptureNormalDto() { Id = dto.Id, photo = dto.photo, IdEspece = idespece, LocalisationNormalDto = dto.LocalisationNormalDto }, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();

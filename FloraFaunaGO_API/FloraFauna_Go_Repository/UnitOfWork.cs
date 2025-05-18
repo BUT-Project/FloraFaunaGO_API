@@ -221,6 +221,9 @@ namespace FloraFauna_Go_Repository
             try
             {
                 capture.UtilisateurId = user.Id;
+                {
+                    
+                });
                 if (await CaptureRepository.Insert(capture) == null)
                 {
                     Context.Captures.Attach(capture);
@@ -234,6 +237,8 @@ namespace FloraFauna_Go_Repository
                     user.Captures = new List<CaptureEntities>();
 
                 user.Captures.Add(capture);
+
+
 
                 if (await UserRepository.Update(user.Id, user) == null)
                 {
