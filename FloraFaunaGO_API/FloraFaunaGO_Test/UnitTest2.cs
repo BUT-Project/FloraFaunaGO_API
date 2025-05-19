@@ -1,4 +1,4 @@
-﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
@@ -63,19 +63,7 @@ namespace FloraFaunaGO_Test
             var captureDto = new FullCaptureDto
             {
                 Capture = new CaptureNormalDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
-                Espece = new FullEspeceDto
-                {
-                    Espece = new EspeceNormalDto { Nom = "Lion", Nom_Scientifique = "Panthera leo" },
-                    localisationNormalDtos = new[] { new LocalisationNormalDto { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
-                },
-                CaptureDetails = new[]
-                {
-                    new FullCaptureDetailDto
-                    {
-                        CaptureDetail = new CaptureDetailNormalDto { Id = "1", Shiny = true },
-                        localisationNormalDtos = new LocalisationNormalDto { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 }
-                    }
-                }
+                CaptureDetails = []
             };
 
             // Act
@@ -86,7 +74,7 @@ namespace FloraFaunaGO_Test
             Assert.IsNotNull(captureEntity);
             Assert.IsInstanceOfType(captureEntity, typeof(CaptureEntities));
             Assert.AreEqual(captureDto.Capture.photo, captureEntity.Photo);
-            Assert.AreEqual(captureDto.CaptureDetails.Length, captureEntity.CaptureDetails.Count);
+            Assert.AreEqual(captureDto.CaptureDetails.Count, captureEntity.CaptureDetails.Count);
         }
 
         [TestMethod]

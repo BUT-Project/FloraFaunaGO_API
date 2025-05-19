@@ -53,26 +53,7 @@ public class UnitTest1
             Capture = new CaptureNormalDto { 
                 photo = new byte[] { 1, 2, 3 }
             },
-            Espece = new FullEspeceDto
-            {
-                Espece = new EspeceNormalDto { /* Remplissez les propriétés pertinentes */ },
-                localisationNormalDtos = new[] { new LocalisationNormalDto() }
-            },
-            CaptureDetails = new []
-            {
-                new FullCaptureDetailDto() { 
-                    CaptureDetail = new CaptureDetailNormalDto { 
-                        Id = "1",
-                        Shiny = false,
-                    },
-                    localisationNormalDtos = new LocalisationNormalDto()
-                       {
-                           Latitude = 0,
-                           Longitude = 0,
-                           Rayon = 0,
-                       }
-                }
-            }
+            
         };
 
         // Act

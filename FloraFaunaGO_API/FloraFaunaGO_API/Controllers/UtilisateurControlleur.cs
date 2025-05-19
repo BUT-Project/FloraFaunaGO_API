@@ -104,7 +104,7 @@ public class UtilisateurControlleur : ControllerBase
         return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
     }
 
-    [HttpPut("login")]
+    /*[HttpPut("login")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -124,7 +124,7 @@ public class UtilisateurControlleur : ControllerBase
             Token = token,
             RefreshToken = refreshToken
         });
-    }
+    }*/
 
     /*[HttpPut("logout")]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -134,7 +134,7 @@ public class UtilisateurControlleur : ControllerBase
         throw new NotImplementedException();
     }*/
 
-    [HttpPut("register")]
+    /*[HttpPut("register")]
     [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -169,9 +169,9 @@ public class UtilisateurControlleur : ControllerBase
         }
 
         return BadRequest();
-    }
+    }*/
 
-    [HttpPost("refresh")]
+    /*[HttpPost("refresh")]
     [Authorize]
     public IActionResult RefreshToken()
     {
@@ -183,8 +183,8 @@ public class UtilisateurControlleur : ControllerBase
 
         var token = GenerateJwtToken(userId, userEmail);
         return Ok(new { Token = token });
-    }
-
+    }*/
+/*
     [HttpPost("reset-password")]
     public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
     {
@@ -197,7 +197,7 @@ public class UtilisateurControlleur : ControllerBase
         await UnitOfWork.SaveChangesAsync();
 
         return Ok();
-    }
+    }*/
 
     private string GenerateJwtToken(string userId, string userEmail)
     {
