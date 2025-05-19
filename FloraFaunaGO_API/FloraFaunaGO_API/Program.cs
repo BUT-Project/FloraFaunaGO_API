@@ -1,9 +1,11 @@
+﻿using FloraFauna_GO_Dto;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -92,7 +94,6 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
-
 builder.Services.AddScoped<IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities>, UnitOfWork>();
 builder.Services.AddScoped<IUserRepository<UtilisateurEntities>, UserRepository>();
 builder.Services.AddScoped<ICaptureRepository<CaptureEntities>, CaptureRepository>();
@@ -128,5 +129,18 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapSwagger().RequireAuthorization();
+
+// Assure-toi que toutes les tables d'Identity sont créées
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+
+    // Méthode bourrin pour tout supprimer et être sur de tout créer correctement
+    //dbContext.Database.EnsureDeleted();
+    dbContext.Database.EnsureCreated();
+
+    // On essaye de conserver les données.
+    // dbContext.Database.Migrate();
+}
 
 app.Run();

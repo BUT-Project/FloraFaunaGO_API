@@ -69,7 +69,7 @@ namespace FloraFauna_Go_Repository
         {
             IQueryable<UtilisateurEntities> query = Set;
 
-            query = query.Where(user => user.Mail == mail);
+            query = query.Where(user => user.Email == mail);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
@@ -105,7 +105,7 @@ namespace FloraFauna_Go_Repository
         {
             IQueryable<UtilisateurEntities> query = Set;
 
-            query = query.OrderBy(user => user.Mail);
+            query = query.OrderBy(user => user.Email);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();

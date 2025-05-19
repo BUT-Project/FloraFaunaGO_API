@@ -69,7 +69,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
