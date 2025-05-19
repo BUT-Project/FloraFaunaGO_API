@@ -17,7 +17,7 @@ namespace FloraFauna_Go_Repository
         public UnitOfWork(FloraFaunaGoDB context)
         {
             Context = context;
-            // Context.Database.EnsureCreated();
+            Context.Database.EnsureCreated();
         }
 
         public IUserRepository<UtilisateurEntities> UserRepository
