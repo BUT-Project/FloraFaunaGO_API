@@ -4,12 +4,14 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 
 namespace FloraFaunaGO_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/espece/")]
 public class EspeceController : ControllerBase

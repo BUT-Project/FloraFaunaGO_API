@@ -3,10 +3,12 @@ using FloraFauna_GO_Dto.New;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/")]
 public class FloraFaunaController : ControllerBase
@@ -67,7 +69,6 @@ public class FloraFaunaController : ControllerBase
                 capture.Capture.Id ?? string.Empty);
         }
         var user = await UnitOfWork.UserRepository.GetById(iduser);
-        // need to fix : when capture is created a capture detail have to be create
         _ = await UnitOfWork.AddCaptureAsync(new CaptureNormalDto() { Id = dto.Id, photo = dto.photo, IdEspece = idespece, LocalisationNormalDto = dto.LocalisationNormalDto }, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
