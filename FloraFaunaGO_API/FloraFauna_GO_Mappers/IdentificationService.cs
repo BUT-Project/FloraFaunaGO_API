@@ -3,6 +3,7 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Dto.Response;
 using FloraFauna_GO_Shared;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 
 namespace FloraFauna_GO_Entities2Dto;
@@ -78,42 +79,5 @@ public class IdentificationService
         return null;
     }
 
-    public async Task<EspeceType> classify(byte[] image)
-    {
-        Directory.CreateDirectory("uploads");
-
-        var filePath = Path.Combine("uploads", Path.GetRandomFileName() + ".jpg");
-        await System.IO.File.WriteAllBytesAsync(filePath, image);
-
-        var psi = new ProcessStartInfo
-        {
-            FileName = "python3",
-            Arguments = $"classify.py \"{filePath}\"",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        };
-
-        var process = Process.Start(psi);
-        var output = await process.StandardOutput.ReadToEndAsync();
-        var error = await process.StandardError.ReadToEndAsync();
-        await process.WaitForExitAsync();
-
-        if (process.ExitCode != 0)
-        {
-            System.IO.File.Delete(filePath);
-            return EspeceType.None;
-        }
-
-        System.IO.File.Delete(filePath);
-
-
-        if (!Enum.TryParse(output, true, out EspeceType type))
-            return EspeceType.None;
-
-
-        return type;
-    }
 }
 

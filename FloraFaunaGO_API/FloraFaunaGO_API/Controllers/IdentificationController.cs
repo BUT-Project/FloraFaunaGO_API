@@ -33,13 +33,4 @@ public class IdentificationController : ControllerBase
         var result = await Service.identify(dto, type);
         return result != null ? Ok(result) : NoContent();
     }
-
-    [HttpPost("classify")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> ClassifyImage([FromBody] AnimalIdentifyNormalDto dto)
-    {
-        var result = await Service.classify(dto.AskedImage);
-        return result is EspeceType.None ? Ok(result) : NoContent();
-    }
 }
