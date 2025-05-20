@@ -143,23 +143,11 @@ namespace FloraFauna_Go_Repository
                 }
                 user.SuccesState.Add(successState);
 
-                if (await UserRepository.Update(user.Id, user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
-
                 if (success.SuccesStates == null)
                 {
                     success.SuccesStates = new List<SuccesStateEntities>();
                 }
                 success.SuccesStates.Add(successState);
-
-                if (await SuccessRepository.Update(success.Id, success) == null)
-                {
-                    Context.Succes.Attach(success);
-                    await Context.Entry(success).ReloadAsync();
-                }
 
                 //await SaveChangesAsync();
                 return true;
@@ -194,18 +182,6 @@ namespace FloraFauna_Go_Repository
                     success.SuccesStates.Remove(successState);
                 }
 
-                if (await UserRepository.Update(user.Id, user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
-
-                if (await SuccessRepository.Update(success.Id, success) == null)
-                {
-                    Context.Succes.Attach(success);
-                    await Context.Entry(success).ReloadAsync();
-                }
-
                 await SaveChangesAsync();
                 return true;
             }
@@ -228,23 +204,6 @@ namespace FloraFauna_Go_Repository
                     await Context.Entry(capture).ReloadAsync();
                 }
 
-                if (user == null)
-                    throw new ArgumentNullException(nameof(user));
-
-                if (user.Captures == null)
-                    user.Captures = new List<CaptureEntities>();
-
-                user.Captures.Add(capture);
-
-
-
-                if (await UserRepository.Update(user.Id, user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
-
-                //await SaveChangesAsync();
                 return true;
             }
             catch (Exception)
@@ -264,12 +223,6 @@ namespace FloraFauna_Go_Repository
                 }
 
                 await CaptureRepository.Delete(capture.Id);
-
-                if (await UserRepository.Update(user.Id, user) == null)
-                {
-                    Context.Utilisateur.Attach(user);
-                    await Context.Entry(user).ReloadAsync();
-                }
 
                 await SaveChangesAsync();
                 return true;
