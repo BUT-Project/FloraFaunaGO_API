@@ -240,9 +240,9 @@ public static class Extension
     {
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
-            Pseudo = dto.Pseudo,
-            Mail = dto.Mail,
-            Hash_mdp = dto.Hash_mdp,
+            UserName = dto.Pseudo,
+            Email = dto.Mail,
+            PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
         };
 
@@ -254,9 +254,9 @@ public static class Extension
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
             Id = id,
-            Pseudo = dto.Pseudo,
-            Mail = dto.Mail,
-            Hash_mdp = dto.Hash_mdp,
+            UserName = dto.Pseudo,
+            Email = dto.Mail,
+            PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
         };
 
@@ -267,9 +267,9 @@ public static class Extension
     {
         Func<UtilisateurEntities, UtilisateurNormalDto> creator = (entities) => new UtilisateurNormalDto()
         {
-            Pseudo = entities.Pseudo,
-            Mail = entities.Mail,
-            Hash_mdp = entities.Hash_mdp,
+            Pseudo = entities.UserName,
+            Mail = entities.Email,
+            Hash_mdp = entities.PasswordHash,
             DateInscription = entities.DateInscription,
             Id = entities.Id,
         };
@@ -282,9 +282,9 @@ public static class Extension
         {
             Utilisateur = new UtilisateurNormalDto()
             {
-                Pseudo = entities.Pseudo,
-                Mail = entities.Mail,
-                Hash_mdp = entities.Hash_mdp,
+                Pseudo = entities.UserName,
+                Mail = entities.Email,
+                Hash_mdp = entities.PasswordHash,
                 DateInscription = entities.DateInscription,
                 Id = entities.Id,
             },

@@ -1,10 +1,13 @@
-using System.Reflection;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
 
 namespace FloraFaunaGO_API.Utils;
 
@@ -92,7 +95,31 @@ public class AppBootstrap(IConfiguration configuration)
 
     private void AddIdentityServices(IServiceCollection services, IConfiguration config)
     {
-        // [DAve] pk ya pas le bg svp ??
+        services.AddAuthorization();
+
+        services.AddIdentityApiEndpoints<UtilisateurEntities>()
+            .AddEntityFrameworkStores<FloraFaunaGoDB>();
+
+        services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            var key = config["Jwt:Key"] ?? "dev-key-very-secret";
+            var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
+
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = issuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+            };
+        });
     }
 
     private void AddSwagger(IServiceCollection services)
@@ -148,6 +175,31 @@ public class AppBootstrap(IConfiguration configuration)
                     Url = new Uri("https://opensource.org/licenses/MIT")
                 }
             });
+
+            var jwtSecurityScheme = new OpenApiSecurityScheme
+            {
+                BearerFormat = "JWT",
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.Http,
+                Scheme = "Bearer",
+                Description = "Entrer 'Bearer {token}'",
+                Reference = new OpenApiReference
+                {
+                    Id = "Bearer",
+                    Type = ReferenceType.SecurityScheme
+                }
+            };
+
+            options.AddSecurityDefinition("Bearer", jwtSecurityScheme);
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    jwtSecurityScheme,
+                    Array.Empty<string>()
+                }
+            });
         });
     }
 
@@ -158,7 +210,7 @@ public class AppBootstrap(IConfiguration configuration)
         app.UseAuthentication();
         app.UseAuthorization();
 
-//        app.MapIdentityApi<AthleteEntity>();
+        app.MapIdentityApi<UtilisateurEntities>();
 
         app.MapControllers();
 
