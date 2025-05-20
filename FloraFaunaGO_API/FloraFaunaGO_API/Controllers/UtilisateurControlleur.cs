@@ -38,18 +38,18 @@ public class UtilisateurControlleur : ControllerBase
         return user != null ? Ok(user) : NotFound(id);
     }
 
-    [HttpGet("{pseudo}")]
+/*    [HttpGet("{pseudo}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetPlayerByPesudo(string pesudo)
     {
         throw new NotImplementedException();
-    }
+    }*/
 
     private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
         var result = await func();
-        foreach(var user in result.Items)
+        foreach (var user in result.Items)
         {
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
