@@ -15,4 +15,4 @@ COPY --from=build /app/publish .
 EXPOSE 8080
 EXPOSE 8081
 
-ENTRYPOINT ["dotnet", "FloraFaunaGO_API.dll"]
+ENTRYPOINT ["dotnet", "FloraFaunaGO_API.dll", "migrate"]
