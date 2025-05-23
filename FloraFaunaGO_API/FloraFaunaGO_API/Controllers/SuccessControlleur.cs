@@ -53,6 +53,7 @@ public class SuccessControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostSuccess([FromBody] SuccessNormalDto dto)
     {
+        dto.Id = null;
         var Toto = await SuccessRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
 
