@@ -12,14 +12,17 @@ namespace FloraFaunaGO_API.Controllers;
 [Route("FloraFaunaGo_API/identification")]
 public class IdentificationController : ControllerBase
 {
+    private readonly IWebHostEnvironment _env;
+
     private readonly ILogger<IdentificationController> _logger;
     public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
     public IdentificationService Service { get; private set; }
 
-    public IdentificationController(ILogger<CaptureController> logger, FloraFaunaService service)
+    public IdentificationController(ILogger<CaptureController> logger, FloraFaunaService service, IWebHostEnvironment env)
     {
         UnitOfWork = service;
         Service = new IdentificationService(UnitOfWork.EspeceRepository);
+        _env = env;
     }
 
     [HttpPost("{especeType}")]
