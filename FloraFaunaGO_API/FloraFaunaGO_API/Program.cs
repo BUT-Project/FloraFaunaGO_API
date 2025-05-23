@@ -7,6 +7,7 @@ using FloraFaunaGO_API.Utils;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,6 +29,11 @@ init.Configure(app, app.Environment);
 var context = app.Services.GetService<FloraFaunaGoDB>();
 
 context!.Database.EnsureCreated();
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+    db.Database.Migrate(); // exécute les migrations EF Core
+}
 Console.WriteLine("============ Database created ============");
 app.Run();
 
