@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities
 {
-    public class FloraFaunaGoDB : IdentityDbContext<UtilisateurEntities>
+    public class FloraFaunaGoDB : IdentityDbContext<UtilisateurEntities, CustomRole, string>
     {
         public virtual DbSet<EspeceEntities> Espece { get; set; }
         public virtual DbSet<CaptureEntities> Captures { get; set; }

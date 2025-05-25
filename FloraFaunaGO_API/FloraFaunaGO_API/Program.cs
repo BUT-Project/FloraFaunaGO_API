@@ -28,6 +28,11 @@ init.Configure(app, app.Environment);
 
 // var context = app.Services.GetService<FloraFaunaGoDB>();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+    db.Database.Migrate(); 
+}
 Console.WriteLine("============ Database created ============");
 app.Run();
 
