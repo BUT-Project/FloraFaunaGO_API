@@ -212,37 +212,40 @@ public class AppBootstrap(IConfiguration configuration)
 
         app.MapIdentityApi<UtilisateurEntities>();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+            db.Database.Migrate();
+        }
+
         app.MapControllers();
 
         app.MapHealthChecks("/health");
 
         // Configure the HTTP request pipeline.
-        if (true)
+        app.UseSwagger(options =>
         {
-            app.UseSwagger(options =>
+            options.PreSerializeFilters.Add((swagger, httpReq) =>
             {
-                options.PreSerializeFilters.Add((swagger, httpReq) =>
+                if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
                 {
-                    if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
+                    string basePath;
+                    switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
                     {
-                        string basePath;
-                        switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
-                        {
-                            case "BDD":
-                                basePath = "containers/FloraFauna_GO-api";
-                                break;
-                            default:
-                                basePath = httpReq.Host.Value;
-                                break;
-                        }
-
-                        var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
-                        swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+                        case "BDD":
+                            basePath = "containers/FloraFauna_GO-api";
+                            break;
+                        default:
+                            basePath = httpReq.Host.Value;
+                            break;
                     }
-                });
+
+                    var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+                    swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+                }
             });
-            app.UseSwaggerUI();
-            app.MapSwagger();
-        }
+        });
+        app.UseSwaggerUI();
+        app.MapSwagger();
     }
 }
