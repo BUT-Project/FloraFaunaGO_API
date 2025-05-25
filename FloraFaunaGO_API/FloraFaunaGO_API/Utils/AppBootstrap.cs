@@ -212,11 +212,11 @@ public class AppBootstrap(IConfiguration configuration)
 
         app.MapIdentityApi<UtilisateurEntities>();
 
-        using (var scope = app.Services.CreateScope())
+        /*using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
             db.Database.Migrate();
-        }
+        }*/
 
         app.MapControllers();
 
