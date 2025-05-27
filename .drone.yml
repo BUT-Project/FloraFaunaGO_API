@@ -188,8 +188,8 @@ steps:
   - name: build-and-push-classifier
     image: plugins/docker
     settings:
-      dockerfile: python/classifier/Dockerfile
-      context: python/classifier
+      dockerfile: python/classify/Dockerfile
+      context: python/classify
       registry: hub.codefirst.iut.uca.fr
       repo: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier
       tags:
