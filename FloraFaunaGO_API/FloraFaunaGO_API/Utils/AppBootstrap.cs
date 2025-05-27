@@ -212,11 +212,32 @@ public class AppBootstrap(IConfiguration configuration)
 
         app.MapIdentityApi<UtilisateurEntities>();
 
-        /*using (var scope = app.Services.CreateScope())
+        using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
-            db.Database.Migrate();
-        }*/
+            try
+            {
+                Console.WriteLine("Ensuring database schema creation...");
+                if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
+                {
+                    // On va passer en force pour le moment, mais c'est pas une solution à garder
+                    Console.WriteLine("Dropping and recreating MySQL database schema...");
+                    db.Database.EnsureDeleted();
+                    db.Database.EnsureCreated();
+                }
+                else
+                {
+                    db.Database.EnsureCreated();
+                }
+                Console.WriteLine("Database schema created successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating database schema: {ex.Message}");
+                // Afficher plus de détails
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+        }
 
         app.MapControllers();
 
