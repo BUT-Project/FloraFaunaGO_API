@@ -10,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities;
 
-public class UtilisateurEntities : IdentityUser
+public class UtilisateurEntities : IdentityUser  
 {
+    public byte[]? Image {  get; set; }
+
     [Required]
     public DateTime DateInscription { get; set; } = DateTime.Now;
 
