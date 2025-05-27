@@ -36,28 +36,7 @@ class ImageBase64Request(BaseModel):
 def health_check():
     return {"status": "ok"}
 
-@app.post("/FloraFaunaGo_API/identification/classify")
-async def classify_image(request: ImageBase64Request):
-    try:
-        base64_str = request.base64_image
-        if "," in base64_str:
-            base64_str = base64_str.split(",")[1]
-        image_bytes = base64.b64decode(base64_str)
-        image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Invalid image format: {str(e)}")
-
-    inputs = processor(text=prompts, images=image, return_tensors="pt", padding=True)
-    with torch.no_grad():
-        outputs = model(**inputs)
-        logits_per_image = outputs.logits_per_image
-        probs = logits_per_image.softmax(dim=1)
-
-    predicted_idx = probs.argmax().item()
-    predicted_label = labels[predicted_idx]
-    return {"classification": predicted_label}
-
-@app.post("/FloraFaunaGo_API/identification/speciesnet")
+@app.post("/FloraFaunaGo_API/identification/animal")
 async def speciesnet_identification(request: ImageBase64Request):
     """
     This endpoint expects a base64-encoded image and uses the cameratrapai (SpeciesNet) model.
