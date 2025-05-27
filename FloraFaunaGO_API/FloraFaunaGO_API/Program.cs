@@ -26,9 +26,6 @@ var app = builder.Build();
 
 init.Configure(app, app.Environment);
 
-var context = app.Services.GetService<FloraFaunaGoDB>();
-context!.Database.EnsureCreated();
-
 Console.WriteLine("============ Database created ============");
 app.Run();
 
