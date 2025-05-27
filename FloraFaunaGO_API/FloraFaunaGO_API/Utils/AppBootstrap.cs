@@ -212,37 +212,61 @@ public class AppBootstrap(IConfiguration configuration)
 
         app.MapIdentityApi<UtilisateurEntities>();
 
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+            try
+            {
+                Console.WriteLine("Ensuring database schema creation...");
+                if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
+                {
+                    // On va passer en force pour le moment, mais c'est pas une solution à garder
+                    Console.WriteLine("Dropping and recreating MySQL database schema...");
+                    db.Database.EnsureDeleted();
+                    db.Database.EnsureCreated();
+                }
+                else
+                {
+                    db.Database.EnsureCreated();
+                }
+                Console.WriteLine("Database schema created successfully");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error creating database schema: {ex.Message}");
+                // Afficher plus de détails
+                Console.WriteLine($"Stack trace: {ex.StackTrace}");
+            }
+        }
+
         app.MapControllers();
 
         app.MapHealthChecks("/health");
 
         // Configure the HTTP request pipeline.
-        if (true)
+        app.UseSwagger(options =>
         {
-            app.UseSwagger(options =>
+            options.PreSerializeFilters.Add((swagger, httpReq) =>
             {
-                options.PreSerializeFilters.Add((swagger, httpReq) =>
+                if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
                 {
-                    if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
+                    string basePath;
+                    switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
                     {
-                        string basePath;
-                        switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
-                        {
-                            case "BDD":
-                                basePath = "containers/FloraFauna_GO-api";
-                                break;
-                            default:
-                                basePath = httpReq.Host.Value;
-                                break;
-                        }
-
-                        var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
-                        swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+                        case "BDD":
+                            basePath = "containers/FloraFauna_GO-api";
+                            break;
+                        default:
+                            basePath = httpReq.Host.Value;
+                            break;
                     }
-                });
+
+                    var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+                    swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+                }
             });
-            app.UseSwaggerUI();
-            app.MapSwagger();
-        }
+        });
+        app.UseSwaggerUI();
+        app.MapSwagger();
     }
 }
