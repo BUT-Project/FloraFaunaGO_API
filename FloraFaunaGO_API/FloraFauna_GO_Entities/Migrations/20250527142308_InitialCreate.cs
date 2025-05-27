@@ -92,8 +92,11 @@ namespace FloraFauna_GO_Entities.Migrations
                 {
                     Id = table.Column<string>(type: "TEXT", nullable: false),
                     Nom = table.Column<string>(type: "TEXT", nullable: false),
+                    Type = table.Column<int>(type: "INTEGER", nullable: false),
+                    Image = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
-                    Objectif = table.Column<double>(type: "REAL", nullable: false)
+                    Objectif = table.Column<double>(type: "REAL", nullable: false),
+                    Evenenement = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {

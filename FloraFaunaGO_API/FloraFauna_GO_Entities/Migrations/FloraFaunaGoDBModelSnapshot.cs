@@ -189,12 +189,23 @@ namespace FloraFauna_GO_Entities.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Evenenement")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Objectif")
                         .HasColumnType("REAL");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FloraFauna_GO_Entities.Migrations
 {
     [DbContext(typeof(FloraFaunaGoDB))]
-    [Migration("20250525153658_InitialCreate")]
+    [Migration("20250527142308_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -192,12 +192,23 @@ namespace FloraFauna_GO_Entities.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Evenenement")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Nom")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<double>("Objectif")
                         .HasColumnType("REAL");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
