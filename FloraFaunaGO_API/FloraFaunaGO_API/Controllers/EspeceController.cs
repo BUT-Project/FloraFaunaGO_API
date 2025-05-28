@@ -31,7 +31,7 @@ public class EspeceController : ControllerBase
     [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<ActionResult<FullEspeceDto>> GetById(string id)
     {
         var espece = await EspeceRepository.GetById(id);
         var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id);
@@ -44,7 +44,7 @@ public class EspeceController : ControllerBase
     [HttpGet("name={name}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByName(string name)
+    public async Task<ActionResult<FullEspeceDto>> GetByName(string name)
     {
         var espece = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
         if (espece != null)
@@ -55,7 +55,7 @@ public class EspeceController : ControllerBase
         return espece != null ? Ok(espece) : NotFound(name);
     }
 
-    private async Task<IActionResult> GetEspeces(Func<Task<Pagination<FullEspeceDto>>> func)
+    private async Task<ActionResult<Pagination<FullEspeceDto>>> GetEspeces(Func<Task<Pagination<FullEspeceDto>>> func)
     {
         var result = await func();
         foreach (var item in result.Items)
@@ -71,7 +71,7 @@ public class EspeceController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllEspece([FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.None, 
+    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetAllEspece([FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.None, 
                                                   [FromQuery] int index = 0, 
                                                   [FromQuery] int count = 10)
     {
@@ -81,7 +81,7 @@ public class EspeceController : ControllerBase
     [HttpGet("famille={famille}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByFamille(string famille)
+    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByFamille(string famille)
     {
         var espece = await EspeceRepository.GetEspeceByFamile( EspeceOrderingCriteria.ByFamille);
         return espece != null ? Ok(espece) : NotFound(famille);
@@ -90,7 +90,7 @@ public class EspeceController : ControllerBase
     [HttpGet("regimeAlimentaire={regime_alimentaire}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetByRegimeAlimentaire(string regimeAlimentaire)
+    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByRegimeAlimentaire(string regimeAlimentaire)
     {
         var espece = await EspeceRepository.GetEspeceByRegime(EspeceOrderingCriteria.ByRegime);
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
@@ -99,7 +99,7 @@ public class EspeceController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> PutEspece(string id, [FromBody] EspeceNormalDto dto)
+    public async Task<ActionResult<FullEspeceDto>> PutEspece(string id, [FromBody] EspeceNormalDto dto)
     {
         var result = await EspeceRepository.Update(id,dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

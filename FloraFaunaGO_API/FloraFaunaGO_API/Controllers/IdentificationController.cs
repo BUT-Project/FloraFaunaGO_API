@@ -27,7 +27,7 @@ public class IdentificationController : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AskToIdentifyAPI(string? especeType, [FromBody] AnimalIdentifyNormalDto dto)
+    public async Task<ActionResult<FullEspeceDto>> AskToIdentifyAPI(string? especeType, [FromBody] AnimalIdentifyNormalDto dto)
     {
         if (especeType is null) especeType = "Plant";
         if (!Enum.TryParse(especeType, true, out EspeceType type))
