@@ -8,7 +8,6 @@ COPY . .
 
 RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir speciesnet \
- && pip install --no-cache-dir -e .[dev] \
  && pip install --no-cache-dir -r requirements.txt
 
 EXPOSE 8001
