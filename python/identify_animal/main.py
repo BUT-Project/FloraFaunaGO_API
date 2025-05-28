@@ -57,8 +57,8 @@ async def speciesnet_identification(request: ImageBase64Request):
         image.save(image_path)
 
         # Path to the Python executable in your env
-        env_python = r"env\Scripts\python.exe"
-        #env_python = "python"
+        # env_python = r"env\Scripts\python.exe"
+        env_python = "python"
         # If you want to use the current running python instead (if you know you're in the right env):
         # env_python = sys.executable
 
