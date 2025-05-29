@@ -14,9 +14,7 @@ requests
 
 jupyterlab
 fastapi
-uvicorn
 litserve
+uvicorn[standard]
+transformers
 
-azure-storage-blob
-google-cloud-storage
-boto3
