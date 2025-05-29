@@ -1,4 +1,4 @@
-speciesnet==5.0.0
+speciesnet
 torch
 torchvision
 yolov5
