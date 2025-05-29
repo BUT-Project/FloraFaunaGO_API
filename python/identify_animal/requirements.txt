@@ -1,7 +1,7 @@
 # Core ML libs
 torch==2.0.1
 torchvision==0.15.2
-yolov5==7.0.11
+git+https://github.com/ultralytics/yolov5.git@v6.2#egg=yolov5
 megadetector==5.0.28
 
 # Vision & image processing
@@ -9,7 +9,7 @@ opencv-python==4.8.1.78
 pillow==10.0.1
 matplotlib==3.10.0
 
-# NumPy version compatible avec tous les bindings C/C++
+# NumPy version compatible
 numpy==1.26.4
 
 # Utilitaires
