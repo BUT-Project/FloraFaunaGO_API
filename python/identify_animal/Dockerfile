@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 RUN pip install --no-cache-dir --upgrade pip \
  && pip install --no-cache-dir speciesnet \
  && pip install --no-cache-dir -r requirements.txt \
- && pip instal -no-cache-dir .[dev]
+ && pip instal -no-cache-dir .dev
 
 EXPOSE 8001
 
