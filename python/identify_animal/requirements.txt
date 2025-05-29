@@ -8,7 +8,7 @@ pillow==10.0.1
 matplotlib==3.10.0
 
 # Utility libraries
-numpy==1.25.0
+numpy
 PyYAML==6.0 
 tqdm==4.67.1
 requests==2.32.0
