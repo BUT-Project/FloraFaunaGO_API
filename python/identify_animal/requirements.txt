@@ -1,15 +1,15 @@
-torch==2.0.1
-torchvision==0.15.2
+torch
+torchvision
 yolov5==7.0.11
 megadetector==5.0.28
 
 opencv-python==4.8.1.78
-pillow==10.0.1
+pillow
 matplotlib==3.10.0
 
 # Utility libraries
 numpy
-PyYAML==6.0 
+PyYAML
 tqdm==4.67.1
 requests==2.32.0
 
