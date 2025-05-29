@@ -1,7 +1,6 @@
 # Core ML libs
 torch==2.0.1
 torchvision==0.15.2
-git+https://github.com/ultralytics/yolov5.git@v6.2#egg=yolov5
 megadetector==5.0.28
 
 # Vision & image processing
