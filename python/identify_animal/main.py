@@ -38,10 +38,6 @@ def health_check():
 
 @app.post("/FloraFaunaGo_API/identification/animal")
 async def speciesnet_identification(request: ImageBase64Request):
-    """
-    This endpoint expects a base64-encoded image and uses the cameratrapai (SpeciesNet) model.
-    The subprocess will be run with the Python interpreter from the specified virtual environment.
-    """
     try:
         base64_str = request.base64_image
         if "," in base64_str:
@@ -56,11 +52,7 @@ async def speciesnet_identification(request: ImageBase64Request):
         output_path = os.path.join(tmpdir, "output.json")
         image.save(image_path)
 
-        # Path to the Python executable in your env
-        # env_python = r"env\Scripts\python.exe"
         env_python = "python"
-        # If you want to use the current running python instead (if you know you're in the right env):
-        # env_python = sys.executable
 
         try:
             cmd = [
