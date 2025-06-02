@@ -199,7 +199,7 @@ public class IdentificationService
                 localisationNormalDtos = []
             };
 
-            return dtoResult;
+            return espece;
         }
         else
         {
@@ -209,6 +209,5 @@ public class IdentificationService
 
         return null;
     }
-}
 }
 
