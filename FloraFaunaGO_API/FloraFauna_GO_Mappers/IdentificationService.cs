@@ -19,6 +19,7 @@ public class IdentificationService
     private const string INSECT_API_KEY = "If5WLVV1F1DfPvA0d7gyjvf0MV6UH6RZ29dG0Wool6YxRRrgHW";
     private static readonly string plantApiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?lang=fr&api-key={PLANT_API_KEY}";
     private static readonly string insectApiEndpoint = $"https://insect.kindwise.com/api/v1/identification?details=common_names,url,description,image";
+    private static readonly string animalApiEndpoint = $"http://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api/FloraFaunaGo_API/identification/animal";
 
     public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
     {
@@ -36,7 +37,7 @@ public class IdentificationService
                 form.Add(imageContent, "images", "image.jpg");
                 return await IdentifyPlant(form, dto.AskedImage);
             case EspeceType.Animal:
-                return null;
+                return await IdentifyAnimal(dto.AskedImage);
             case EspeceType.Insect:
                 return await IdentifyInsect(dto.AskedImage);
             default:
@@ -151,6 +152,63 @@ public class IdentificationService
         return null;
     }
 
+    public async Task<FullEspeceDto> IdentifyAnimal(byte[] image)
+    {
+        var base64Image = Convert.ToBase64String(image);
 
+        var requestBody = new
+        {
+            base64_image = base64Image
+        };
+
+        var jsonContent = new StringContent(
+            JsonSerializer.Serialize(requestBody),
+            Encoding.UTF8,
+            "application/json"
+        );
+
+        client.DefaultRequestHeaders.Clear();
+
+        HttpResponseMessage response = await client.PostAsync(animalApiEndpoint, jsonContent);
+
+        if (response.IsSuccessStatusCode)
+        {
+            var jsonResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("Réponse brute de l'API : " + jsonResponse);
+
+            var dtoResult = JsonSerializer.Deserialize<AnimalIdentificationResultDto>(
+                jsonResponse,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
+
+            var espece = new FullEspeceDto()
+            {
+                Espece = new EspeceNormalDto
+                {
+                    Nom = dtoResult.Predictions.First().Prediction.Split( ';' ).Last(),
+                    Nom_Scientifique = "",
+                    Description = ""
+                                  ?? "Description non disponible.",
+                    Image = image,
+                    Image3D = null,
+                    Famille = "Inconnue",
+                    Zone = "À définir",
+                    Climat = "À définir",
+                    Regime = "À définir"
+                },
+                localisationNormalDtos = []
+            };
+
+            return dtoResult;
+        }
+        else
+        {
+            var errorContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Erreur {response.StatusCode} : {errorContent}");
+        }
+
+        return null;
+    }
+}
 }
 
