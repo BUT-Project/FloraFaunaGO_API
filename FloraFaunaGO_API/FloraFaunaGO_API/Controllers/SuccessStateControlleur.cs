@@ -1,4 +1,5 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto.Edit;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
@@ -68,9 +69,11 @@ public class SuccessStateControlleur : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id,[FromBody] SuccessStateNormalDto dto)
+    public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id,[FromBody] EditSuccessDto dto)
     {
-        var result = await Repository.Update(id, dto);
+        var tmp = await Repository.GetById(id);
+        if ( tmp is null ) return NoContent();
+        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = tmp.State.PercentSucces == tmp.Success.Objectif, PercentSucces = dto.PercentSucces});
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }
