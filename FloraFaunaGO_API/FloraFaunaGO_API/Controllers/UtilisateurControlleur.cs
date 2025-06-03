@@ -39,7 +39,7 @@ public class UtilisateurControlleur : ControllerBase
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetPlayerById(string id)
+    public async Task<ActionResult<FullUtilisateurDto>> GetPlayerById(string id)
     {
         var user = await UserRepository.GetById(id);
         if(user != null) { 
@@ -57,7 +57,7 @@ public class UtilisateurControlleur : ControllerBase
     //    throw new NotImplementedException();
     //}
 
-    private async Task<IActionResult> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
+    private async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
         var result = await func();
         foreach(var user in result.Items)
@@ -72,7 +72,7 @@ public class UtilisateurControlleur : ControllerBase
     //[Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
+    public async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
                                                   [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
@@ -83,7 +83,7 @@ public class UtilisateurControlleur : ControllerBase
     [Authorize]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PostPlayer(UtilisateurNormalDto dto)
+    public async Task<ActionResult<FullUtilisateurDto>> PostPlayer(UtilisateurNormalDto dto)
     {
         _ = await UserRepository.Insert(dto);
         var inserted = await UnitOfWork.SaveChangesAsync();
@@ -97,7 +97,7 @@ public class UtilisateurControlleur : ControllerBase
     [Authorize]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)
+    public async Task<ActionResult<FullUtilisateurDto>> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)
     {
         var result = await UserRepository.Update(id, dto);
         if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

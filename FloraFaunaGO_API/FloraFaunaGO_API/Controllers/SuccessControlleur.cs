@@ -26,13 +26,13 @@ public class SuccessControlleur : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<ActionResult<SuccessNormalDto>> GetById(string id)
     {
         var result = await SuccessRepository.GetById(id);
         return result != null ? Ok(result) : NotFound(id);
     }
 
-    private async Task<IActionResult> GetSuccess(Func<Task<Pagination<SuccessNormalDto>>> func)
+    private async Task<ActionResult<Pagination<SuccessNormalDto>>> GetSuccess(Func<Task<Pagination<SuccessNormalDto>>> func)
     {
         var result = await func();
         return result.Items.Any() ? Ok(result) : NoContent();
@@ -41,7 +41,7 @@ public class SuccessControlleur : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllSuccess([FromQuery] SuccessOrderingCreteria criterium = SuccessOrderingCreteria.None,
+    public async Task<ActionResult<Pagination<SuccessNormalDto>>> GetAllSuccess([FromQuery] SuccessOrderingCreteria criterium = SuccessOrderingCreteria.None,
                                                    [FromQuery] int index = 0,
                                                    [FromQuery] int count = 10)
     {
@@ -51,7 +51,7 @@ public class SuccessControlleur : ControllerBase
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostSuccess([FromBody] SuccessNormalDto dto)
+    public async Task<ActionResult<SuccessNormalDto>> PostSuccess([FromBody] SuccessNormalDto dto)
     {
         dto.Id = null;
         var Toto = await SuccessRepository.Insert(dto);
@@ -65,7 +65,7 @@ public class SuccessControlleur : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutSuccess(string id,[FromBody] SuccessNormalDto dto)
+    public async Task<ActionResult<SuccessNormalDto>> PutSuccess(string id,[FromBody] SuccessNormalDto dto)
     {
         var result = await SuccessRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
@@ -75,7 +75,7 @@ public class SuccessControlleur : ControllerBase
     [HttpDelete("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> DeleteSuccess(string id)
+    public async Task<ActionResult<bool>> DeleteSuccess(string id)
     {
         bool result = await SuccessRepository.Delete(id);
         if (await UnitOfWork.SaveChangesAsync() == null) return NotFound(id);

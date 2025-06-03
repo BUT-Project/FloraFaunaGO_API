@@ -1,4 +1,5 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto.Edit;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
@@ -27,7 +28,7 @@ public class SuccessStateControlleur : ControllerBase
     [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<ActionResult<FullSuccessStateDto>> GetById(string id)
     {
         try
         {
@@ -44,7 +45,7 @@ public class SuccessStateControlleur : ControllerBase
         return NotFound();
     }
 
-    private async Task<IActionResult> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
+    private async Task<ActionResult<Pagination<FullSuccessStateDto>>> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
     {
         var result = await func();
         foreach (var item in result.Items)
@@ -58,7 +59,7 @@ public class SuccessStateControlleur : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAll([FromQuery] SuccessStateOrderingCreteria criterium = SuccessStateOrderingCreteria.None,
+    public async Task<ActionResult<Pagination<FullSuccessStateDto>>> GetAll([FromQuery] SuccessStateOrderingCreteria criterium = SuccessStateOrderingCreteria.None,
                                            [FromQuery] int index = 0,
                                            [FromQuery] int count = 10)
     {
@@ -68,9 +69,11 @@ public class SuccessStateControlleur : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutSuccessState(string id,[FromBody] SuccessStateNormalDto dto)
+    public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id,[FromBody] EditSuccessDto dto)
     {
-        var result = await Repository.Update(id, dto);
+        var tmp = await Repository.GetById(id);
+        if ( tmp is null ) return NoContent();
+        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = tmp.State.PercentSucces == tmp.Success.Objectif, PercentSucces = dto.PercentSucces});
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }

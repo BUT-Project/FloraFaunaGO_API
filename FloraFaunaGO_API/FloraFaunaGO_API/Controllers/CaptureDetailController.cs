@@ -26,7 +26,7 @@ public class CaptureDetailController : ControllerBase
     [HttpGet ("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<ActionResult<FullCaptureDetailDto>> GetById(string id)
     {
         var result = await CaptureDetailRepository.GetById(id);
         if (result == null) return NotFound();
@@ -35,7 +35,7 @@ public class CaptureDetailController : ControllerBase
         return Ok(result);
     }
 
-    private async Task<IActionResult> GetCaptureDetail(Func<Task<Pagination<FullCaptureDetailDto>>> func)
+    private async Task<ActionResult<Pagination<FullCaptureDetailDto>>> GetCaptureDetail(Func<Task<Pagination<FullCaptureDetailDto>>> func)
     {
         var result = await func();
         foreach (var item in result.Items)
@@ -48,7 +48,7 @@ public class CaptureDetailController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllCaptureDetail([FromQuery] CaptureDetailOrderingCriteria criterium = CaptureDetailOrderingCriteria.None,
+    public async Task<ActionResult<Pagination<FullCaptureDetailDto>>> GetAllCaptureDetail([FromQuery] CaptureDetailOrderingCriteria criterium = CaptureDetailOrderingCriteria.None,
                                                   [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
@@ -58,7 +58,7 @@ public class CaptureDetailController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
+    public async Task<ActionResult<FullCaptureDetailDto>> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
     {
         var result = await CaptureDetailRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/identification")]
 public class IdentificationController : ControllerBase
@@ -25,11 +24,12 @@ public class IdentificationController : ControllerBase
         _env = env;
     }
 
-    [HttpPost("{especeType}")]
+    [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> AskToIdentifyAPI(string especeType, [FromBody] AnimalIdentifyNormalDto dto)
+    public async Task<ActionResult<FullEspeceDto>> AskToIdentifyAPI(string? especeType, [FromBody] AnimalIdentifyNormalDto dto)
     {
+        if (especeType is null) especeType = "Plant";
         if (!Enum.TryParse(especeType, true, out EspeceType type))
             return BadRequest("Action invalide.");
 

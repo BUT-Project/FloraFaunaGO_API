@@ -43,7 +43,7 @@ public class CaptureController : ControllerBase
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCaptureById(string id)
+    public async Task<ActionResult<FullCaptureDto>> GetCaptureById(string id)
     {
         var capture = await CaptureRepository.GetById(id);
         if (capture != null)
@@ -61,7 +61,7 @@ public class CaptureController : ControllerBase
     [HttpGet ("idUser={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetCaptureByUser(string id)
+    public async Task<ActionResult<FullCaptureDto>> GetCaptureByUser(string id)
     {
         var capture = await CaptureRepository.GetCaptureByUser(id, CaptureOrderingCriteria.ByUser);
         if (capture != null && capture.Items.Count() == 0)
@@ -79,7 +79,7 @@ public class CaptureController : ControllerBase
         return capture != null ? Ok(capture) : NotFound();
     }
 
-    private async Task<IActionResult> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
+    private async Task<ActionResult<Pagination<FullCaptureDto>>> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
     {
         var result = await func();
         foreach(var item in result.Items)
@@ -97,7 +97,7 @@ public class CaptureController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllCapture([FromQuery] CaptureOrderingCriteria criterium = CaptureOrderingCriteria.None,
+    public async Task<ActionResult<Pagination<FullCaptureDto>>> GetAllCapture([FromQuery] CaptureOrderingCriteria criterium = CaptureOrderingCriteria.None,
                                                   [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
@@ -107,7 +107,7 @@ public class CaptureController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> PutCapture(string id, [FromBody] EditCaptureDto dto)
+    public async Task<ActionResult<FullCaptureDto>> PutCapture(string id, [FromBody] EditCaptureDto dto)
     {
         var capture = await CaptureRepository.GetById(id);
         if (dto.idEspece != null) capture.Capture.IdEspece = dto.idEspece;
