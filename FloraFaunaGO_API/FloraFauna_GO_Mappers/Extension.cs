@@ -26,7 +26,9 @@ public static class Extension
         {
             Latitude = dto.Latitude,
             Longitude = dto.Longitude,
-            Rayon = dto.Rayon
+            Rayon = dto.Rayon,
+            Altitude = dto.Altitude,
+            Exactitude = dto.Exactitude
         };
 
         return dto.ToU(Mappers.LocalisationMapper, creator);
@@ -39,7 +41,9 @@ public static class Extension
             Id = id,
             Latitude = dto.Latitude,
             Longitude = dto.Longitude,
-            Rayon = dto.Rayon
+            Rayon = dto.Rayon,
+            Altitude = dto.Altitude,
+            Exactitude = dto.Exactitude
         };
 
         return dto.ToU(Mappers.LocalisationMapper, creator);
@@ -49,6 +53,8 @@ public static class Extension
     {
         Func<LocalisationEntities, LocalisationNormalDto> creator = (entities) => new LocalisationNormalDto()
         {
+            Altitude = entities.Altitude,
+            Exactitude = entities.Exactitude,
             Latitude = entities.Latitude,
             Longitude = entities.Longitude,
             Rayon = entities.Rayon,
@@ -192,6 +198,8 @@ public static class Extension
             Zone = dto.Zone,
             Famille = dto.Famille,
             Regime = dto.Regime,
+            Kingdom = dto.Kingdom,
+            Class = dto.Class,
         };
         return dto.ToU(Mappers.EspeceMapper, creator);
     }
@@ -208,6 +216,8 @@ public static class Extension
             Climat = entities.Climat,
             Zone = entities.Zone,
             Regime = entities.Regime,
+            Kingdom = entities.Kingdom,
+            Class = entities.Class,
         };
         return entities.ToT(null, creator);
     }
@@ -227,6 +237,8 @@ public static class Extension
                 Climat = entities.Climat,
                 Zone = entities.Zone,
                 Regime = entities.Regime,
+                Kingdom = entities.Kingdom,
+                Class = entities.Class,
             },
         };
         Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
