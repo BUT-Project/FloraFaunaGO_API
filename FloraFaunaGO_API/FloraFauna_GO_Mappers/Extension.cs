@@ -180,6 +180,9 @@ public static class Extension
             Zone = dto.Zone,
             Famille = dto.Famille,
             Regime = dto.Regime,
+            Kingdom = dto.Kingdom,
+            Class = dto.Class,
+
         };
         return dto.ToU(Mappers.EspeceMapper, creator);
     }

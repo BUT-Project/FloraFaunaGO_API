@@ -55,9 +55,14 @@ public class IdentificationService
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Espece.Nom = speciesName;
+            //espece.Espece.Image = dto.AskedImage;
             return espece;
         }
-        else return null;
+        else if (speciesName is null) return null;
+        else
+        {
+            return especes.Result.Items.First();
+        }
     }
 
     private async Task<String> IdentifyPlant(MultipartFormDataContent form, byte[] image)
@@ -185,7 +190,6 @@ public class IdentificationService
             "application/json"
         );
 
-        // IMPORTANT: nettoyer les anciens headers
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", DATA_API_KEY);
 
@@ -195,7 +199,27 @@ public class IdentificationService
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(jsonResponse, new JsonSerializerOptions
+            using var document = JsonDocument.Parse(jsonResponse);
+
+            var content = document.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+
+            if (string.IsNullOrWhiteSpace(content))
+            {
+                Console.WriteLine("Contenu vide.");
+                return null;
+            }
+
+            // Nettoyage du contenu pour enlever les ``` et les \n
+            var cleanJson = content
+                .Replace("```", "")  // Enlève les backticks
+                .Trim();
+
+            // Désérialisation du JSON propre en FullEspeceDto
+            var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(cleanJson, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
@@ -210,5 +234,6 @@ public class IdentificationService
 
         return null;
     }
+
 }
 

@@ -31,6 +31,7 @@ pour le nom tu ne met pas en majuscule et en francais
 localisation est un tableau donc si il y a plusieurs localisation il faut les mettre dans le tableau en gardant le shéma
 il faut que les champ "nom_Scientifique", "famille", "zone", "climat", "class", "kingdom" et "regime" soient remplis avec les informations de l'animal que je te donne
 et que les informations soit en latin obligatoire et en majuscule obligatoire
+Pour les 2 image mets null et pas de chaine de caratres vide ou pleine juste null car ces sont des byte[]? dans les dtos de récupération
 le kingdom est à la base un enum comprit dans cette liste : 
 {
   "ANIMALIA",
