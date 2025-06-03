@@ -34,7 +34,7 @@ public class IdentificationService
     {
         var imageContent = new ByteArrayContent(dto.AskedImage);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
-        string? speciesName = "";
+        string? speciesName = null;
         switch (type)
         {
             case EspeceType.Plant:
@@ -51,7 +51,7 @@ public class IdentificationService
                 break;
         }
         var especes = Service.GetEspeceByName(speciesName);
-        if (!speciesName.IsNullOrEmpty() && especes.Result is null)
+        if (speciesName is not null && especes.Result.TotalCount == 0)
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Espece.Nom = speciesName;
@@ -109,7 +109,7 @@ public class IdentificationService
             if (bestSuggestion is null)
                 return null;
 
-            return bestSuggestion.Details?.CommonNames?.FirstOrDefault();
+            return bestSuggestion.Name;
         }
         else
         {
@@ -172,16 +172,11 @@ public class IdentificationService
 
         var requestBody = new
         {
-            model = "meta-llama/llama-4-scout-17b-16e-instruct",
+            model = "llama-3.3-70b-versatile",
             messages = new[]
             {
-            new { role = "user", content = prompt + nom }
-        },
-            temperature = 1,
-            max_tokens = 1024,
-            top_p = 1,
-            stream = true,
-            stop = (string?)null
+            new { role = "user", content = prompt + " " + nom }
+        }
         };
 
         var jsonContent = new StringContent(
@@ -190,39 +185,17 @@ public class IdentificationService
             "application/json"
         );
 
+        // IMPORTANT: nettoyer les anciens headers
+        client.DefaultRequestHeaders.Clear();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", DATA_API_KEY);
+
         var response = await client.PostAsync(dataApiEndpoint, jsonContent);
 
         if (response.IsSuccessStatusCode)
         {
-            using var stream = await response.Content.ReadAsStreamAsync();
-            using var reader = new StreamReader(stream);
+            var jsonResponse = await response.Content.ReadAsStringAsync();
 
-            var fullContent = new StringBuilder();
-
-            while (!reader.EndOfStream)
-            {
-                var line = await reader.ReadLineAsync();
-                if (!string.IsNullOrWhiteSpace(line) && line.StartsWith("data:"))
-                {
-                    var jsonLine = line.Substring(5).Trim();
-
-                    if (jsonLine == "[DONE]")
-                        break;
-
-                    var jsonDoc = JsonDocument.Parse(jsonLine);
-                    var delta = jsonDoc.RootElement
-                        .GetProperty("choices")[0]
-                        .GetProperty("delta");
-
-                    if (delta.TryGetProperty("content", out var content))
-                    {
-                        fullContent.Append(content.GetString());
-                    }
-                }
-            }
-            var fullText = fullContent.ToString();
-
-            var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(fullText, new JsonSerializerOptions
+            var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(jsonResponse, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
             });
