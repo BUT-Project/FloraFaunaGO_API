@@ -99,12 +99,15 @@ public class AppBootstrap(IConfiguration configuration)
     {
         services.AddAuthorization();
 
+        /*
         var key = config["Jwt:Key"] ?? "dev-key-very-secret";
         var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
+        */
 
         services.AddIdentityApiEndpoints<UtilisateurEntities>()
             .AddEntityFrameworkStores<FloraFaunaGoDB>();
 
+        /*
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -136,6 +139,7 @@ public class AppBootstrap(IConfiguration configuration)
                 }
             };
         });
+        */
 
         services.Configure<IdentityOptions>(options =>
         {
