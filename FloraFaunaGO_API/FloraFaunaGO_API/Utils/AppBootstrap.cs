@@ -3,6 +3,8 @@ using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -97,9 +99,15 @@ public class AppBootstrap(IConfiguration configuration)
     {
         services.AddAuthorization();
 
+        /*
+        var key = config["Jwt:Key"] ?? "dev-key-very-secret";
+        var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
+        */
+
         services.AddIdentityApiEndpoints<UtilisateurEntities>()
             .AddEntityFrameworkStores<FloraFaunaGoDB>();
 
+        /*
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -107,18 +115,44 @@ public class AppBootstrap(IConfiguration configuration)
         })
         .AddJwtBearer(options =>
         {
-            var key = config["Jwt:Key"] ?? "dev-key-very-secret";
-            var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
-
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = false,
+                ValidateAudience = false, // Pas de validation d'audience pour le moment
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
             };
+
+            options.Events = new JwtBearerEvents
+            {
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    Console.WriteLine("Token validated successfully");
+                    return Task.CompletedTask;
+                }
+            };
+        });
+        */
+
+        services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = true;
+            options.Password.RequireLowercase = true;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequireUppercase = true;
+            options.Password.RequiredLength = 6;
+
+            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+            options.Lockout.MaxFailedAccessAttempts = 5;
+
+            options.User.RequireUniqueEmail = true;
         });
     }
 
@@ -211,7 +245,6 @@ public class AppBootstrap(IConfiguration configuration)
         app.UseAuthorization();
 
         app.MapIdentityApi<UtilisateurEntities>();
-
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();

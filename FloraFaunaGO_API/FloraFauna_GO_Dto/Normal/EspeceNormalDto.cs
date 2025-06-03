@@ -27,5 +27,9 @@ public class EspeceNormalDto
 
     public string Climat { get; set; }
 
+    public string Class { get; set; }
+
+    public string Kingdom { get; set; }
+
     public string Regime { get; set; }
 }

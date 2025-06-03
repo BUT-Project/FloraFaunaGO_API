@@ -26,7 +26,9 @@ public static class Extension
         {
             Latitude = dto.Latitude,
             Longitude = dto.Longitude,
-            Rayon = dto.Rayon
+            Rayon = dto.Rayon,
+            Altitude = dto.Altitude,
+            Exactitude = dto.Exactitude
         };
 
         return dto.ToU(Mappers.LocalisationMapper, creator);
@@ -39,7 +41,9 @@ public static class Extension
             Id = id,
             Latitude = dto.Latitude,
             Longitude = dto.Longitude,
-            Rayon = dto.Rayon
+            Rayon = dto.Rayon,
+            Altitude = dto.Altitude,
+            Exactitude = dto.Exactitude
         };
 
         return dto.ToU(Mappers.LocalisationMapper, creator);
@@ -49,6 +53,8 @@ public static class Extension
     {
         Func<LocalisationEntities, LocalisationNormalDto> creator = (entities) => new LocalisationNormalDto()
         {
+            Altitude = entities.Altitude,
+            Exactitude = entities.Exactitude,
             Latitude = entities.Latitude,
             Longitude = entities.Longitude,
             Rayon = entities.Rayon,
@@ -192,6 +198,8 @@ public static class Extension
             Zone = dto.Zone,
             Famille = dto.Famille,
             Regime = dto.Regime,
+            Kingdom = dto.Kingdom,
+            Class = dto.Class,
         };
         return dto.ToU(Mappers.EspeceMapper, creator);
     }
@@ -208,6 +216,8 @@ public static class Extension
             Climat = entities.Climat,
             Zone = entities.Zone,
             Regime = entities.Regime,
+            Kingdom = entities.Kingdom,
+            Class = entities.Class,
         };
         return entities.ToT(null, creator);
     }
@@ -227,6 +237,8 @@ public static class Extension
                 Climat = entities.Climat,
                 Zone = entities.Zone,
                 Regime = entities.Regime,
+                Kingdom = entities.Kingdom,
+                Class = entities.Class,
             },
         };
         Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
@@ -241,6 +253,7 @@ public static class Extension
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
             UserName = dto.Pseudo,
+            Image = dto.Image,
             Email = dto.Mail,
             PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
@@ -255,6 +268,7 @@ public static class Extension
         {
             Id = id,
             UserName = dto.Pseudo,
+            Image = dto.Image,
             Email = dto.Mail,
             PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
@@ -268,6 +282,7 @@ public static class Extension
         Func<UtilisateurEntities, UtilisateurNormalDto> creator = (entities) => new UtilisateurNormalDto()
         {
             Pseudo = entities.UserName,
+            Image = entities.Image,
             Mail = entities.Email,
             Hash_mdp = entities.PasswordHash,
             DateInscription = entities.DateInscription,
@@ -283,6 +298,7 @@ public static class Extension
             Utilisateur = new UtilisateurNormalDto()
             {
                 Pseudo = entities.UserName,
+                Image = entities.Image,
                 Mail = entities.Email,
                 Hash_mdp = entities.PasswordHash,
                 DateInscription = entities.DateInscription,
@@ -302,8 +318,11 @@ public static class Extension
         Func<SuccessNormalDto, SuccesEntities> creator = (dto) => new SuccesEntities()
         {
             Nom = dto.Nom,
+            Type = dto.Type,
+            Image = dto.Image,
             Objectif = dto.Objectif,
             Description = dto.Description,
+            Evenenement = dto.Evenement,
         };
         return dto.ToU(Mappers.SuccessMapper, creator);
     }
@@ -314,8 +333,11 @@ public static class Extension
         {
             Id = id,
             Nom = dto.Nom,
+            Type = dto.Type,
+            Image = dto.Image,
             Objectif = dto.Objectif,
             Description = dto.Description,
+            Evenenement = dto.Evenement,
         };
 
         return dto.ToU(Mappers.SuccessMapper, creator);
@@ -328,6 +350,9 @@ public static class Extension
             Objectif = entities.Objectif,
             Description = entities.Description,
             Nom = entities.Nom,
+            Type = entities.Type,
+            Image = entities.Image,
+            Evenement = entities.Evenenement,
             Id = entities.Id,
         };
         return entities.ToT(null, creator);

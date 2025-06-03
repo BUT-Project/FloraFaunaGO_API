@@ -14,7 +14,7 @@ namespace FloraFauna_GO_Entities
         [Required]
         public string Nom { get; set; }
 
-        public SuccesType Type { get; set; }
+        public string Type { get; set; }
 
         public string Image { get; set; }
 
@@ -27,13 +27,5 @@ namespace FloraFauna_GO_Entities
         public string Evenenement { get; set; }
 
         public ICollection<SuccesStateEntities> SuccesStates { get; set; } = new List<SuccesStateEntities>();
-    }
-
-    public enum SuccesType
-    {
-        CAPTURE,
-        DISTANCE,
-        LIEUX,
-        PHOTO
     }
 }

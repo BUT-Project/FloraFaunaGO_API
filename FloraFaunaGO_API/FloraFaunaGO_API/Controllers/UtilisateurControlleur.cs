@@ -69,7 +69,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet]
-    //[Authorize]
+    [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
@@ -102,128 +102,5 @@ public class UtilisateurControlleur : ControllerBase
         var result = await UserRepository.Update(id, dto);
         if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
-    }
-
-    /*[HttpPut("login")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Login([FromBody] LoginDto dto)
-    {
-        var user = (await UserRepository.GetUserByMail(dto.Mail)).Items.FirstOrDefault();
-        var hash = dto.Password; // TODO: hash password
-
-        if (user == null || user.Utilisateur.Hash_mdp != hash) return NotFound();
-
-        var token = GenerateJwtToken(user.Utilisateur.Id, user.Utilisateur.Mail);
-        var refreshToken = GenerateRefreshToken();
-
-        return Ok(new
-        {
-            UserId = user.Utilisateur.Id,
-            Token = token,
-            RefreshToken = refreshToken
-        });
-    }*/
-
-    /*[HttpPut("logout")]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Logout()
-    {
-        throw new NotImplementedException();
-    }*/
-
-    /*[HttpPut("register")]
-    [AllowAnonymous]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<IActionResult> Register([FromBody] NewUtilisateurDto dto)
-    {
-        if (dto == null) return BadRequest();
-        if ((await UserRepository.GetAllUser()).Items.Any(u => u.Utilisateur.Mail == dto.Mail || u.Utilisateur.Pseudo == dto.Pseudo))
-            return BadRequest("Identifiant already use");
-
-        var user = new UtilisateurNormalDto()
-        {
-            Mail = dto.Mail,
-            Pseudo = dto.Pseudo,
-            Hash_mdp = dto.password, // TODO: hash password
-            DateInscription = DateTime.Now,
-        };
-
-        var result = await PostPlayer(user);
-        if (result is CreatedResult)
-        {
-            // Récupère l'utilisateur inséré (id généré)
-            var insertedUser = (result as CreatedResult)?.Value as UtilisateurNormalDto ?? user;
-            var token = GenerateJwtToken(insertedUser.Id, insertedUser.Mail);
-            var refreshToken = GenerateRefreshToken();
-
-            return Ok(new
-            {
-                UserId = insertedUser.Id,
-                Token = token,
-                RefreshToken = refreshToken
-            });
-        }
-
-        return BadRequest();
-    }*/
-
-    /*[HttpPost("refresh")]
-    [Authorize]
-    public IActionResult RefreshToken()
-    {
-        var userId = User.FindFirstValue(JwtRegisteredClaimNames.Sub);
-        var userEmail = User.FindFirstValue(JwtRegisteredClaimNames.Email);
-
-        if (userId == null || userEmail == null)
-            return Unauthorized();
-
-        var token = GenerateJwtToken(userId, userEmail);
-        return Ok(new { Token = token });
-    }*/
-/*
-    [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
-    {
-        var user = (await UserRepository.GetUserByMail(dto.Mail)).Items.FirstOrDefault();
-        if (user == null)
-            return NotFound();
-
-        user.Utilisateur.Hash_mdp = dto.NewPassword; // TODO: hasher le mot de passe
-        await UserRepository.Update(user.Utilisateur.Id, user.Utilisateur);
-        await UnitOfWork.SaveChangesAsync();
-
-        return Ok();
-    }*/
-
-    private string GenerateJwtToken(string userId, string userEmail)
-    {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var claims = new[]
-        {
-        new Claim(JwtRegisteredClaimNames.Sub, userId),
-        new Claim(JwtRegisteredClaimNames.Email, userEmail),
-        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-    };
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Issuer"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddHours(1),
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
-    }
-
-    private string GenerateRefreshToken()
-    {
-        return Convert.ToBase64String(Guid.NewGuid().ToByteArray());
     }
 }
