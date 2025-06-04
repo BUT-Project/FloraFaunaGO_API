@@ -47,7 +47,7 @@ public class EspeceController : ControllerBase
     public async Task<ActionResult<FullEspeceDto>> GetByName(string name)
     {
         var espece = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
-        if (espece != null)
+        if (espece != null && espece.Items.Count() > 0)
         {
             var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(espece.Items.First().Espece.Id);
             espece.Items.First().localisationNormalDtos = localisations.Items.ToArray();
