@@ -51,7 +51,7 @@ public class IdentificationService
                 break;
         }
         var especes = Service.GetEspeceByName(speciesName);
-        if (speciesName is not null && especes.Result.TotalCount == 0)
+        if (speciesName is not null && (especes is null || especes.Result.TotalCount == 0))
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Espece.Nom = speciesName;
