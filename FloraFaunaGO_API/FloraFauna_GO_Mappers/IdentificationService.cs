@@ -213,12 +213,12 @@ public class IdentificationService
                 return null;
             }
 
-            // Nettoyage du contenu pour enlever les ``` et les \n
             var cleanJson = content
-                .Replace("```", "")  // Enlève les backticks
+                .Replace("```", "")
                 .Trim();
 
-            // Désérialisation du JSON propre en FullEspeceDto
+            Console.WriteLine("Réponse brute de l'API : " + cleanJson);
+
             var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(cleanJson, new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true
