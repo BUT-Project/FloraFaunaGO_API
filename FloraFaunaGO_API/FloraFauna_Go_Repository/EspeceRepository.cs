@@ -98,7 +98,7 @@ namespace FloraFauna_Go_Repository
         {
             IQueryable<EspeceEntities> query = Set;
 
-            query = query.OrderBy(espece => espece.Nom);
+            query = query.Where(espece => espece.Nom == name);
 
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
