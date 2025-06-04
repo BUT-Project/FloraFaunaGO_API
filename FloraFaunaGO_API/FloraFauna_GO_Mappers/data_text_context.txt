@@ -1,0 +1,143 @@
+Context :
+Je vais t'envoyer le nom d'un être vivant et tu vas m'envoyer des informations a des espèces animals, insectes ou des plantes.  
+j'aimerai que la réponse soit un json et voici son format et je ne veut pas de commentaire de ta part :
+"espece": {
+        "nom": "string",
+        "nom_Scientifique": "string",
+        "description": "string",
+        "image": "string",
+        "image3D": "string",
+        "famille": "string",
+        "zone": "string",
+        "climat": "string",
+        "class": "string",
+        "kingdom": "string",
+        "regime": "string"
+      },
+      "localisationNormalDtos": [
+        {
+          "latitude": 0,
+          "longitude": 0,
+          "altitude": 0,
+          "exactitude": 0,
+          "rayon": 0
+        }
+      ]
+
+Paramètre Important :
+
+pour la description ne la met pas en majuscule et faut quelle soit très développé
+pour le nom tu ne met pas en majuscule et en francais
+localisation est un tableau donc si il y a plusieurs localisation il faut les mettre dans le tableau en gardant le shéma
+il faut que les champ "nom_Scientifique", "famille", "zone", "climat", "class", "kingdom" et "regime" soient remplis avec les informations de l'animal que je te donne
+et que les informations soit en latin obligatoire et en majuscule obligatoire
+Pour les 2 image mets null et pas de chaine de caratres vide ou pleine juste null car ces sont des byte[]? dans les dtos de récupération
+le kingdom est à la base un enum comprit dans cette liste : 
+{
+  "ANIMALIA",
+  "PLANTAE",
+  "FUNGI",
+  "PROTISTA",
+  "ARCHAEA",
+  "BACTERIA"
+}
+garde bien ces données la pour le kingdom
+le régime est à la base un enum comprit dans cette liste :
+{
+ "CARNIVORA",
+ "HERBIVORA",
+ "OMNIVORA",
+ "INSECTIVORA",
+ "NECTARIVORA",
+ "AUTOTROPHA",
+ "DETRITIVORA",
+ "FRUGIVORA",
+ "FOLIVORA",
+ "GRANIVORA",
+ "PLANKTIVORA",
+ "PARASITICA"
+}
+garde bien ces données la pour le régime
+
+la famille est à la base un enum comprit dans cette liste : 
+{
+  "CANIDAE",
+  "BOVIDAE",
+  "LEPORIDAE",
+  "HOMINIDAE",
+  "SCIURIDAE",
+  "PHASCOLARCTIDAE",
+  "DELPHINIDAE",
+  "MURIDAE",
+  "VESPERTILIONIDAE",
+  "ERINACEIDAE",
+  "FELIDAE",
+
+  "SPHENISCIDAE",
+  "ACCIPITRIDAE",
+  "COLUMBIDAE",
+  "CORVIDAE",
+
+  "TESTUDINIDAE",
+  "CHAMAELEONIDAE",
+  "VIPERIDAE",
+  "IGUANIDAE",
+
+  "COCCINELLIDAE",
+  "FORMICIDAE",
+  "APIDAE",
+  "VESPIDAE",
+  "SCARABAEIDAE",
+  "PAPILIONIDAE",
+  "NYMPHALIDAE",
+  "PIERIDAE",
+
+  "ASTERACEAE",
+  "FAGACEAE",
+  "MALVACEAE",
+  "LAMIACEAE",
+  "SAPINDACEAE",
+  "ROSACEAE",
+  "FABACEAE",
+  "POACEAE",
+
+  "UNKNOWN"
+}
+
+la class est à la base un enum comprit dans cette liste :
+{
+  "MAMMALIA",
+  "AVES",
+  "REPTILIA",
+  "AMPHIBIA",
+  "ACTINOPTERYGII",
+  "CHONDRICHTHYES",
+
+  "INSECTA",
+  "ARACHNIDA",
+  "MYRIAPODA",
+  "CRUSTACEA",
+  "GASTROPODA",
+  "BIVALVIA",
+
+  "MAGNOLIOPSIDA",
+  "LILIOPSIDA",
+  "PINOPSIDA",
+  "BRYOPSIDA",
+  "POLYPODIOPSIDA",
+
+  "AGARICOMYCETES",
+  "ASCOMYCETES",
+ 
+  "UNKNOWN"
+
+le climat est à la base un enum comprit dans cette liste :
+  "TROPICAL",
+  "ARID",
+  "TEMPERATE",
+  "CONTINENTAL",
+  "POLAR",
+  "UNKNOWN"
+
+ET N'OUBLIE PAS DE REFERANCE TOUTE LES INFORPMATION AVEC LEUR CARACTERISTIQUE POUR CHAQUE CHAMP
+nom : 

@@ -53,7 +53,7 @@ public class IdentificationService
         var especes = Service.GetEspeceByName(speciesName);
         Console.WriteLine("init Espece");
         if (especes is null) Console.WriteLine("ton espece elle est null enfaite");
-        if (speciesName is not null && especes.Result.TotalCount == 0)
+        if (speciesName is not null && especes.Result.Items.Where(especes => especes.Espece.Nom == speciesName).Count() == 0)
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Espece.Nom = speciesName;
@@ -63,7 +63,7 @@ public class IdentificationService
         else if (speciesName is null) return null;
         else
         {
-            return especes.Result.Items.First();
+            return especes.Result.Items.Where(especes => especes.Espece.Nom == speciesName).First();
         }
     }
 
