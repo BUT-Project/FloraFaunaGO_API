@@ -23,9 +23,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<CaptureEntities>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -42,9 +42,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<CaptureEntities>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -59,9 +59,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<CaptureEntities>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -77,9 +77,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<CaptureEntities>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -96,9 +96,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<CaptureEntities>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }

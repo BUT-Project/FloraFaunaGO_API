@@ -413,9 +413,9 @@ public static class Extension
     {
         return new Pagination<FullEspeceDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToResponseDto).ToArray()
         };
     }
@@ -424,9 +424,9 @@ public static class Extension
     {
         return new Pagination<FullCaptureDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToResponseDto).ToArray()
         };
     }
@@ -435,9 +435,9 @@ public static class Extension
     {
         return new Pagination<FullCaptureDetailDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToResponseDto).ToArray()
         };
     }
@@ -446,9 +446,9 @@ public static class Extension
     {
         return new Pagination<FullUtilisateurDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToResponseDto).ToArray()
         };
     }
@@ -457,9 +457,9 @@ public static class Extension
     {
         return new Pagination<FullSuccessStateDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToResponseDto).ToArray()
         };
     }
@@ -468,9 +468,9 @@ public static class Extension
     {
         return new Pagination<SuccessNormalDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToDto).ToArray()
         };
     }
@@ -479,9 +479,9 @@ public static class Extension
     {
         return new Pagination<LocalisationNormalDto>
         {
-            PageIndex = entities.PageIndex,
-            CountPerPage = entities.CountPerPage,
-            TotalCount = entities.TotalCount,
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
             Items = entities.Items.Select(ToDto).ToArray()
         };
     }

@@ -36,7 +36,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet("{id}")]
-    [Authorize]
+    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullUtilisateurDto>> GetPlayerById(string id)
@@ -69,7 +69,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet]
-    [Authorize]
+    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
@@ -80,7 +80,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPost]
-    [Authorize]
+    
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<FullUtilisateurDto>> PostPlayer(UtilisateurNormalDto dto)
@@ -94,7 +94,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPut ("{id}")]
-    [Authorize]
+    
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<FullUtilisateurDto>> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)

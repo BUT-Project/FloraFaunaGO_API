@@ -56,9 +56,9 @@ namespace FloraFauna_Go_Repository
             }
             return new Pagination<TEntity>
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = query.Skip(index * count)
                         .Take(count)
                         .ToList()

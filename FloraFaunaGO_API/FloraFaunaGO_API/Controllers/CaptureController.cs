@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFaunaGO_API.Controllers;
 
-[Authorize]
+
 [ApiController]
 [Route("FloraFaunaGo_API/capture/")]
 public class CaptureController : ControllerBase
@@ -40,7 +40,7 @@ public class CaptureController : ControllerBase
     /// <response code="500">Oops! Can't create your product right now</response>
 */
     [HttpGet ("{id}")]
-    [Authorize]
+    
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullCaptureDto>> GetCaptureById(string id)

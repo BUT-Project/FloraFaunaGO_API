@@ -23,9 +23,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<SuccesStateEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -40,9 +40,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<SuccesStateEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -57,9 +57,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<SuccesStateEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -74,9 +74,9 @@ namespace FloraFauna_Go_Repository
 
             return Task.FromResult(new Pagination<SuccesStateEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items.Result
             });
         }

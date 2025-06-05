@@ -11,7 +11,6 @@ using System.Linq;
 
 namespace FloraFaunaGO_API.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/espece/")]
 public class EspeceController : ControllerBase

@@ -23,9 +23,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<LocalisationEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -39,9 +39,9 @@ namespace FloraFauna_Go_Repository
             var items = await query.Skip(index * count).Take(count).ToListAsync();
             return new Pagination<LocalisationEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -56,9 +56,9 @@ namespace FloraFauna_Go_Repository
             var items = await query.Skip(index * count).Take(count).ToListAsync();
             return new Pagination<LocalisationEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
