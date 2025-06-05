@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FloraFauna_GO_Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -34,6 +35,7 @@ namespace FloraFauna_GO_Shared
         ISuccessStateRepository<TSuccessStateInput, TSuccessStateOutput> SuccessStateRepository { get; }
         ILocalisationRepository<TLocalisationInput, TLocalisationOutput> LocalisationRepository { get; }
 
+        Task<bool> AddSuccess(TSuccessInput success);
         Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);
@@ -66,6 +68,7 @@ namespace FloraFauna_GO_Shared
         ISuccessStateRepository<TSuccessStateInput> SuccessStateRepository { get; }
         ILocalisationRepository<TLocalisationInput> LocalisationRepository { get; }
 
+        Task<bool> AddSuccess(TSuccessInput success);
         Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);

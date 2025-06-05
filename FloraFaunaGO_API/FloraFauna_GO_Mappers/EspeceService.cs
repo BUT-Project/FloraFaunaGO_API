@@ -6,7 +6,7 @@ using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class EspeceService : IEspeceRepository<EspeceNormalDto, FullEspeceDto>
+internal class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
 {
     private IEspeceRepository<EspeceEntities> Repository { get; set; }
 
@@ -31,10 +31,10 @@ internal class EspeceService : IEspeceRepository<EspeceNormalDto, FullEspeceDto>
     public async Task<Pagination<FullEspeceDto>> GetEspeceByRegime(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByRegime, int index = 0, int count = 15)
         => (await Repository.GetEspeceByRegime(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<FullEspeceDto?> Insert(EspeceNormalDto item)
+    public async Task<FullEspeceDto?> Insert(FullEspeceDto item)
         => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();
 
-    public async Task<FullEspeceDto?> Update(string id, EspeceNormalDto item)
+    public async Task<FullEspeceDto?> Update(string id, FullEspeceDto item)
         => (await Repository.Update(id, item.ToEntities()))?.ToResponseDto();
 
     public Task<Pagination<FullEspeceDto>> GetEspeceByClimat(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByClimat, int index = 0, int count = 15)
@@ -46,4 +46,7 @@ internal class EspeceService : IEspeceRepository<EspeceNormalDto, FullEspeceDto>
     {
         throw new NotImplementedException();
     }
+
+    public Task<Pagination<FullEspeceDto>> GetEspeceByProperty(string id,string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
+        => Repository.GetEspeceByProperty(id, property, criteria, index, count).ContinueWith(t => t.Result.ToPagingResponseDtos());
 }

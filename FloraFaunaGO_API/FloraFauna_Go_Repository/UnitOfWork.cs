@@ -501,5 +501,44 @@ namespace FloraFauna_Go_Repository
             Dispose(true);
             GC.SuppressFinalize(this);
         }
+
+        public async Task<bool> AddSuccess(SuccesEntities success)
+        {
+            try
+            {
+                if (await SuccessRepository.Insert(success) == null)
+                {
+                    Context.Succes.Attach(success);
+                    await Context.Entry(success).ReloadAsync();
+                }
+                
+                var user = Context.Users.ToList();
+                foreach (var u in user)
+                {
+                    var successState = new SuccesStateEntities
+                    {
+                        PercentSucces = 0,
+                        SuccesEntitiesId = success.Id,
+                        IsSucces = false,
+                        SuccesEntities = success
+                    };
+                    successState.UtilisateurId = u.Id;
+                    successState.UtilisateurEntities = u;
+                    if (await SuccessStateRepository.Insert(successState) == null)
+                    {
+                        Context.SuccesState.Attach(successState);
+                        await Context.Entry(successState).ReloadAsync();
+                    }
+                }
+
+                //await SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                await RejectChangesAsync();
+                return false;
+            }
+        }
     }
 }

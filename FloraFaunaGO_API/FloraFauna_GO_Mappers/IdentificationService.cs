@@ -12,7 +12,7 @@ namespace FloraFauna_GO_Entities2Dto;
 
 public class IdentificationService
 {
-    private IEspeceRepository<EspeceNormalDto, FullEspeceDto> Service { get; set; }
+    private IEspeceRepository<FullEspeceDto, FullEspeceDto> Service { get; set; }
     private HttpClient client = new HttpClient();
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
@@ -25,7 +25,7 @@ public class IdentificationService
     private static readonly string dataApiEndpoint = $"https://api.groq.com/openai/v1/chat/completions";
 
     private static readonly string filePath = "data_text_context.txt";
-    public IdentificationService(IEspeceRepository<EspeceNormalDto, FullEspeceDto> service)
+    public IdentificationService(IEspeceRepository<FullEspeceDto, FullEspeceDto> service)
     {
         Service = service;
     }
@@ -56,8 +56,8 @@ public class IdentificationService
         if (speciesName is not null && especes.Result.Items.Count() == 0)
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
-            espece.Espece.Nom = speciesName;
-            espece.Espece.Image = dto.AskedImage;
+            espece.Nom = speciesName;
+            espece.Image = dto.AskedImage;
             return espece;
         }
         else if (speciesName is null) return null;

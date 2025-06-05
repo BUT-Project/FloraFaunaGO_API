@@ -167,9 +167,9 @@ public static class Extension
         return entities.ToT(null, creator, linker);
     }
 
-    public static EspeceEntities ToEntities(this EspeceNormalDto dto)
+    public static EspeceEntities ToEntities(this FullEspeceDto dto)
     {
-        Func<EspeceNormalDto, EspeceEntities> creator = (dto) => new EspeceEntities()
+        Func<FullEspeceDto, EspeceEntities> creator = (dto) => new EspeceEntities()
         {
             Nom = dto.Nom,
             Nom_scientifique = dto.Nom_Scientifique,
@@ -182,14 +182,13 @@ public static class Extension
             Regime = dto.Regime,
             Kingdom = dto.Kingdom,
             Class = dto.Class,
-
         };
-        return dto.ToU(Mappers.EspeceMapper, creator);
+        return dto.ToU(Mappers.ResponseEspeceMapper, creator);
     }
 
-    public static EspeceEntities ToEntities(this EspeceNormalDto dto, string id)
+    public static EspeceEntities ToEntities(this FullEspeceDto dto, string id)
     {
-        Func<EspeceNormalDto, EspeceEntities> creator = (dto) => new EspeceEntities()
+        Func<FullEspeceDto, EspeceEntities> creator = (dto) => new EspeceEntities()
         {
             Id = id,
             Nom = dto.Nom,
@@ -204,21 +203,21 @@ public static class Extension
             Kingdom = dto.Kingdom,
             Class = dto.Class,
         };
-        return dto.ToU(Mappers.EspeceMapper, creator);
+        return dto.ToU(Mappers.ResponseEspeceMapper, creator);
     }
-    public static EspeceNormalDto ToDto(this EspeceEntities entities)
+    public static FullEspeceDto ToDto(this EspeceEntities entities)
     {
-        Func<EspeceEntities, EspeceNormalDto> creator = (entities) => new EspeceNormalDto()
+        Func<EspeceEntities, FullEspeceDto> creator = (entities) => new FullEspeceDto()
         {
             Id = entities.Id,
-            Description = entities.Description ?? "",
-            Image = entities.Image,
-            Image3D = entities.Image3D,
             Nom = entities.Nom,
             Nom_Scientifique = entities.Nom_scientifique,
-            Famille = entities.Famille,
+            Description = entities.Description,
+            Image = entities.Image,
+            Image3D = entities.Image3D,
             Climat = entities.Climat,
             Zone = entities.Zone,
+            Famille = entities.Famille,
             Regime = entities.Regime,
             Kingdom = entities.Kingdom,
             Class = entities.Class,
@@ -230,8 +229,6 @@ public static class Extension
     {
         Func<EspeceEntities, FullEspeceDto> creator = (entities) => new FullEspeceDto()
         {
-            Espece = new EspeceNormalDto()
-            {
                 Id = entities.Id,
                 Description = entities.Description ?? "",
                 Image = entities.Image,
@@ -244,11 +241,10 @@ public static class Extension
                 Regime = entities.Regime,
                 Kingdom = entities.Kingdom,
                 Class = entities.Class,
-            },
         };
         Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
         {
-            dto.localisationNormalDtos = entities.Localisations.Select(loc => new LocalisationNormalDto() { Id = loc.LocalisationId }).ToArray();
+            dto.localisations = entities.Localisations.Select(loc => new LocalisationNormalDto() { Id = loc.LocalisationId }).ToArray();
         };
         return entities.ToT(null, creator, linker);
     }

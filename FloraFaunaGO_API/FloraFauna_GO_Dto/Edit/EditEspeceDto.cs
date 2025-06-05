@@ -1,13 +1,12 @@
-﻿using FloraFauna_GO_Dto.Normal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FloraFauna_GO_Dto.Full;
+namespace FloraFauna_GO_Dto.Edit;
 
-public class FullEspeceDto
+public class EditEspeceDto
 {
     public string? Id { get; set; }
 
@@ -32,7 +31,4 @@ public class FullEspeceDto
     public string Kingdom { get; set; }
 
     public string Regime { get; set; }
-    public LocalisationNormalDto[]? localisations { get; set; }
-
-
 }

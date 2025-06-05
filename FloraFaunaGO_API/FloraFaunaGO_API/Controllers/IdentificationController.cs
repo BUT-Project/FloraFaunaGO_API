@@ -14,7 +14,7 @@ public class IdentificationController : ControllerBase
     private readonly IWebHostEnvironment _env;
 
     private readonly ILogger<IdentificationController> _logger;
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
     public IdentificationService Service { get; private set; }
 
     public IdentificationController(ILogger<CaptureController> logger, FloraFaunaService service, IWebHostEnvironment env)
@@ -34,16 +34,16 @@ public class IdentificationController : ControllerBase
             return BadRequest("Action invalide.");
 
         var result = await Service.identify(dto, type);
-        if (result is not null && result.Espece.Id is null)
+        if (result is not null && result.Id is null)
         {
-            UnitOfWork.AddEspeceAsync(result.Espece, result.localisationNormalDtos);
+            UnitOfWork.AddEspeceAsync(result, result.localisations);
             var inserted = await UnitOfWork.SaveChangesAsync();
-            result = UnitOfWork.EspeceRepository.GetEspeceByName(result.Espece.Nom).Result.Items.FirstOrDefault();
+            result = UnitOfWork.EspeceRepository.GetEspeceByName(result.Nom).Result.Items.FirstOrDefault();
         }
 
         if (result is not null)
         {
-            result.localisationNormalDtos = UnitOfWork.LocalisationRepository.GetLocalisationByEspece(result.Espece.Id).Result.Items.ToArray();
+            result.localisations = UnitOfWork.LocalisationRepository.GetLocalisationByEspece(result.Id).Result.Items.ToArray();
         }
 
         return result != null ? Ok(result) : NoContent();

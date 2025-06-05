@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto>
+public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto>
 {
     
     private IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> DbUnitOfWork { get; set; }
@@ -28,7 +28,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
     public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
-    public IEspeceRepository<EspeceNormalDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
+    public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
 
     public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository => new CaptureDetailService(DbUnitOfWork.CaptureDetailRepository);
 
@@ -126,15 +126,21 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
         return result;
     }
 
-    public async Task<bool> AddEspeceAsync(EspeceNormalDto espece, IEnumerable<LocalisationNormalDto> localisations)
+    public async Task<bool> AddEspeceAsync(FullEspeceDto espece, IEnumerable<LocalisationNormalDto> localisations)
     {
         bool result = await DbUnitOfWork.AddEspeceAsync(espece.ToEntities(), localisations.Select(l => l.ToEntities()));
         return result;
     }
 
-    public async Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, IEnumerable<LocalisationNormalDto> localisations)
+    public async Task<bool> DeleteEspeceAsync(FullEspeceDto espece, IEnumerable<LocalisationNormalDto> localisations)
     {
         bool result = await DbUnitOfWork.DeleteEspeceAsync(espece.ToEntities(espece.Id), localisations.Select(l => l.ToEntities(l.Id)));
+        return result;
+    }
+
+    public async Task<bool> AddSuccess(SuccessNormalDto success)
+    {
+        bool result = await DbUnitOfWork.AddSuccess(success.ToEntities());
         return result;
     }
 }

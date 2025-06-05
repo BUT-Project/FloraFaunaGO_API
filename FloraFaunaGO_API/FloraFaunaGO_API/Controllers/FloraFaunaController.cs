@@ -15,7 +15,7 @@ public class FloraFaunaController : ControllerBase
 {
     private readonly ILogger<FloraFaunaController> _logger;
 
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
     public FloraFaunaController(ILogger<FloraFaunaController> logger, FloraFaunaService service)
     {
@@ -131,10 +131,10 @@ public class FloraFaunaController : ControllerBase
     [HttpPost("espece")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostEspece([FromBody] NewEspeceDto dto)
+    public async Task<IActionResult> PostEspece([FromBody] FullEspeceDto dto)
     {
         if (dto == null) return BadRequest();
-        _ = await UnitOfWork.AddEspeceAsync(dto.espece, dto.localisation);
+        _ = await UnitOfWork.AddEspeceAsync(dto, dto.localisations);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
         var insertedEspece = inserted;
@@ -148,8 +148,8 @@ public class FloraFaunaController : ControllerBase
     {
         var espece = await UnitOfWork.EspeceRepository.GetById(id);
         if (espece == null) return NotFound();
-        espece.localisationNormalDtos = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id)).Items.ToArray();
-        var deleted = await UnitOfWork.DeleteEspeceAsync(espece.Espece, espece.localisationNormalDtos);
+        espece.localisations = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id)).Items.ToArray();
+        var deleted = await UnitOfWork.DeleteEspeceAsync(espece, espece.localisations);
         return deleted ? Ok() : NotFound();
     }
 
