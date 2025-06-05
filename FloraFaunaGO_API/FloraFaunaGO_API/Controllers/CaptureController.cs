@@ -11,7 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFaunaGO_API.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/capture/")]
 public class CaptureController : ControllerBase

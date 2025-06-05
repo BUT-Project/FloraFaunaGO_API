@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 namespace FloraFaunaGO_API.Controllers;
 
-[Authorize]
+//[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/success/state/")]
 public class SuccessStateControlleur : ControllerBase
