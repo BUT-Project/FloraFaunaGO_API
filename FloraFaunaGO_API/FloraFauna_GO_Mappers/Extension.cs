@@ -180,6 +180,9 @@ public static class Extension
             Zone = dto.Zone,
             Famille = dto.Famille,
             Regime = dto.Regime,
+            Kingdom = dto.Kingdom,
+            Class = dto.Class,
+
         };
         return dto.ToU(Mappers.EspeceMapper, creator);
     }
@@ -213,6 +216,7 @@ public static class Extension
             Image3D = entities.Image3D,
             Nom = entities.Nom,
             Nom_Scientifique = entities.Nom_scientifique,
+            Famille = entities.Famille,
             Climat = entities.Climat,
             Zone = entities.Zone,
             Regime = entities.Regime,
@@ -235,6 +239,7 @@ public static class Extension
                 Nom = entities.Nom,
                 Nom_Scientifique = entities.Nom_scientifique,
                 Climat = entities.Climat,
+                Famille = entities.Famille,
                 Zone = entities.Zone,
                 Regime = entities.Regime,
                 Kingdom = entities.Kingdom,

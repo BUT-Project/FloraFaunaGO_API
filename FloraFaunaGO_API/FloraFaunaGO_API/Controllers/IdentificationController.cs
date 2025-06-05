@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/identification")]
 public class IdentificationController : ControllerBase
@@ -34,6 +35,18 @@ public class IdentificationController : ControllerBase
             return BadRequest("Action invalide.");
 
         var result = await Service.identify(dto, type);
+        if (result is not null && result.Espece.Id is null)
+        {
+            UnitOfWork.AddEspeceAsync(result.Espece, result.localisationNormalDtos);
+            var inserted = await UnitOfWork.SaveChangesAsync();
+            result = UnitOfWork.EspeceRepository.GetEspeceByName(result.Espece.Nom).Result.Items.FirstOrDefault();
+        }
+
+        if (result is not null)
+        {
+            result.localisationNormalDtos = UnitOfWork.LocalisationRepository.GetLocalisationByEspece(result.Espece.Id).Result.Items.ToArray();
+        }
+
         return result != null ? Ok(result) : NoContent();
     }
 }

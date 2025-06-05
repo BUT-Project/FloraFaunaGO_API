@@ -17,4 +17,10 @@
     <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
   </ItemGroup>
 
+ <ItemGroup>
+	<Content Include="data_text_context.txt">
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</Content>
+</ItemGroup>
+
 </Project>

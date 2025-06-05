@@ -46,11 +46,13 @@ public class EspeceController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullEspeceDto>> GetByName(string name)
     {
-        var espece = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
-        if (espece != null)
+        var especes = await EspeceRepository.GetEspeceByName(name, EspeceOrderingCriteria.ByNom);
+        FullEspeceDto? espece = null;
+        if (especes != null && especes.Items.Count() > 0)
         {
-            var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(espece.Items.First().Espece.Id);
-            espece.Items.First().localisationNormalDtos = localisations.Items.ToArray();
+            var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(especes.Items.First().Espece.Id);
+            especes.Items.First().localisationNormalDtos = localisations.Items.ToArray();
+            espece = especes.Items.First();
         }
         return espece != null ? Ok(espece) : NotFound(name);
     }
