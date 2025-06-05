@@ -99,7 +99,7 @@ public class AppBootstrap(IConfiguration configuration)
     {
         services.AddAuthorization();
 
-        var key = config["Jwt:Key"] ?? "dev-key-very-secret";
+        var key = config["Jwt:Key"] ?? "FloraFaunaVeryHiddenKeyForJWTGeneration2025!";
         var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
 
         services.AddIdentity<UtilisateurEntities, IdentityRole>()
