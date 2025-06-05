@@ -246,8 +246,34 @@ public class AppBootstrap(IConfiguration configuration)
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
         app.UseHttpsRedirection();
+        app.UseSwagger(options =>
+        {
+            options.PreSerializeFilters.Add((swagger, httpReq) =>
+            {
+                if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
+                {
+                    string basePath;
+                    switch (Environment.GetEnvironmentVariable("TYPE"))
+                    {
+                        case "BDD":
+                            basePath = "containers/FloraFauna_GO-api";
+                            break;
+                        default:
+                            basePath = httpReq.Host.Value;
+                            break;
+                    }
 
-        // Ajoutez ce middleware de diagnostic ici
+                    var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
+                    swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
+                }
+            });
+        });
+        app.UseSwaggerUI();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        // Middleware de diagnostic APRÈS les middlewares d'authentification
         app.Use(async (context, next) =>
         {
             if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
@@ -259,7 +285,7 @@ public class AppBootstrap(IConfiguration configuration)
                 if (tokenValue.StartsWith("Bearer "))
                 {
                     var token = tokenValue.Substring(7);
-                    Console.WriteLine($"Token extrait: '{token}'");
+                    Console.WriteLine($"Token extrait: '{token.Substring(0, Math.Min(30, token.Length))}...'");
                     Console.WriteLine($"Longueur: {token.Length}");
                     Console.WriteLine($"Points présents: {token.Count(c => c == '.')}");
                 }
@@ -276,37 +302,9 @@ public class AppBootstrap(IConfiguration configuration)
             await next();
         });
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-
+        // Mappage des routes et endpoints
         app.MapControllers();
-
         app.MapHealthChecks("/health");
-
-        // Configure the HTTP request pipeline.
-        app.UseSwagger(options =>
-        {
-            options.PreSerializeFilters.Add((swagger, httpReq) =>
-            {
-                if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
-                {
-                    string basePath;
-                    switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
-                    {
-                        case "BDD":
-                            basePath = "containers/FloraFauna_GO-api";
-                            break;
-                        default:
-                            basePath = httpReq.Host.Value;
-                            break;
-                    }
-
-                    var serverUrl = $"https://{httpReq.Headers["X-Forwarded-Host"]}/{basePath}";
-                    swagger.Servers = new List<OpenApiServer> { new() { Url = serverUrl } };
-                }
-            });
-        });
-        app.UseSwaggerUI();
         app.MapSwagger();
     }
 }

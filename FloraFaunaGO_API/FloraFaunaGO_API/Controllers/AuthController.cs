@@ -53,7 +53,7 @@ namespace FloraFaunaGO_API.Controllers
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Issuer"], // Utiliser l'émetteur comme audience
+                audience: _config["Jwt:Issuer"],
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: creds
@@ -99,6 +99,7 @@ namespace FloraFaunaGO_API.Controllers
         }
 
         [HttpPost("refresh")]
+        [Authorize]
         public async Task<IActionResult> Refresh([FromBody] string refreshToken)
         {
             var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
