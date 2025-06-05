@@ -6,7 +6,7 @@ using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
+public class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
 {
     private IEspeceRepository<EspeceEntities> Repository { get; set; }
 

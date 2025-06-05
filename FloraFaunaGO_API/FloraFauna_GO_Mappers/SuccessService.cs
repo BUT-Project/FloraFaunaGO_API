@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class SuccessService : ISuccessRepository<SuccessNormalDto, SuccessNormalDto>
+public class SuccessService : ISuccessRepository<SuccessNormalDto, SuccessNormalDto>
 {
     private ISuccessRepository<SuccesEntities> Repository { get; set; }
     public SuccessService(ISuccessRepository<SuccesEntities> repository)

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class SuccessStateService : ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto>
+public class SuccessStateService : ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto>
 {
     private ISuccessStateRepository<SuccesStateEntities> Repository { get; set; }
     public SuccessStateService(ISuccessStateRepository<SuccesStateEntities> repository)

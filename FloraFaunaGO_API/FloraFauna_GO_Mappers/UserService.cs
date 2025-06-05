@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class UserService : IUserRepository<UtilisateurNormalDto, FullUtilisateurDto>
+public class UserService : IUserRepository<UtilisateurNormalDto, FullUtilisateurDto>
 {
 
     private IUserRepository<UtilisateurEntities> Repository { get; set; }

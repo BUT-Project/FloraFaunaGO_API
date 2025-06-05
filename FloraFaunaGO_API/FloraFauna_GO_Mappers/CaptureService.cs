@@ -6,7 +6,7 @@ using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class CaptureService : ICaptureRepository<CaptureNormalDto, FullCaptureDto>
+public class CaptureService : ICaptureRepository<CaptureNormalDto, FullCaptureDto>
 {
     private ICaptureRepository<CaptureEntities> Repository { get; set; }
 

@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto>
+public class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto>
 {
     private ICaptureDetailRepository<CaptureDetailsEntities> Repository { get; set; }
     public CaptureDetailService(ICaptureDetailRepository<CaptureDetailsEntities> repository)
