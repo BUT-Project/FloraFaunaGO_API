@@ -13,9 +13,9 @@ public class UnitTest1
     public void ToEntities_Should_Map_FullEspeceDto_To_EspeceEntities()
     {
         // Arrange
-        EspeceNormalDto especeDto = new EspeceNormalDto()
+        FullEspeceDto especeDto = new FullEspeceDto()
         {
-            Nom = "Lion", Nom_Scientifique = "Panthera leo"
+            Nom = "Lion"
         };
 
         // Act

@@ -21,18 +21,18 @@ namespace FloraFaunaGO_Test
             // Arrange
             FullEspeceDto especeDto = new FullEspeceDto
             {
-                Espece = new EspeceNormalDto { Nom = "Lion", Nom_Scientifique = "Panthera leo" },
-                localisationNormalDtos = new[] { new LocalisationNormalDto { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
+                Nom = "Lion", Nom_Scientifique = "Panthera leo",
+                localisations = new[] { new LocalisationNormalDto { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
             };
 
             // Act
-            var entities = especeDto.Espece.ToEntities();
+            var entities = especeDto.ToEntities();
 
             // Assert
             Assert.IsNotNull(entities);
             Assert.IsInstanceOfType(entities, typeof(EspeceEntities));
-            Assert.AreEqual(especeDto.Espece.Nom, entities.Nom);
-            Assert.AreEqual(especeDto.Espece.Nom_Scientifique, entities.Nom_scientifique);
+            Assert.AreEqual(especeDto.Nom, entities.Nom);
+            Assert.AreEqual(especeDto.Nom_Scientifique, entities.Nom_scientifique);
         }
 
         [TestMethod]
