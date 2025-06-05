@@ -69,7 +69,6 @@ public class EspeceController : ControllerBase
         var list = new List<EspeceNormalDto>();
         foreach (var item in result.Items)
         {
-            item.localisations = (await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(item.Id)).Items.ToArray();
             var espece = new EspeceNormalDto
             {
                 Id = item.Id,
@@ -77,9 +76,6 @@ public class EspeceController : ControllerBase
                 Image = item.Image,
                 Image3D = item.Image3D,
             };
-            for (int i = 0; i < item.localisations.Length; i++)
-                item.localisations[i] = await UnitOfWork.LocalisationRepository.GetById(item.localisations[i].Id);
-            espece.Localisations = item.localisations;
             list.Add(espece);
 
         }
