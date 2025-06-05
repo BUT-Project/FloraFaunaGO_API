@@ -99,15 +99,13 @@ public class AppBootstrap(IConfiguration configuration)
     {
         services.AddAuthorization();
 
-        /*
         var key = config["Jwt:Key"] ?? "dev-key-very-secret";
         var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
-        */
 
-        services.AddIdentityApiEndpoints<UtilisateurEntities>()
-            .AddEntityFrameworkStores<FloraFaunaGoDB>();
+        services.AddIdentity<UtilisateurEntities, IdentityRole>()
+            .AddEntityFrameworkStores<FloraFaunaGoDB>()
+            .AddDefaultTokenProviders();
 
-        /*
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -118,7 +116,7 @@ public class AppBootstrap(IConfiguration configuration)
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = false, // Pas de validation d'audience pour le moment
+                ValidateAudience = false,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
@@ -139,7 +137,6 @@ public class AppBootstrap(IConfiguration configuration)
                 }
             };
         });
-        */
 
         services.Configure<IdentityOptions>(options =>
         {
@@ -155,6 +152,7 @@ public class AppBootstrap(IConfiguration configuration)
             options.User.RequireUniqueEmail = true;
         });
     }
+
 
     private void AddSwagger(IServiceCollection services)
     {
@@ -244,7 +242,7 @@ public class AppBootstrap(IConfiguration configuration)
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.MapIdentityApi<UtilisateurEntities>();
+        // app.MapIdentityApi<UtilisateurEntities>();
         using (var scope = app.Services.CreateScope())
         {
             var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
