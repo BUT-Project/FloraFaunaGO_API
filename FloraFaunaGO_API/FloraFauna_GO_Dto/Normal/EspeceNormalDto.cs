@@ -16,6 +16,4 @@ public class EspeceNormalDto
     public byte[]? Image { get; set; }
 
     public byte[]? Image3D { get; set; }
-
-    public LocalisationNormalDto[]? Localisations { get; set; }
 }
