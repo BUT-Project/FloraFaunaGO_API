@@ -83,18 +83,22 @@ public class EspeceController : ControllerBase
     [HttpGet("famille={famille}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByFamille(string famille)
+    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByFamille(string famille, [FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.ByFamille,
+                                                  [FromQuery] int index = 0,
+                                                  [FromQuery] int count = 10)
     {
-        var espece = await EspeceRepository.GetEspeceByFamile( EspeceOrderingCriteria.ByFamille);
+        var espece = await EspeceRepository.GetEspeceByFamile(criterium, index, count);
         return espece != null ? Ok(espece) : NotFound(famille);
     }
 
     [HttpGet("regimeAlimentaire={regime_alimentaire}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByRegimeAlimentaire(string regimeAlimentaire)
+    public async Task<ActionResult<Pagination<FullEspeceDto>>> GetByRegimeAlimentaire(string regimeAlimentaire, [FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.ByRegime,
+                                                  [FromQuery] int index = 0,
+                                                  [FromQuery] int count = 10)
     {
-        var espece = await EspeceRepository.GetEspeceByRegime(EspeceOrderingCriteria.ByRegime);
+        var espece = await EspeceRepository.GetEspeceByRegime(criterium, index,count);
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 

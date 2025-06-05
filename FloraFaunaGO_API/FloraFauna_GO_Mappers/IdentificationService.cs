@@ -219,6 +219,12 @@ public class IdentificationService
                 .Replace("```", "")
                 .Trim();
 
+            if (!cleanJson.StartsWith("{"))
+                cleanJson = "{" + cleanJson;
+
+            if (!cleanJson.EndsWith("}"))
+                cleanJson = cleanJson + "}";
+
             Console.WriteLine("Réponse brute de l'API : " + cleanJson);
 
             var dtoResult = JsonSerializer.Deserialize<FullEspeceDto>(cleanJson, new JsonSerializerOptions

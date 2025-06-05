@@ -30,6 +30,15 @@ namespace FloraFauna_Go_Repository
         {
             IQueryable<EspeceEntities> query = Set;
 
+            switch (criteria)
+            {
+                case EspeceOrderingCriteria.None:
+                    break;
+                case EspeceOrderingCriteria.ByRegime:
+                    query = query.OrderBy(especes => especes.Regime);
+                    break;
+            }
+
             var totalCount = await query.CountAsync();
             var items = await query.Skip(index * count).Take(count).ToListAsync();
 
