@@ -41,7 +41,7 @@ public class UnitTest1
 
         // Assert
         Assert.IsNotNull(dtos);
-        Assert.IsInstanceOfType<EspeceNormalDto>(dtos);
+        Assert.IsInstanceOfType<FullEspeceDto>(dtos);
         // Vérifiez les propriétés spécifiques, si besoin
     }
 

@@ -51,7 +51,7 @@ namespace FloraFaunaGO_Test
 
             // Assert
             Assert.IsNotNull(dto);
-            Assert.IsInstanceOfType(dto, typeof(EspeceNormalDto));
+            Assert.IsInstanceOfType(dto, typeof(FullEspeceDto));
             Assert.AreEqual(especeEntity.Nom, dto.Nom);
             Assert.AreEqual(especeEntity.Nom_scientifique, dto.Nom_Scientifique);
         }
