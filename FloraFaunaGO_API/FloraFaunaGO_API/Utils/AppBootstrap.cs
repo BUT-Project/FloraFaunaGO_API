@@ -116,7 +116,8 @@ public class AppBootstrap(IConfiguration configuration)
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = false,
+                ValidateAudience = true,
+                ValidAudience = issuer,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
@@ -125,14 +126,21 @@ public class AppBootstrap(IConfiguration configuration)
 
             options.Events = new JwtBearerEvents
             {
+                OnMessageReceived = context =>
+                {
+                    Console.WriteLine($"Token reçu dans OnMessageReceived: '{context.Token?.Substring(0, Math.Min(20, context.Token?.Length ?? 0))}...'");
+                    return Task.CompletedTask;
+                },
                 OnAuthenticationFailed = context =>
                 {
                     Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    Console.WriteLine($"Exception type: {context.Exception.GetType().Name}");
                     return Task.CompletedTask;
                 },
                 OnTokenValidated = context =>
                 {
-                    Console.WriteLine("Token validated successfully");
+                    Console.WriteLine("Token validé avec succès!");
+                    Console.WriteLine($"Utilisateur: {context.Principal.Identity?.Name}");
                     return Task.CompletedTask;
                 }
             };
@@ -239,15 +247,37 @@ public class AppBootstrap(IConfiguration configuration)
     {
         app.UseHttpsRedirection();
 
+        // Ajoutez ce middleware de diagnostic ici
+        app.Use(async (context, next) =>
+        {
+            if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                Console.WriteLine("===== DIAGNOSTIC AUTHORIZATION HEADER =====");
+                Console.WriteLine($"Header brut: '{authHeader}'");
+
+                string tokenValue = authHeader.ToString();
+                if (tokenValue.StartsWith("Bearer "))
+                {
+                    var token = tokenValue.Substring(7);
+                    Console.WriteLine($"Token extrait: '{token}'");
+                    Console.WriteLine($"Longueur: {token.Length}");
+                    Console.WriteLine($"Points présents: {token.Count(c => c == '.')}");
+                }
+                else
+                {
+                    Console.WriteLine("ERREUR: Pas de préfixe 'Bearer ' trouvé");
+                }
+            }
+            else
+            {
+                Console.WriteLine("AUCUN HEADER D'AUTORISATION TROUVÉ");
+            }
+
+            await next();
+        });
+
         app.UseAuthentication();
         app.UseAuthorization();
-
-        // app.MapIdentityApi<UtilisateurEntities>();
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
-            db.Database.EnsureCreated();
-        }
 
         app.MapControllers();
 

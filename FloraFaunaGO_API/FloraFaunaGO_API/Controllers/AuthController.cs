@@ -53,8 +53,8 @@ namespace FloraFaunaGO_API.Controllers
 
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Issuer"], // Utiliser l'émetteur comme audience
                 claims: claims,
-                audience: null,
                 expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: creds
             );
