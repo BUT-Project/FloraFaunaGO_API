@@ -43,10 +43,10 @@ namespace FloraFaunaGO_API.Controllers
 
             var claims = new[]
             {
-        new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-        new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
-        new Claim("uid", user.Id)
-    };
+                new Claim(JwtRegisteredClaimNames.Sub, user.Id),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email ?? ""),
+                new Claim("uid", user.Id)
+            };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -54,6 +54,7 @@ namespace FloraFaunaGO_API.Controllers
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 claims: claims,
+                audience: null,
                 expires: DateTime.UtcNow.AddMinutes(20),
                 signingCredentials: creds
             );
@@ -122,7 +123,6 @@ namespace FloraFaunaGO_API.Controllers
                 signingCredentials: creds
             );
 
-            // Nouveau refresh token aussi
             var newRefreshToken = GenerateRefreshToken();
             user.RefreshToken = newRefreshToken;
             user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
