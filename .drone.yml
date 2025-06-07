@@ -166,7 +166,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
       COMMAND: create
-      OVERWRITE: true
+      OVERWRITE: false
     depends_on: [deploy-container-mysql, docker-build-and-push, deploy-container-stub]
 
   - name: deploy-container-phpmyadmin
