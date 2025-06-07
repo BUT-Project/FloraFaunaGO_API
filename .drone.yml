@@ -129,45 +129,45 @@ steps:
     depends_on: [ docker-build-and-push, deploy-container-stub ]
 
   # database container deployment
-  - name: deploy-container-mysql
-    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-    environment:
-      IMAGENAME: mariadb:10
-      CONTAINERNAME: FloraFauna_GO-mysql
-      COMMAND: create
-      OVERWRITE: false
-      PRIVATE: true
-      CODEFIRST_CLIENTDRONE_ENV_MARIADB_ROOT_PASSWORD:
-        from_secret: db_root_password
-      CODEFIRST_CLIENTDRONE_ENV_MARIADB_DATABASE:
-        from_secret: db_database
-      CODEFIRST_CLIENTDRONE_ENV_MARIADB_USER:
-        from_secret: db_user
-      CODEFIRST_CLIENTDRONE_ENV_MARIADB_PASSWORD:
-        from_secret: db_password
-      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+  # - name: deploy-container-mysql
+  #   image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+  #   environment:
+  #     IMAGENAME: mariadb:10
+  #     CONTAINERNAME: FloraFauna_GO-mysql
+  #     COMMAND: create
+  #     OVERWRITE: false
+  #     PRIVATE: true
+  #     CODEFIRST_CLIENTDRONE_ENV_MARIADB_ROOT_PASSWORD:
+  #       from_secret: db_root_password
+  #     CODEFIRST_CLIENTDRONE_ENV_MARIADB_DATABASE:
+  #       from_secret: db_database
+  #     CODEFIRST_CLIENTDRONE_ENV_MARIADB_USER:
+  #       from_secret: db_user
+  #     CODEFIRST_CLIENTDRONE_ENV_MARIADB_PASSWORD:
+  #       from_secret: db_password
+  #     ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
   
   
   # database container bdd
-  - name: deploy-container-bdd
-    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-    environment:
-      CODEFIRST_CLIENTDRONE_ENV_TYPE: BDD
-      CODEFIRST_CLIENTDRONE_ENV_HOST: FloraFauna_GO-FloraFauna_GO-mysql
-      CODEFIRST_CLIENTDRONE_ENV_PORTDB: 3306
-      CODEFIRST_CLIENTDRONE_ENV_DATABASE:
-        from_secret: db_database
-      CODEFIRST_CLIENTDRONE_ENV_USERNAME:
-        from_secret: db_user
-      CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
-        from_secret: db_password
-      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
-      CONTAINERNAME: api
-      CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
-      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-      COMMAND: create
-      OVERWRITE: false
-    depends_on: [deploy-container-mysql, docker-build-and-push, deploy-container-stub]
+  # - name: deploy-container-bdd
+  #   image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+  #   environment:
+  #     CODEFIRST_CLIENTDRONE_ENV_TYPE: BDD
+  #     CODEFIRST_CLIENTDRONE_ENV_HOST: FloraFauna_GO-FloraFauna_GO-mysql
+  #     CODEFIRST_CLIENTDRONE_ENV_PORTDB: 3306
+  #     CODEFIRST_CLIENTDRONE_ENV_DATABASE:
+  #       from_secret: db_database
+  #     CODEFIRST_CLIENTDRONE_ENV_USERNAME:
+  #       from_secret: db_user
+  #     CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
+  #       from_secret: db_password
+  #     IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
+  #     CONTAINERNAME: api
+  #     CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
+  #     ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+  #     COMMAND: create
+  #     OVERWRITE: true
+  #   depends_on: [deploy-container-mysql, docker-build-and-push, deploy-container-stub]
 
   - name: deploy-container-phpmyadmin
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
