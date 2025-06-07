@@ -91,7 +91,7 @@ public class CaptureController : ControllerBase
                 captureDetail.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(captureDetail.localisationNormalDtos.Id);
             }
         }
-        return result.Items.Any() ? Ok(result) : NoContent();
+        return result != null ? Ok(result) : NoContent();
     }
 
     [HttpGet]

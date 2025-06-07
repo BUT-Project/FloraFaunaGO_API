@@ -53,7 +53,7 @@ public class SuccessStateControlleur : ControllerBase
             item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.FirstOrDefault();
             item.User = (await UnitOfWork.UserRepository.GetUserBySuccessState(item.State.Id)).Items.First().Utilisateur;
         }
-        return result.Items.Any() ? Ok(result) : NoContent();
+        return result != null ? Ok(result) : NoContent();
     }
 
     [HttpGet]

@@ -80,7 +80,7 @@ public class EspeceController : ControllerBase
 
         }
         returned.Items = list;
-        return returned.Items.Any() ? Ok(returned) : NoContent();
+        return returned != null ? Ok(returned) : NoContent();
     }
 
     [HttpGet]

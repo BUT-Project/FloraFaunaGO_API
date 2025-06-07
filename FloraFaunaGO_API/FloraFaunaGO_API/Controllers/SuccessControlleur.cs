@@ -35,7 +35,7 @@ public class SuccessControlleur : ControllerBase
     private async Task<ActionResult<Pagination<SuccessNormalDto>>> GetSuccess(Func<Task<Pagination<SuccessNormalDto>>> func)
     {
         var result = await func();
-        return result.Items.Any() ? Ok(result) : NoContent();
+        return result != null ? Ok(result) : NoContent();
     }
 
     [HttpGet]

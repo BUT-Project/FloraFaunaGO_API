@@ -65,7 +65,7 @@ public class UtilisateurControlleur : ControllerBase
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
         }
-        return result.Items.Any() ? Ok(result) : NoContent();
+        return result != null ? Ok(result) : NoContent();
     }
 
     [HttpGet]
