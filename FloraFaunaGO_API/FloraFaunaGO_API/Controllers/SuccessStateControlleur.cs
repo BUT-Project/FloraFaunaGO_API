@@ -97,8 +97,9 @@ public class SuccessStateControlleur : ControllerBase
     public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id,[FromBody] EditSuccessDto dto)
     {
         var tmp = await Repository.GetById(id);
+        tmp.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(id)).Items.FirstOrDefault();
         if ( tmp is null ) return NoContent();
-        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = tmp.State.PercentSucces == tmp.Success.Objectif, PercentSucces = dto.PercentSucces});
+        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = dto.PercentSucces >= tmp.Success.Objectif, PercentSucces = dto.PercentSucces});
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }
