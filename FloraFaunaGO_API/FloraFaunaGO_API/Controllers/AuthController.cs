@@ -39,7 +39,7 @@ namespace FloraFaunaGO_API.Controllers
         {
             var user = await _userManager.FindByEmailAsync(dto.Mail);
             if (user == null || !await _userManager.CheckPasswordAsync(user, dto.Password))
-                return Unauthorized("Email ou mot de passe incorrect.");
+                return Unauthorized("Email and/or password is wrong.");
 
             var claims = new[]
             {
@@ -77,11 +77,11 @@ namespace FloraFaunaGO_API.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterDto dto)
         {
             if (dto.Password != dto.ConfirmPassword)
-                return BadRequest("Les mots de passe ne correspondent pas.");
+                return BadRequest("passwords is not the same.");
 
             var existingUser = await _userManager.FindByEmailAsync(dto.Email);
             if (existingUser != null)
-                return Conflict("Un utilisateur avec cet email existe déjà.");
+                return Conflict("An account with the same email already exist.");
 
             var user = new UtilisateurEntities
             {
@@ -95,7 +95,7 @@ namespace FloraFaunaGO_API.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok("Inscription réussie.");
+            return Ok("Register succesfully.");
         }
 
         [HttpPost("refresh")]
@@ -142,28 +142,48 @@ namespace FloraFaunaGO_API.Controllers
         public async Task<IActionResult> ForgotPassword([FromBody] string mail)
         {
             var user = await _userManager.FindByEmailAsync(mail);
-            if (user == null) return Ok("Si un compte existe, un e-mail a été envoyé.");
+            if (user == null) return Ok("if an account existe, the email will be sent.");
 
             var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 
-            Console.WriteLine($"Token de réinitialisation : {token}");
+            Console.WriteLine($"Reset Token : {token}");
 
             return Ok(new { resetToken = token });
         }
 
         [HttpPost("reset-password")]
-        [Authorize]
         public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto dto)
         {
             var user = await _userManager.FindByEmailAsync(dto.Mail);
-            if (user == null) return BadRequest("Utilisateur non trouvé.");
+            if (user == null) return BadRequest("User not found.");
 
             var result = await _userManager.ResetPasswordAsync(user, dto.Token, dto.NewPassword);
 
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
-            return Ok("Mot de passe réinitialisé.");
+            return Ok("Password reset succesfully");
         }
+
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, dto.CurrentPassword, dto.NewPassword);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(result.Errors);
+            }
+
+            return Ok("Password updated succesfully");
+        }
+
     }
 }
