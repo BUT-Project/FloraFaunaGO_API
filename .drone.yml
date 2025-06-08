@@ -145,8 +145,10 @@ steps:
         from_secret: db_user
       CODEFIRST_CLIENTDRONE_ENV_MARIADB_PASSWORD:
         from_secret: db_password
-      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-  
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_VOLUMES: |
+        FloraFauna_GO-mysql-data:/var/lib/mysql
+      ADMINS: davidd_almeida,alexislaurent,...
+
   
   # database container bdd
   - name: deploy-container-bdd
