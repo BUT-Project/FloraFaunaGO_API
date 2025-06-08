@@ -24,6 +24,13 @@ init.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+    dbContext.Database.EnsureCreated();
+    Console.WriteLine("============ Database created with Identity tables ============");
+}
+
 init.Configure(app, app.Environment);
 
 Console.WriteLine("============ Database created ============");
