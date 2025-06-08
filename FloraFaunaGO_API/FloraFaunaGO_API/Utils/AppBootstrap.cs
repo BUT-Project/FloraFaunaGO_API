@@ -1,4 +1,4 @@
-using FloraFauna_GO_Entities;
+﻿using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 
@@ -113,6 +115,9 @@ public class AppBootstrap(IConfiguration configuration)
         })
         .AddJwtBearer(options =>
         {
+            // Configuration des validations
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -121,43 +126,50 @@ public class AppBootstrap(IConfiguration configuration)
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                ClockSkew = TimeSpan.FromMinutes(1)
             };
 
             options.Events = new JwtBearerEvents
             {
                 OnMessageReceived = context =>
                 {
-                    Console.WriteLine($"Token re�u dans OnMessageReceived: '{context.Token?.Substring(0, Math.Min(20, context.Token?.Length ?? 0))}...'");
-                    return Task.CompletedTask;
-                },
-                OnAuthenticationFailed = context =>
-                {
-                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
-                    Console.WriteLine($"Exception type: {context.Exception.GetType().Name}");
+                    var authHeader = context.Request.Headers["Authorization"].ToString();
+                    Console.WriteLine($"OnMessageReceived - Auth Header brut: '{authHeader}'");
+
+                    if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                    {
+                        var rawToken = authHeader.Substring(7).Trim();
+
+                        // Vérification explicite du format du token
+                        var dotCount = rawToken.Count(c => c == '.');
+                        Console.WriteLine($"Nombre de points dans le token: {dotCount}");
+
+                        if (dotCount == 2)
+                        {
+                            context.Token = rawToken;
+                            Console.WriteLine($"Token format valide: {rawToken.Substring(0, Math.Min(20, rawToken.Length))}...");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"ATTENTION: Format de token incorrect ({dotCount} points au lieu de 2)");
+                            context.Token = null; // Force l'échec de l'authentification
+                        }
+                    }
+
                     return Task.CompletedTask;
                 },
                 OnTokenValidated = context =>
                 {
-                    Console.WriteLine("Token valid� avec succ�s!");
-                    Console.WriteLine($"Utilisateur: {context.Principal.Identity?.Name}");
+                    Console.WriteLine($"Token validé avec succès! Utilisateur: {context.Principal?.Identity?.Name ?? "inconnu"}");
+                    return Task.CompletedTask;
+                },
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine($"Échec d'authentification: {context.Exception}");
                     return Task.CompletedTask;
                 }
             };
-        });
-
-        services.Configure<IdentityOptions>(options =>
-        {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = true;
-            options.Password.RequiredLength = 6;
-
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            options.Lockout.MaxFailedAccessAttempts = 5;
-
-            options.User.RequireUniqueEmail = true;
         });
     }
 
@@ -246,6 +258,55 @@ public class AppBootstrap(IConfiguration configuration)
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
         app.UseHttpsRedirection();
+
+        // Middleware de diagnostic global - pour toutes les requêtes
+        app.Use(async (context, next) =>
+        {
+            Console.WriteLine($"\n===== REQUÊTE ENTRANTE: {context.Request.Method} {context.Request.Path} =====");
+
+            // Capture les headers pour le diagnostic
+            foreach (var header in context.Request.Headers)
+            {
+                Console.WriteLine($"Header: {header.Key}: {header.Value}");
+            }
+
+            // Vérification JWT si présent
+            if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                if (authHeader.ToString().StartsWith("Bearer "))
+                {
+                    var token = authHeader.ToString().Substring(7).Trim();
+                    Console.WriteLine($"Token JWT présent: {token.Substring(0, Math.Min(20, token.Length))}...");
+                    Console.WriteLine($"Points dans le token: {token.Count(c => c == '.')}");
+
+                    // Afficher une représentation hexadécimale pour détecter des caractères invisibles
+                    Console.WriteLine($"Premier 30 caractères en hex: {BitConverter.ToString(Encoding.UTF8.GetBytes(token.Substring(0, Math.Min(30, token.Length))))}");
+                }
+            }
+
+            // Création d'un middleware de réponse pour capturer le code de statut
+            var originalBodyStream = context.Response.Body;
+            using var responseBody = new MemoryStream();
+            context.Response.Body = responseBody;
+
+            await next();
+
+            // Afficher le résultat après exécution du pipeline
+            Console.WriteLine($"===== RÉPONSE: {context.Response.StatusCode} =====");
+
+            // Restaurer le corps de la réponse
+            responseBody.Seek(0, SeekOrigin.Begin);
+            await responseBody.CopyToAsync(originalBodyStream);
+        });
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.MapHealthChecks("/health");
+
+        // Configure the HTTP request pipeline.
         app.UseSwagger(options =>
         {
             options.PreSerializeFilters.Add((swagger, httpReq) =>
@@ -253,7 +314,7 @@ public class AppBootstrap(IConfiguration configuration)
                 if (httpReq.Headers.ContainsKey("X-Forwarded-Host"))
                 {
                     string basePath;
-                    switch (Environment.GetEnvironmentVariable("TYPE"))
+                    switch (Environment.GetEnvironmentVariable("TYPE")) // httpReq.Host.Value
                     {
                         case "BDD":
                             basePath = "containers/FloraFauna_GO-api";
@@ -269,42 +330,6 @@ public class AppBootstrap(IConfiguration configuration)
             });
         });
         app.UseSwaggerUI();
-
-        app.UseAuthentication();
-        app.UseAuthorization();
-
-        // Middleware de diagnostic APR�S les middlewares d'authentification
-        app.Use(async (context, next) =>
-        {
-            if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
-            {
-                Console.WriteLine("===== DIAGNOSTIC AUTHORIZATION HEADER =====");
-                Console.WriteLine($"Header brut: '{authHeader}'");
-
-                string tokenValue = authHeader.ToString();
-                if (tokenValue.StartsWith("Bearer "))
-                {
-                    var token = tokenValue.Substring(7);
-                    Console.WriteLine($"Token extrait: '{token.Substring(0, Math.Min(30, token.Length))}...'");
-                    Console.WriteLine($"Longueur: {token.Length}");
-                    Console.WriteLine($"Points pr�sents: {token.Count(c => c == '.')}");
-                }
-                else
-                {
-                    Console.WriteLine("ERREUR: Pas de pr�fixe 'Bearer ' trouv�");
-                }
-            }
-            else
-            {
-                Console.WriteLine("AUCUN HEADER D'AUTORISATION TROUV�");
-            }
-
-            await next();
-        });
-
-        // Mappage des routes et endpoints
-        app.MapControllers();
-        app.MapHealthChecks("/health");
         app.MapSwagger();
     }
 }
