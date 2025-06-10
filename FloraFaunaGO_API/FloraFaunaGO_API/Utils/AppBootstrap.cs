@@ -1,4 +1,4 @@
-using FloraFauna_GO_Entities;
+﻿using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
@@ -6,8 +6,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
 using System.Reflection;
 using System.Text;
 
@@ -99,15 +101,13 @@ public class AppBootstrap(IConfiguration configuration)
     {
         services.AddAuthorization();
 
-        /*
-        var key = config["Jwt:Key"] ?? "dev-key-very-secret";
+        var key = config["Jwt:Key"] ?? "FloraFaunaVeryHiddenKeyForJWTGeneration2025!";
         var issuer = config["Jwt:Issuer"] ?? "FloraFaunaIssuer";
-        */
 
-        services.AddIdentityApiEndpoints<UtilisateurEntities>()
-            .AddEntityFrameworkStores<FloraFaunaGoDB>();
+        services.AddIdentity<UtilisateurEntities, IdentityRole>()
+            .AddEntityFrameworkStores<FloraFaunaGoDB>()
+            .AddDefaultTokenProviders();
 
-        /*
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -115,46 +115,64 @@ public class AppBootstrap(IConfiguration configuration)
         })
         .AddJwtBearer(options =>
         {
+            // Configuration des validations
+            options.RequireHttpsMetadata = false;
+            options.SaveToken = true;
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
-                ValidateAudience = false, // Pas de validation d'audience pour le moment
+                ValidateAudience = true,
+                ValidAudience = issuer,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = issuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key))
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key)),
+                ClockSkew = TimeSpan.FromMinutes(1)
             };
 
             options.Events = new JwtBearerEvents
             {
-                OnAuthenticationFailed = context =>
+                OnMessageReceived = context =>
                 {
-                    Console.WriteLine($"Authentication failed: {context.Exception.Message}");
+                    var authHeader = context.Request.Headers["Authorization"].ToString();
+                    Console.WriteLine($"OnMessageReceived - Auth Header brut: '{authHeader}'");
+
+                    if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+                    {
+                        var rawToken = authHeader.Substring(7).Trim();
+
+                        // Vérification explicite du format du token
+                        var dotCount = rawToken.Count(c => c == '.');
+                        Console.WriteLine($"Nombre de points dans le token: {dotCount}");
+
+                        if (dotCount == 2)
+                        {
+                            context.Token = rawToken;
+                            Console.WriteLine($"Token format valide: {rawToken.Substring(0, Math.Min(20, rawToken.Length))}...");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"ATTENTION: Format de token incorrect ({dotCount} points au lieu de 2)");
+                            context.Token = null; // Force l'échec de l'authentification
+                        }
+                    }
+
                     return Task.CompletedTask;
                 },
                 OnTokenValidated = context =>
                 {
-                    Console.WriteLine("Token validated successfully");
+                    Console.WriteLine($"Token validé avec succès! Utilisateur: {context.Principal?.Identity?.Name ?? "inconnu"}");
+                    return Task.CompletedTask;
+                },
+                OnAuthenticationFailed = context =>
+                {
+                    Console.WriteLine($"Échec d'authentification: {context.Exception}");
                     return Task.CompletedTask;
                 }
             };
         });
-        */
-
-        services.Configure<IdentityOptions>(options =>
-        {
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = true;
-            options.Password.RequireNonAlphanumeric = false;
-            options.Password.RequireUppercase = true;
-            options.Password.RequiredLength = 6;
-
-            options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            options.Lockout.MaxFailedAccessAttempts = 5;
-
-            options.User.RequireUniqueEmail = true;
-        });
     }
+
 
     private void AddSwagger(IServiceCollection services)
     {
@@ -241,15 +259,48 @@ public class AppBootstrap(IConfiguration configuration)
     {
         app.UseHttpsRedirection();
 
+        // Middleware de diagnostic global - pour toutes les requêtes
+        app.Use(async (context, next) =>
+        {
+            Console.WriteLine($"\n===== REQUÊTE ENTRANTE: {context.Request.Method} {context.Request.Path} =====");
+
+            // Capture les headers pour le diagnostic
+            foreach (var header in context.Request.Headers)
+            {
+                Console.WriteLine($"Header: {header.Key}: {header.Value}");
+            }
+
+            // Vérification JWT si présent
+            if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                if (authHeader.ToString().StartsWith("Bearer "))
+                {
+                    var token = authHeader.ToString().Substring(7).Trim();
+                    Console.WriteLine($"Token JWT présent: {token.Substring(0, Math.Min(20, token.Length))}...");
+                    Console.WriteLine($"Points dans le token: {token.Count(c => c == '.')}");
+
+                    // Afficher une représentation hexadécimale pour détecter des caractères invisibles
+                    Console.WriteLine($"Premier 30 caractères en hex: {BitConverter.ToString(Encoding.UTF8.GetBytes(token.Substring(0, Math.Min(30, token.Length))))}");
+                }
+            }
+
+            // Création d'un middleware de réponse pour capturer le code de statut
+            var originalBodyStream = context.Response.Body;
+            using var responseBody = new MemoryStream();
+            context.Response.Body = responseBody;
+
+            await next();
+
+            // Afficher le résultat après exécution du pipeline
+            Console.WriteLine($"===== RÉPONSE: {context.Response.StatusCode} =====");
+
+            // Restaurer le corps de la réponse
+            responseBody.Seek(0, SeekOrigin.Begin);
+            await responseBody.CopyToAsync(originalBodyStream);
+        });
+
         app.UseAuthentication();
         app.UseAuthorization();
-
-        app.MapIdentityApi<UtilisateurEntities>();
-        using (var scope = app.Services.CreateScope())
-        {
-            var db = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
-            db.Database.EnsureCreated();
-        }
 
         app.MapControllers();
 

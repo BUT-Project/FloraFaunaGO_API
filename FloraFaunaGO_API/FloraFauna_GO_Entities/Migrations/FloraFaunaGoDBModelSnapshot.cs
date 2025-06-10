@@ -106,15 +106,16 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Class")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Climat")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Famille")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<byte[]>("Image")
@@ -122,6 +123,9 @@ namespace FloraFauna_GO_Entities.Migrations
 
                     b.Property<byte[]>("Image3D")
                         .HasColumnType("BLOB");
+
+                    b.Property<string>("Kingdom")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Nom")
                         .IsRequired()
@@ -131,11 +135,9 @@ namespace FloraFauna_GO_Entities.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Regime")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Zone")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -163,8 +165,14 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
+                    b.Property<double>("Altitude")
+                        .HasColumnType("REAL");
+
                     b.Property<string>("CaptureDetailsId")
                         .HasColumnType("TEXT");
+
+                    b.Property<double>("Exactitude")
+                        .HasColumnType("REAL");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("REAL");
@@ -204,8 +212,9 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<double>("Objectif")
                         .HasColumnType("REAL");
 
-                    b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -263,6 +272,9 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("BLOB");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
 
@@ -285,6 +297,12 @@ namespace FloraFauna_GO_Entities.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");

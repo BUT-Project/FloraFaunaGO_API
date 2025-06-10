@@ -1,0 +1,241 @@
+kind: pipeline
+type: docker
+name: FloraFaunaGO-API-CI
+
+trigger:
+  event:
+    - push
+
+steps:
+  - name: build
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    commands:
+      - cd FloraFaunaGO_API/
+      - dotnet restore FloraFaunaGO_API.sln
+      - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o CI_PROJECT_DIR/build/release
+
+  - name: tests
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    commands:
+      - cd FloraFaunaGO_API/
+      - dotnet restore FloraFaunaGO_API.sln
+      - dotnet test FloraFaunaGO_API.sln --no-restore
+    depends_on: [build]
+
+  - name: code-analysis
+    image: hub.codefirst.iut.uca.fr/marc.chevaldonne/codefirst-dronesonarplugin-dotnet8
+    secrets: [ SONAR_TOKEN ]
+    settings:
+      sonar_host: https://codefirst.iut.uca.fr/sonar/
+      sonar_token:
+        from_secret: SONAR_TOKEN
+      project_key: FloraFaunaGO_API
+      coverage_exclusions: Tests/**
+      duplication_exclusions: Tests/**
+    commands:
+      - cd FloraFaunaGO_API/
+      - dotnet restore FloraFaunaGO_API.sln
+      - dotnet sonarscanner begin /k:FloraFaunaGO_API /d:sonar.host.url=$${PLUGIN_SONAR_HOST} /d:sonar.login=$${PLUGIN_SONAR_TOKEN} /d:sonar.coverage.exclusions="Tests/**" /d:sonar.cpd.exclusions="Tests/***" /d:sonar.coverageReportPaths="coveragereport/SonarQube.xml"
+      - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
+      - dotnet test FloraFaunaGO_API.sln --logger trx --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --collect "XPlat Code Coverage"
+      - reportgenerator -reports:"**/coverage.cobertura.xml" -reporttypes:SonarQube -targetdir:"coveragereport"
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o $CI_PROJECT_DIR/build/release
+      - dotnet sonarscanner end /d:sonar.login=$${PLUGIN_SONAR_TOKEN}
+    depends_on: [ tests ]
+
+  - name: swagger
+    image: mcr.microsoft.com/dotnet/sdk:8.0
+    failure: ignore
+    volumes:
+      - name: docs
+        path: /docs
+    environment:
+      CODEFIRST_CLIENTDRONE_ENV_DOTNET_ROLL_FORWARD: LatestMajor
+      CODEFIRST_CLIENTDRONE_ENV_DOTNET_ROLL_FORWARD_TO_PRERELEASE: 1
+    commands:
+      - cd FloraFaunaGO_API/
+      - dotnet restore FloraFaunaGO_API.sln
+      - cd FloraFaunaGO_API
+      - dotnet new tool-manifest
+      - dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 7.2.0
+      - cd ../
+      - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o CI_PROJECT_DIR/build/release
+      - export PATH="$PATH:/root/.dotnet/tools"
+      - swagger tofile --output /docs/swagger.json FloraFaunaGO_API/bin/Release/net8.0/FloraFaunaGO_API.dll v1
+    depends_on: [build,tests]
+
+  - name: generate-and-deploy-docs
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-docdeployer
+    failure: ignore
+    commands:
+      - /entrypoint.sh -l docs/doxygen -t doxygen
+    when:
+      event:
+        - push
+    depends_on: [ build, swagger ]
+
+volumes:
+  - name: docs
+    path: /docs
+    temp: {}
+
+---
+
+kind: pipeline
+type: docker
+name: FloraFaunaGO-API-CD
+
+trigger:
+  event:
+    - push
+steps:
+
+  - name: docker-build-and-push
+    image: plugins/docker
+    settings:
+      dockerfile: FloraFaunaGO_API/FloraFaunaGO_API/Dockerfile
+      context: FloraFaunaGO_API/
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/api
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
+  
+  # database container stub
+  - name: deploy-container-stub
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: STUB
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
+      CONTAINERNAME: ffgo_stub
+      COMMAND: create
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito,camillepetitalot
+      OVERWRITE: true
+    depends_on: [ docker-build-and-push ]
+
+  - name: deploy-container
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+        IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
+        CONTAINERNAME: ffgo_api
+        CODEFIRST_CLIENTDRONE_ENV_TYPE: API
+        CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
+        ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,nicolas.raymond
+        COMMAND: create
+        OVERWRITE: true
+    depends_on: [ docker-build-and-push, deploy-container-stub ]
+
+  # database container deployment
+  - name: deploy-container-mysql
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: mariadb:10
+      CONTAINERNAME: FloraFauna_GO-mysql
+      COMMAND: up
+      OVERWRITE: false
+      PRIVATE: true
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_ROOT_PASSWORD:
+        from_secret: db_root_password
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_DATABASE:
+        from_secret: db_database
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_USER:
+        from_secret: db_user
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_PASSWORD:
+        from_secret: db_password
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_VOLUMES: "FloraFauna_GO-mysql-data:/var/lib/mysql"
+
+      ADMINS: davidd_almeida,alexislaurent,...
+
+  
+  # database container bdd
+  - name: deploy-container-bdd
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: BDD
+      CODEFIRST_CLIENTDRONE_ENV_HOST: FloraFauna_GO-FloraFauna_GO-mysql
+      CODEFIRST_CLIENTDRONE_ENV_PORTDB: 3306
+      CODEFIRST_CLIENTDRONE_ENV_DATABASE:
+        from_secret: db_database
+      CODEFIRST_CLIENTDRONE_ENV_USERNAME:
+        from_secret: db_user
+      CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
+        from_secret: db_password
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
+      CONTAINERNAME: api
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+      COMMAND: create
+      OVERWRITE: true
+    depends_on: [deploy-container-mysql, docker-build-and-push, deploy-container-stub]
+
+  - name: deploy-container-phpmyadmin
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: phpmyadmin/phpmyadmin
+      CONTAINERNAME: phpmyadmin
+      COMMAND: create
+      OVERWRITE: true
+      CODEFIRST_CLIENTDRONE_ENV_PMA_HOST: FloraFauna_GO-FloraFauna_GO-mysql
+      CODEFIRST_CLIENTDRONE_ENV_PMA_PORT: 3306
+      CODEFIRST_CLIENTDRONE_ENV_PMA_USER:
+        from_secret: db_user
+      CODEFIRST_CLIENTDRONE_ENV_PMA_PASSWORD:
+        from_secret: db_password
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+    depends_on: [deploy-container-mysql]
+
+  - name: build-and-push-classifier
+    image: plugins/docker
+    settings:
+      dockerfile: python/classify/Dockerfile
+      context: python/classify
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier
+      tags:
+        - latest
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
+
+  - name: build-and-push-identification
+    image: plugins/docker
+    settings:
+      dockerfile: python/identify_animal/Dockerfile
+      context: python/identify_animal
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api
+      tags:
+        - latest
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
+
+  - name: deploy-classifier
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier:latest
+      CONTAINERNAME: clip-classifier
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: API
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 8011
+      COMMAND: create
+      OVERWRITE: true
+      ADMINS: davidd_almeida,alexislaurent,...
+    depends_on: [ build-and-push-classifier ]
+
+  - name: deploy-identification
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api:latest
+      CONTAINERNAME: identification-api
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: API
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 8012
+      COMMAND: create
+      OVERWRITE: true
+      ADMINS: davidd_almeida,alexislaurent,...
+    depends_on: [ build-and-push-identification ]
+

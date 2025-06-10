@@ -128,13 +128,13 @@ steps:
         OVERWRITE: true
     depends_on: [ docker-build-and-push, deploy-container-stub ]
 
-  #database container deployment
+  # database container deployment
   - name: deploy-container-mysql
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
       IMAGENAME: mariadb:10
       CONTAINERNAME: FloraFauna_GO-mysql
-      COMMAND: create
+      COMMAND: up
       OVERWRITE: false
       PRIVATE: true
       CODEFIRST_CLIENTDRONE_ENV_MARIADB_ROOT_PASSWORD:
@@ -145,8 +145,10 @@ steps:
         from_secret: db_user
       CODEFIRST_CLIENTDRONE_ENV_MARIADB_PASSWORD:
         from_secret: db_password
-      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-  
+      CODEFIRST_CLIENTDRONE_ENV_MARIADB_VOLUMES: "FloraFauna_GO-mysql-data:/var/lib/mysql"
+
+      ADMINS: davidd_almeida,alexislaurent,...
+
   
   # database container bdd
   - name: deploy-container-bdd

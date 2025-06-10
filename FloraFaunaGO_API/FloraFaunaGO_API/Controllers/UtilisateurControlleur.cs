@@ -35,6 +35,19 @@ public class UtilisateurControlleur : ControllerBase
         _configuration = configuration;
     }
 
+   /* [HttpGet("test")]
+    public IActionResult GetTest()
+    {
+        return Ok("Endpoint non-sécurisé accessible");
+    }
+
+    [HttpGet("secure")]
+    [Authorize]
+    public IActionResult GetSecure()
+    {
+        return Ok("Endpoint sécurisé accessible");
+    }*/
+
     [HttpGet("{id}")]
     
     [ProducesResponseType(StatusCodes.Status200OK)]
