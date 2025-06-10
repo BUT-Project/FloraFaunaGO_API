@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/capturedetail/")]
 public class CaptureDetailController : ControllerBase

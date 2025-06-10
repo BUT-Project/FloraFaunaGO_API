@@ -14,6 +14,8 @@ using System.Security.Claims;
 using System.Text;
 
 namespace FloraFaunaGO_API.Controllers;
+
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/utilisateur/")]
 public class UtilisateurControlleur : ControllerBase

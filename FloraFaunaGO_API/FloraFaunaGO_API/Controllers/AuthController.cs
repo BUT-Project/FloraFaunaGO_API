@@ -1,5 +1,9 @@
 ﻿using FloraFauna_GO_Dto;
+using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
+using FloraFauna_GO_Entities2Dto;
+using FloraFauna_GO_Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -20,10 +24,14 @@ namespace FloraFaunaGO_API.Controllers
         private readonly UserManager<UtilisateurEntities> _userManager;
         private readonly IConfiguration _config;
 
-        public AuthController(UserManager<UtilisateurEntities> userManager, IConfiguration config)
+        public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
+
+
+        public AuthController(UserManager<UtilisateurEntities> userManager, IConfiguration config, FloraFaunaService service)
         {
             _userManager = userManager;
             _config = config;
+            UnitOfWork = service;
         }
 
         private string GenerateRefreshToken()
@@ -95,7 +103,25 @@ namespace FloraFaunaGO_API.Controllers
             if (!result.Succeeded)
                 return BadRequest(result.Errors);
 
+            await CreateUserState(user.Id);
+
             return Ok("Register succesfully.");
+        }
+
+        private async Task CreateUserState(string userId)
+        {
+            var successes = await UnitOfWork.SuccessRepository.GetAllSuccess(count: 1000);
+            if (successes is null) return;
+            foreach (var success in successes.Items)
+            {
+                var _ = UnitOfWork.AddSuccesStateAsync(
+                    new SuccessStateNormalDto() { PercentSucces = 0, IsSucces = false },
+                    (await UnitOfWork.UserRepository.GetById(userId)).Utilisateur,
+                    success
+                );
+                await UnitOfWork.SaveChangesAsync();
+            }
+
         }
 
         [HttpPost("refresh")]

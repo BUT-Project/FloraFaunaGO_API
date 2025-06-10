@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualBasic;
 namespace FloraFaunaGO_API.Controllers;
 
-
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/success/state/")]
 public class SuccessStateControlleur : ControllerBase
@@ -45,6 +45,19 @@ public class SuccessStateControlleur : ControllerBase
         return NotFound();
     }
 
+    [HttpGet("idUser={id}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<FullSuccessStateDto>> GetByIdUser(string id)
+    {
+            var result = await Repository.GetSuccessStateByUser(id);
+            if (result == null) return NoContent();
+            foreach (var item in result.Items) 
+                item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.First();
+            
+            return result != null ? Ok(result) : NoContent();  
+    }
+
     private async Task<ActionResult<Pagination<FullSuccessStateDto>>> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
     {
         var result = await func();
@@ -66,7 +79,7 @@ public class SuccessStateControlleur : ControllerBase
         return await GetSuccessStates(async () => await Repository.GetAllSuccessState(criterium, index, count));
     }
 
-    [HttpGet("User={id}&Success{idSuccess}")]
+    [HttpGet("idUser={id}&idSuccess{idSuccess}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullSuccessStateDto>> GetByIdUserAndSuccess(string id, string idSuccess)
