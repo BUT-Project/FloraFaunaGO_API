@@ -104,7 +104,7 @@ steps:
       password:
         from_secret: SECRET_REGISTRY_PASSWORD
   
-   database container stub
+  # database container stub
   - name: deploy-container-stub
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
@@ -128,7 +128,7 @@ steps:
         OVERWRITE: true
     depends_on: [ docker-build-and-push, deploy-container-stub ]
 
-   database container deployment
+  # database container deployment
   - name: deploy-container-mysql
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
@@ -150,7 +150,7 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,...
 
   
-   database container bdd
+  # database container bdd
   - name: deploy-container-bdd
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
@@ -187,55 +187,55 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [deploy-container-mysql]
 
-  # - name: build-and-push-classifier
-     image: plugins/docker
-     settings:
-       dockerfile: python/classify/Dockerfile
-       context: python/classify
-       registry: hub.codefirst.iut.uca.fr
-       repo: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier
-       tags:
-         - latest
-       username:
-         from_secret: SECRET_REGISTRY_USERNAME
-       password:
-         from_secret: SECRET_REGISTRY_PASSWORD
+  - name: build-and-push-classifier
+    image: plugins/docker
+    settings:
+      dockerfile: python/classify/Dockerfile
+      context: python/classify
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier
+      tags:
+        - latest
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
 
-  # - name: build-and-push-identification
-     image: plugins/docker
-     settings:
-       dockerfile: python/identify_animal/Dockerfile
-       context: python/identify_animal
-       registry: hub.codefirst.iut.uca.fr
-       repo: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api
-       tags:
-         - latest
-       username:
-         from_secret: SECRET_REGISTRY_USERNAME
-       password:
-         from_secret: SECRET_REGISTRY_PASSWORD
+  - name: build-and-push-identification
+    image: plugins/docker
+    settings:
+      dockerfile: python/identify_animal/Dockerfile
+      context: python/identify_animal
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api
+      tags:
+        - latest
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
 
-  # - name: deploy-classifier
-     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-     environment:
-       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier:latest
-       CONTAINERNAME: clip-classifier
-       CODEFIRST_CLIENTDRONE_ENV_TYPE: API
-       CODEFIRST_CLIENTDRONE_ENV_PORT: 8011
-       COMMAND: create
-       OVERWRITE: true
-       ADMINS: davidd_almeida,alexislaurent,...
-     depends_on: [ build-and-push-classifier ]
+  - name: deploy-classifier
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/clip-classifier:latest
+      CONTAINERNAME: clip-classifier
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: API
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 8011
+      COMMAND: create
+      OVERWRITE: true
+      ADMINS: davidd_almeida,alexislaurent,...
+    depends_on: [ build-and-push-classifier ]
 
-  # - name: deploy-identification
-     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-     environment:
-       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api:latest
-       CONTAINERNAME: identification-api
-       CODEFIRST_CLIENTDRONE_ENV_TYPE: API
-       CODEFIRST_CLIENTDRONE_ENV_PORT: 8012
-       COMMAND: create
-       OVERWRITE: true
-       ADMINS: davidd_almeida,alexislaurent,...
-     depends_on: [ build-and-push-identification ]
+  - name: deploy-identification
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/identification-api:latest
+      CONTAINERNAME: identification-api
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: API
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 8012
+      COMMAND: create
+      OVERWRITE: true
+      ADMINS: davidd_almeida,alexislaurent,...
+    depends_on: [ build-and-push-identification ]
 
