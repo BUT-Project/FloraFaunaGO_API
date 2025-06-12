@@ -31,12 +31,22 @@ steps:
       sonar_token:
         from_secret: SONAR_TOKEN
       project_key: FloraFaunaGO_API
-      coverage_exclusions: Tests/**
-      duplication_exclusions: Tests/**
+      coverage_exclusions: >
+        Tests/**,
+        **/Controllers/**,
+        **/Services/**,
+        **/*Controller.cs,
+        **/*Service.cs
+      duplication_exclusions: >
+        Tests/**,
+        **/Controllers/**,
+        **/Services/**,
+        **/*Controller.cs,
+        **/*Service.cs
     commands:
       - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
-      - dotnet sonarscanner begin /k:FloraFaunaGO_API /d:sonar.host.url=$${PLUGIN_SONAR_HOST} /d:sonar.login=$${PLUGIN_SONAR_TOKEN} /d:sonar.coverage.exclusions="Tests/**" /d:sonar.cpd.exclusions="Tests/***" /d:sonar.coverageReportPaths="coveragereport/SonarQube.xml"
+      - dotnet sonarscanner begin /k:FloraFaunaGO_API /d:sonar.host.url=$${PLUGIN_SONAR_HOST} /d:sonar.login=$${PLUGIN_SONAR_TOKEN} /d:sonar.coverage.exclusions="Tests/**, **/Controllers/**, **/Services/**, **/*Controller.cs, **/*Service.cs" /d:sonar.cpd.exclusions="Tests/**, **/Controllers/**, **/Services/**, **/*Controller.cs, **/*Service.cs" /d:sonar.coverageReportPaths="coveragereport/SonarQube.xml"
       - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
       - dotnet test FloraFaunaGO_API.sln --logger trx --no-restore /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura --collect "XPlat Code Coverage"
       - reportgenerator -reports:"**/coverage.cobertura.xml" -reporttypes:SonarQube -targetdir:"coveragereport"

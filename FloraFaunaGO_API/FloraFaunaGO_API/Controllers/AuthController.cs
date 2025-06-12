@@ -63,7 +63,7 @@ namespace FloraFaunaGO_API.Controllers
                 issuer: _config["Jwt:Issuer"],
                 audience: _config["Jwt:Issuer"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(20),
+                expires: DateTime.UtcNow.AddMinutes(60),
                 signingCredentials: creds
             );
 
@@ -76,7 +76,7 @@ namespace FloraFaunaGO_API.Controllers
             {
                 tokenType = "Bearer",
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                expiresIn = 900,
+                expiresIn = 3600,
                 refreshToken
             });
         }
@@ -146,7 +146,7 @@ namespace FloraFaunaGO_API.Controllers
             var token = new JwtSecurityToken(
                 issuer: _config["Jwt:Issuer"],
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(15),
+                expires: DateTime.UtcNow.AddMinutes(60),
                 signingCredentials: creds
             );
 
@@ -159,7 +159,7 @@ namespace FloraFaunaGO_API.Controllers
             {
                 tokenType = "Bearer",
                 accessToken = new JwtSecurityTokenHandler().WriteToken(token),
-                expiresIn = 900,
+                expiresIn = 3600,
                 refreshToken = newRefreshToken
             });
         }
