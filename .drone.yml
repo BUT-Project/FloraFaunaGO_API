@@ -36,16 +36,16 @@ steps:
         **/Controllers/**,
         **/Services/**,
         **/*Controller.cs,
-        **/*Service.cs
+        **/*Service.cs,
+        **/UnitOfWork.cs,
+        **/AppBootstrap.cs,
+        **/Migrations/**
       duplication_exclusions: >
         Tests/**,
         **/Controllers/**,
         **/Services/**,
         **/*Controller.cs,
         **/*Service.cs
-        **/UnitOfWork.cs,
-        **/AppBootstrap.cs,
-        **/Migrations/**
     commands:
       - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
