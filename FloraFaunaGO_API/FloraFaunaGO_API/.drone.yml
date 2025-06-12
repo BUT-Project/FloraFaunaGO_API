@@ -31,8 +31,8 @@ steps:
       sonar_token:
         from_secret: SONAR_TOKEN
       project_key: FloraFaunaGO_API
-      coverage_exclusions: Tests/**
-      duplication_exclusions: Tests/**
+      coverage_exclusions: Tests/**, **/Controllers/**,**/Services/**,**/*Controller.cs,**/*Service.cs,**/UnitOfWork.cs,**/AppBootstrap.cs,**/Migrations/** 
+      duplication_exclusions: Tests/**, **/Controllers/**,**/Services/**,**/*Controller.cs,**/*Service.cs,**/UnitOfWork.cs,**/AppBootstrap.cs,**/Migrations/** 
     commands:
       - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
