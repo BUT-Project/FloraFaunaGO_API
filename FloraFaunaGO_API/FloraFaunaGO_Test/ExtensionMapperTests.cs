@@ -151,16 +151,43 @@ public class ExtensionMapperTests
         Assert.AreEqual("Roi de la savane", entity.Description);
         Assert.AreEqual("Felidae", entity.Famille);
         Assert.AreEqual("Carnivore", entity.Regime);
+        Assert.AreEqual("Savane", entity.Climat);
+        Assert.AreEqual("Afrique", entity.Zone);
+        Assert.AreEqual("Animalia", entity.Kingdom);
+        Assert.AreEqual("Mammals", entity.Class);
     }
 
     [TestMethod]
     public void ToEntities_FullEspeceDto_WithId()
     {
-        var dto = new FullEspeceDto { Id = "esp1", Nom = "Lion" };
+        var dto = new FullEspeceDto
+        {
+            Id = "esp1",
+            Nom = "Lion",
+            Nom_Scientifique = "Panthera leo",
+            Description = "Roi de la savane",
+            Image = new byte[] { 1 },
+            Image3D = new byte[] { 2 },
+            Climat = "Savane",
+            Zone = "Afrique",
+            Famille = "Felidae",
+            Regime = "Carnivore",
+            Kingdom = "Animalia",
+            Class = "Mammals"
+        };
         var entity = dto.ToEntities("esp1");
         Assert.AreEqual("esp1", entity.Id);
         Assert.AreEqual("Lion", entity.Nom);
+        Assert.AreEqual("Panthera leo", entity.Nom_scientifique);
+        Assert.AreEqual("Roi de la savane", entity.Description);
+        Assert.AreEqual("Felidae", entity.Famille);
+        Assert.AreEqual("Carnivore", entity.Regime);
+        Assert.AreEqual("Savane", entity.Climat);
+        Assert.AreEqual("Afrique", entity.Zone);
+        Assert.AreEqual("Animalia", entity.Kingdom);
+        Assert.AreEqual("Mammals", entity.Class);
     }
+
 
     [TestMethod]
     public void ToDto_EspeceEntities_To_FullEspeceDto()
@@ -277,5 +304,105 @@ public class ExtensionMapperTests
         var set = new HashSet<int> { 1, 2 };
         set.AddRange(new[] { 2, 3, 4 });
         Assert.IsTrue(set.SetEquals(new[] { 1, 2, 3, 4 }));
+    }
+
+    [TestMethod]
+    public void ToEntities_CaptureDetailNormalDto_WithDate()
+    {
+        var date = new DateTime(2024, 1, 1);
+        var dto = new CaptureDetailNormalDto { Id = "cd3", Shiny = true, date = date };
+        var entity = dto.ToEntities("cd3");
+        Assert.AreEqual("cd3", entity.Id);
+        Assert.AreEqual(date, entity.DateCapture);
+        Assert.IsTrue(entity.Shiny);
+    }
+
+    [TestMethod]
+    public void ToResponseDto_CaptureDetailsEntities()
+    {
+        var entity = new CaptureDetailsEntities
+        {
+            Id = "cd4",
+            Shiny = true,
+            DateCapture = new DateTime(2024, 2, 2),
+            LocalisationId = "locX"
+        };
+        var dto = entity.ToResponseDto();
+        Assert.AreEqual("cd4", dto.CaptureDetail.Id);
+        Assert.AreEqual(true, dto.CaptureDetail.Shiny);
+        Assert.AreEqual(new DateTime(2024, 2, 2), dto.CaptureDetail.date);
+        Assert.AreEqual("locX", dto.localisationNormalDtos.Id);
+    }
+
+    [TestMethod]
+    public void ToEntities_UtilisateurNormalDto()
+    {
+        var date = DateTime.Now;
+        var dto = new UtilisateurNormalDto
+        {
+            Id = "u1",
+            Pseudo = "toto",
+            Image = new byte[] { 1, 2 },
+            Mail = "a@b.c",
+            Hash_mdp = "hash",
+            DateInscription = date
+        };
+        var entity = dto.ToEntities();
+        Assert.AreEqual("toto", entity.UserName);
+        Assert.AreEqual("a@b.c", entity.Email);
+        Assert.AreEqual("hash", entity.PasswordHash);
+        Assert.AreEqual(date, entity.DateInscription);
+    }
+
+    [TestMethod]
+    public void ToEntities_UtilisateurNormalDto_WithId()
+    {
+        var dto = new UtilisateurNormalDto { Id = "u2", Pseudo = "titi" };
+        var entity = dto.ToEntities("u2");
+        Assert.AreEqual("u2", entity.Id);
+        Assert.AreEqual("titi", entity.UserName);
+    }
+
+    [TestMethod]
+    public void ToDto_UtilisateurEntities()
+    {
+        var entity = new UtilisateurEntities
+        {
+            Id = "u3",
+            UserName = "tata",
+            Email = "x@y.z",
+            PasswordHash = "h2",
+            DateInscription = new DateTime(2023, 5, 5)
+        };
+        var dto = entity.ToDto();
+        Assert.AreEqual("u3", dto.Id);
+        Assert.AreEqual("tata", dto.Pseudo);
+        Assert.AreEqual("x@y.z", dto.Mail);
+        Assert.AreEqual("h2", dto.Hash_mdp);
+        Assert.AreEqual(new DateTime(2023, 5, 5), dto.DateInscription);
+    }
+
+    [TestMethod]
+    public void ToEntities_SuccessNormalDto_WithId_2()
+    {
+        var dto = new SuccessNormalDto { Id = "s3", Nom = "S3", Type = "T3", Image = "img3", Objectif = 3, Description = "desc3", Evenement = "ev3" };
+        var entity = dto.ToEntities("s3");
+        Assert.AreEqual("s3", entity.Id);
+        Assert.AreEqual("S3", entity.Nom);
+        Assert.AreEqual("T3", entity.Type);
+        Assert.AreEqual("img3", entity.Image);
+        Assert.AreEqual(3, entity.Objectif);
+        Assert.AreEqual("desc3", entity.Description);
+        Assert.AreEqual("ev3", entity.Evenenement);
+    }
+
+    [TestMethod]
+    public void ToEntities_SuccessStateNormalDto_WithId_2()
+    {
+        var dto = new SuccessStateNormalDto { Id = "ss3", PercentSucces = 33, IsSucces = true };
+        var entity = dto.ToEntities("ss3");
+        Assert.AreEqual("ss3", entity.Id);
+        Assert.AreEqual(33, entity.PercentSucces);
+        Assert.IsTrue(entity.IsSucces);
     }
 }
