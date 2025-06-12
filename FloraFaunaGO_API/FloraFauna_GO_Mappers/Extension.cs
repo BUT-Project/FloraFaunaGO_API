@@ -75,7 +75,8 @@ public static class Extension
                 new CaptureDetailsEntities()
                 {
                     Localisation = dto.LocalisationNormalDto != null ? dto.LocalisationNormalDto.ToEntities() : null,
-                    Shiny = dto.Shiny ?? false
+                    Shiny = dto.Shiny ?? false,
+                    DateCapture = DateTime.Now
                 }
             },
         };
@@ -126,6 +127,7 @@ public static class Extension
         Func<CaptureDetailNormalDto, CaptureDetailsEntities> creator = (dto) => new CaptureDetailsEntities()
         {
             Shiny = dto.Shiny,
+            DateCapture = DateTime.Now
         };
         return dto.ToU(Mappers.CaptureDetailMapper, creator);
     }
@@ -135,6 +137,7 @@ public static class Extension
         Func<CaptureDetailNormalDto, CaptureDetailsEntities> creator = (dto) => new CaptureDetailsEntities()
         {
             Id = id,
+            DateCapture = dto.date,
             Shiny = dto.Shiny,
         };
         return dto.ToU(Mappers.CaptureDetailMapper, creator);
@@ -145,6 +148,7 @@ public static class Extension
         Func<CaptureDetailsEntities, CaptureDetailNormalDto> creator = (entities) => new CaptureDetailNormalDto()
         {
             Shiny = entities.Shiny,
+            date = entities.DateCapture,
             Id = entities.Id,
         };
         return entities.ToT(null, creator, null);
@@ -157,6 +161,7 @@ public static class Extension
             CaptureDetail = new CaptureDetailNormalDto()
             {
                 Id = entities.Id,
+                date = entities.DateCapture,
                 Shiny = entities.Shiny,
             },
         };
