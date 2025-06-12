@@ -43,6 +43,9 @@ steps:
         **/Services/**,
         **/*Controller.cs,
         **/*Service.cs
+        **/UnitOfWork.cs,
+        **/AppBootstrap.cs
+        **/Migrations/**,
     commands:
       - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
