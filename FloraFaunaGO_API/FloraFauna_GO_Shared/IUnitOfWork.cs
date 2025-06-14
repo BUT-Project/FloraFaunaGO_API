@@ -1,11 +1,4 @@
-﻿using FloraFauna_GO_Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FloraFauna_GO_Shared
+﻿namespace FloraFauna_GO_Shared
 {
     public interface IUnitOfWork<TEspeceInput, TEspeceOutput, TCaptureInput, TCaptureOutput, TCaptureDetailInput, TCaptureDetailOutput,
                                  TUserInput, TUserOutput, TSuccessInput, TSuccessOutput, TSuccessStateInput, TSuccessStateOutput,
@@ -50,7 +43,7 @@ namespace FloraFauna_GO_Shared
         Task RejectChangesAsync();
     }
 
-    public interface IUnitOfWork<TEspeceInput, TCaptureInput, TCaptureDetailInput, TUserInput, TSuccessInput, 
+    public interface IUnitOfWork<TEspeceInput, TCaptureInput, TCaptureDetailInput, TUserInput, TSuccessInput,
                                  TSuccessStateInput, TLocalisationInput> : IDisposable
         where TEspeceInput : class
         where TCaptureInput : class

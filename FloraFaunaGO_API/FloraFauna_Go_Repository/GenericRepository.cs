@@ -1,5 +1,4 @@
-﻿using FloraFauna_GO_Entities;
-using FloraFauna_GO_Shared;
+﻿using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
@@ -12,10 +11,10 @@ namespace FloraFauna_Go_Repository
         protected DbContext Context { get; private set; }
         protected DbSet<TEntity> Set { get; private set; }
 
-        protected GenericRepository(DbContext context) 
+        protected GenericRepository(DbContext context)
         {
-           Context = context;
-           Set = Context.Set<TEntity>();
+            Context = context;
+            Set = Context.Set<TEntity>();
         }
 
         public virtual async Task<TEntity?> GetById(string id)
@@ -95,7 +94,7 @@ namespace FloraFauna_Go_Repository
             var values = typeof(TEntity).GetProperties()
                                         .Where(promp => promp.Name != keyName && promp.CanWrite)
                                         .ToDictionary(promp => promp.Name, promp => promp.GetValue(item));
-            
+
             originalEntry.CurrentValues.SetValues(values);
             Set.Attach(originalEntity);
             Context.Entry(originalEntity).State = EntityState.Modified;

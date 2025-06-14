@@ -1,5 +1,4 @@
 ﻿using FloraFauna_GO_Dto.Full;
-using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
@@ -16,17 +15,17 @@ public class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
     }
     public async Task<bool> Delete(string id) => await Repository.Delete(id);
 
-    public async Task<Pagination<FullEspeceDto>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15) 
+    public async Task<Pagination<FullEspeceDto>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
             => (await Repository.GetAllEspece(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<FullEspeceDto?> GetById(string id) 
+    public async Task<FullEspeceDto?> GetById(string id)
         => (await Repository.GetById(id))?.ToResponseDto();
 
     public async Task<Pagination<FullEspeceDto>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille, int index = 0, int count = 15)
         => (await Repository.GetEspeceByFamile(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<Pagination<FullEspeceDto>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
-        => (await Repository.GetEspeceByName(name,criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<FullEspeceDto>> GetEspeceByName(string name, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
+        => (await Repository.GetEspeceByName(name, criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<Pagination<FullEspeceDto>> GetEspeceByRegime(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByRegime, int index = 0, int count = 15)
         => (await Repository.GetEspeceByRegime(criteria, index, count)).ToPagingResponseDtos();
@@ -47,6 +46,6 @@ public class EspeceService : IEspeceRepository<FullEspeceDto, FullEspeceDto>
         throw new NotImplementedException();
     }
 
-    public Task<Pagination<FullEspeceDto>> GetEspeceByProperty(string id,string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
+    public Task<Pagination<FullEspeceDto>> GetEspeceByProperty(string id, string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
         => Repository.GetEspeceByProperty(id, property, criteria, index, count).ContinueWith(t => t.Result.ToPagingResponseDtos());
 }

@@ -2,12 +2,10 @@ using FloraFauna_GO_Dto.Edit;
 using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
-using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -29,18 +27,18 @@ public class CaptureController : ControllerBase
         UnitOfWork = service;
         CaptureRepository = service.CaptureRepository;
     }
-/*
-    /// <summary>
-    /// get Capture by id
-    /// </summary>
-    /// <param name="id">identifiant de capture</param>
-    /// <remarks>Cool</remarks>
-    /// <response code="200">Product created</response>
-    /// <response code="400">Product has missing/invalid values</response>
-    /// <response code="500">Oops! Can't create your product right now</response>
-*/
-    [HttpGet ("{id}")]
-    
+    /*
+        /// <summary>
+        /// get Capture by id
+        /// </summary>
+        /// <param name="id">identifiant de capture</param>
+        /// <remarks>Cool</remarks>
+        /// <response code="200">Product created</response>
+        /// <response code="400">Product has missing/invalid values</response>
+        /// <response code="500">Oops! Can't create your product right now</response>
+    */
+    [HttpGet("{id}")]
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullCaptureDto>> GetCaptureById(string id)
@@ -58,7 +56,7 @@ public class CaptureController : ControllerBase
         return capture != null ? Ok(capture) : NotFound();
     }
 
-    [HttpGet ("idUser={id}")]
+    [HttpGet("idUser={id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullCaptureDto>> GetCaptureByUser(string id)
@@ -82,7 +80,7 @@ public class CaptureController : ControllerBase
     private async Task<ActionResult<Pagination<FullCaptureDto>>> GetCapture(Func<Task<Pagination<FullCaptureDto>>> func)
     {
         var result = await func();
-        foreach(var item in result.Items)
+        foreach (var item in result.Items)
         {
             var cd = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(item.Capture.Id, CaptureDetailOrderingCriteria.None);
             item.CaptureDetails = cd.Items.ToList();

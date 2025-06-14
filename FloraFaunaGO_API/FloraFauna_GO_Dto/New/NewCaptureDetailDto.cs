@@ -1,10 +1,4 @@
-﻿using FloraFauna_GO_Dto.Full;
-using FloraFauna_GO_Dto.Normal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FloraFauna_GO_Dto.Normal;
 
 namespace FloraFauna_GO_Dto.New;
 

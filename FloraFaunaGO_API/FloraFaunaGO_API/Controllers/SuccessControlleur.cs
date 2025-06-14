@@ -16,8 +16,9 @@ public class SuccessControlleur : ControllerBase
     private readonly ILogger<SuccessControlleur> _logger;
     public ISuccessRepository<SuccessNormalDto, SuccessNormalDto> SuccessRepository;
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
-    
-    public SuccessControlleur(ILogger<SuccessControlleur> logger, FloraFaunaService service) {
+
+    public SuccessControlleur(ILogger<SuccessControlleur> logger, FloraFaunaService service)
+    {
         _logger = logger;
         UnitOfWork = service;
         SuccessRepository = service.SuccessRepository;
@@ -65,7 +66,7 @@ public class SuccessControlleur : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<SuccessNormalDto>> PutSuccess(string id,[FromBody] SuccessNormalDto dto)
+    public async Task<ActionResult<SuccessNormalDto>> PutSuccess(string id, [FromBody] SuccessNormalDto dto)
     {
         var result = await SuccessRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

@@ -6,7 +6,6 @@ using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.VisualBasic;
 namespace FloraFaunaGO_API.Controllers;
 
 [Authorize]
@@ -15,9 +14,9 @@ namespace FloraFaunaGO_API.Controllers;
 public class SuccessStateControlleur : ControllerBase
 {
     private readonly ILogger<SuccessStateControlleur> _logger;
-    public ISuccessStateRepository<SuccessStateNormalDto,  FullSuccessStateDto> Repository { get; set; }
+    public ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto> Repository { get; set; }
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
-    
+
     public SuccessStateControlleur(ILogger<SuccessStateControlleur> logger, FloraFaunaService service)
     {
         _logger = logger;
@@ -50,12 +49,12 @@ public class SuccessStateControlleur : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullSuccessStateDto>> GetByIdUser(string id)
     {
-            var result = await Repository.GetSuccessStateByUser(id);
-            if (result == null) return NoContent();
-            foreach (var item in result.Items) 
-                item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.First();
-            
-            return result != null ? Ok(result) : NoContent();  
+        var result = await Repository.GetSuccessStateByUser(id);
+        if (result == null) return NoContent();
+        foreach (var item in result.Items)
+            item.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(item.State.Id)).Items.First();
+
+        return result != null ? Ok(result) : NoContent();
     }
 
     private async Task<ActionResult<Pagination<FullSuccessStateDto>>> GetSuccessStates(Func<Task<Pagination<FullSuccessStateDto>>> func)
@@ -107,12 +106,12 @@ public class SuccessStateControlleur : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id,[FromBody] EditSuccessDto dto)
+    public async Task<ActionResult<FullSuccessStateDto>> PutSuccessState(string id, [FromBody] EditSuccessDto dto)
     {
         var tmp = await Repository.GetById(id);
         tmp.Success = (await UnitOfWork.SuccessRepository.GetSuccessBySuccessState(id)).Items.FirstOrDefault();
-        if ( tmp is null ) return NoContent();
-        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = dto.PercentSucces >= tmp.Success.Objectif, PercentSucces = dto.PercentSucces});
+        if (tmp is null) return NoContent();
+        var result = await Repository.Update(id, new SuccessStateNormalDto() { Id = id, IsSucces = dto.PercentSucces >= tmp.Success.Objectif, PercentSucces = dto.PercentSucces });
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutSuccessState), result) : NotFound(id);
     }

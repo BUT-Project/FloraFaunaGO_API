@@ -2,13 +2,10 @@
 using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
-using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -29,7 +26,7 @@ public class EspeceController : ControllerBase
         EspeceRepository = UnitOfWork.EspeceRepository;
     }
 
-    [HttpGet ("{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullEspeceDto>> GetById(string id)
@@ -87,8 +84,8 @@ public class EspeceController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<Pagination<EspeceNormalDto>>> GetAllEspece([FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.None, 
-                                                  [FromQuery] int index = 0, 
+    public async Task<ActionResult<Pagination<EspeceNormalDto>>> GetAllEspece([FromQuery] EspeceOrderingCriteria criterium = EspeceOrderingCriteria.None,
+                                                  [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
         return await GetEspeces(async () => await EspeceRepository.GetAllEspece(criterium, index, count));
@@ -107,7 +104,7 @@ public class EspeceController : ControllerBase
         var criterium = EspeceOrderingCriteria.None;
         if (!Enum.TryParse(property, true, out criterium))
             return BadRequest("Action invalide.");
-        return await GetEspeces(async () => await EspeceRepository.GetEspeceByProperty(id,value,criterium, index, count));
+        return await GetEspeces(async () => await EspeceRepository.GetEspeceByProperty(id, value, criterium, index, count));
     }
 
     [HttpGet("famille={famille}")]
@@ -128,7 +125,7 @@ public class EspeceController : ControllerBase
                                                   [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
-        var espece = await EspeceRepository.GetEspeceByRegime(criterium, index,count);
+        var espece = await EspeceRepository.GetEspeceByRegime(criterium, index, count);
         return espece != null ? Ok(espece) : NotFound(regimeAlimentaire);
     }
 
@@ -147,7 +144,7 @@ public class EspeceController : ControllerBase
             Image3D = dto.Image3D,
             Description = dto.Description
         };
-        var result = await EspeceRepository.Update(id,espece);
+        var result = await EspeceRepository.Update(id, espece);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
     }

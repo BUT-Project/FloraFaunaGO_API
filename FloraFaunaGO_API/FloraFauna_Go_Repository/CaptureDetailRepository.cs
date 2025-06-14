@@ -2,11 +2,6 @@
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_Go_Repository
 {
@@ -30,7 +25,7 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<CaptureDetailsEntities>> GetCaptureDetailByCapture(string id,CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
+        public async Task<Pagination<CaptureDetailsEntities>> GetCaptureDetailByCapture(string id, CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
         {
             IQueryable<CaptureDetailsEntities> query = Set;
             query = query.Where(captureDetail => captureDetail.CaptureId == id);

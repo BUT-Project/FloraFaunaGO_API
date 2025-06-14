@@ -23,7 +23,7 @@ public class CaptureDetailController : ControllerBase
         CaptureDetailRepository = service.CaptureDetailRepository;
     }
 
-    [HttpGet ("{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullCaptureDetailDto>> GetById(string id)
@@ -58,7 +58,7 @@ public class CaptureDetailController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<FullCaptureDetailDto>> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
+    public async Task<ActionResult<FullCaptureDetailDto>> PutCaptureDetail([FromQuery] string id, [FromBody] CaptureDetailNormalDto dto)
     {
         var result = await CaptureDetailRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

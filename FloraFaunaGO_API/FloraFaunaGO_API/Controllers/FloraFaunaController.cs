@@ -28,7 +28,7 @@ public class FloraFaunaController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostSuccessState(string idsuccess, string iduser, [FromBody] SuccessStateNormalDto dto)
     {
-        if(dto == null) return BadRequest();
+        if (dto == null) return BadRequest();
         var user = await UnitOfWork.UserRepository.GetById(iduser);
         var success = await UnitOfWork.SuccessRepository.GetById(idsuccess);
         _ = await UnitOfWork.AddSuccesStateAsync(dto, user.Utilisateur, success);
@@ -73,7 +73,7 @@ public class FloraFaunaController : ControllerBase
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
         var insertedCapture = inserted;
-        return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture) 
+        return insertedCapture != null ? CreatedAtAction(nameof(PostCapture), insertedCapture)
             : BadRequest();
     }
 
@@ -111,7 +111,7 @@ public class FloraFaunaController : ControllerBase
         var captureDetail = await UnitOfWork.CaptureDetailRepository.GetById(id);
         var capture = (await UnitOfWork.CaptureRepository.GetCaptureByCaptureDetail(id)).Items.FirstOrDefault();
         var localisation = (await UnitOfWork.LocalisationRepository.GetLocalisationByCaptureDetail(id)).Items.FirstOrDefault();
-        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail,capture.Capture, localisation);
+        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail, capture.Capture, localisation);
         return deleted ? Ok() : NotFound();
     }
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FloraFauna_GO_Shared.Criteria;
+﻿using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Shared
 {
@@ -11,14 +6,14 @@ namespace FloraFauna_GO_Shared
         where Toutput : class
         where Tinput : class
     {
-        Task<Pagination<Toutput>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, 
+        Task<Pagination<Toutput>> GetAllEspece(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None,
             int index = 0, int count = 15);
 
-        Task<Pagination<Toutput>> GetEspeceByProperty(string id,string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None,
+        Task<Pagination<Toutput>> GetEspeceByProperty(string id, string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None,
             int index = 0, int count = 15);
 
-        Task<Pagination<Toutput>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom,
-            int index=0, int count = 15);
+        Task<Pagination<Toutput>> GetEspeceByName(string name, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom,
+            int index = 0, int count = 15);
 
         Task<Pagination<Toutput>> GetEspeceByFamile(EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByFamille,
             int index = 0, int count = 15);

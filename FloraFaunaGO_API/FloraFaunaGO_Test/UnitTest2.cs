@@ -3,12 +3,6 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
-using FloraFaunaGO_API.Controllers;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FloraFaunaGO_Test
 {
@@ -21,7 +15,8 @@ namespace FloraFaunaGO_Test
             // Arrange
             FullEspeceDto especeDto = new FullEspeceDto
             {
-                Nom = "Lion", Nom_Scientifique = "Panthera leo",
+                Nom = "Lion",
+                Nom_Scientifique = "Panthera leo",
                 localisations = new[] { new LocalisationNormalDto { Latitude = 1.0, Longitude = 2.0, Rayon = 3.0 } }
             };
 
@@ -43,7 +38,7 @@ namespace FloraFaunaGO_Test
             {
                 Nom = "Lion",
                 Nom_scientifique = "Panthera leo",
-                Localisations = new List<EspeceLocalisationEntities> { new EspeceLocalisationEntities {  } }
+                Localisations = new List<EspeceLocalisationEntities> { new EspeceLocalisationEntities { } }
             };
 
             // Act
@@ -115,7 +110,7 @@ namespace FloraFaunaGO_Test
         {
             // Arrange
             var mapper = new Mapper<EspeceNormalDto, EspeceEntities>();
-            var dto =  new EspeceNormalDto { Nom = "Lion" };
+            var dto = new EspeceNormalDto { Nom = "Lion" };
             var entity = new EspeceEntities { Nom = "Lion" };
 
             // Act
@@ -134,7 +129,7 @@ namespace FloraFaunaGO_Test
         {
             // Arrange
             var mapper = new Mapper<EspeceNormalDto, EspeceEntities>();
-            var dto = new EspeceNormalDto { Nom = "Lion" } ;
+            var dto = new EspeceNormalDto { Nom = "Lion" };
             var entity = new EspeceEntities { Nom = "Lion" };
             mapper.AddMapping(dto, entity);
 

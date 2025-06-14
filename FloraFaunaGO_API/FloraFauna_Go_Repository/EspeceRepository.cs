@@ -1,12 +1,7 @@
-﻿using FloraFauna_GO_Shared;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FloraFauna_GO_Entities;
+﻿using FloraFauna_GO_Entities;
+using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.EntityFrameworkCore;
 
 namespace FloraFauna_Go_Repository
 {
@@ -115,7 +110,7 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<EspeceEntities>> GetEspeceByName(string name,EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
+        public async Task<Pagination<EspeceEntities>> GetEspeceByName(string name, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.ByNom, int index = 0, int count = 15)
         {
             IQueryable<EspeceEntities> query = Set;
 
@@ -151,11 +146,11 @@ namespace FloraFauna_Go_Repository
             };
         }
 
-        public async Task<Pagination<EspeceEntities>> GetEspeceByProperty(string id,string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
+        public async Task<Pagination<EspeceEntities>> GetEspeceByProperty(string id, string property, EspeceOrderingCriteria criteria = EspeceOrderingCriteria.None, int index = 0, int count = 15)
         {
             IQueryable<EspeceEntities> query = Set;
 
-            switch(criteria)
+            switch (criteria)
             {
                 case EspeceOrderingCriteria.ByFamille:
                     query = query.Where(espece => espece.Famille == property);

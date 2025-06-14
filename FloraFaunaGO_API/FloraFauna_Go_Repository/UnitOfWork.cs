@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FloraFauna_GO_Entities;
+﻿using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 
 namespace FloraFauna_Go_Repository
 {
@@ -21,7 +15,7 @@ namespace FloraFauna_Go_Repository
                 Context = context;
                 Context.Database.EnsureCreated();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e);
             }
@@ -276,12 +270,12 @@ namespace FloraFauna_Go_Repository
             }
         }
 
-        public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture, 
+        public async Task<bool> DeleteCaptureDetailAsync(CaptureDetailsEntities captureDetail, CaptureEntities capture,
                                                           LocalisationEntities localisation)
         {
             try
             {
-                
+
                 captureDetail.LocalisationId = localisation.Id;
                 captureDetail.CaptureId = capture.Id;
                 captureDetail.Capture = capture;
@@ -403,7 +397,8 @@ namespace FloraFauna_Go_Repository
                     .Where(c => c.EspeceId == espece.Id)
                     .ToListAsync();
 
-                foreach (var capturing in captures) {
+                foreach (var capturing in captures)
+                {
                     var CaptureDetails = (await CaptureDetailRepository.GetCaptureDetailByCapture(capturing.Id)).Items.ToList();
                     var Utilisateur = (await UserRepository.GetUserByCapture(capturing.Id)).Items.FirstOrDefault();
                     await DeleteCaptureAsync(capturing, Utilisateur, CaptureDetails);
@@ -511,7 +506,7 @@ namespace FloraFauna_Go_Repository
                     Context.Succes.Attach(success);
                     await Context.Entry(success).ReloadAsync();
                 }
-                
+
                 var user = Context.Users.ToList();
                 foreach (var u in user)
                 {

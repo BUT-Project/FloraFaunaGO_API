@@ -1,24 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FloraFauna_GO_Entities;
 
 public class EspeceEntities : BaseEntity
 {
     [Required]
-    public string Nom {  get; set; }
+    public string Nom { get; set; }
 
     public string? Nom_scientifique { get; set; }
 
     public string? Description { get; set; }
-    
-    public byte[]? Image {  get; set; }
+
+    public byte[]? Image { get; set; }
 
     public byte[]? Image3D { get; set; }
 
@@ -30,7 +23,7 @@ public class EspeceEntities : BaseEntity
 
     public string? Class { get; set; }
 
-    public string? Kingdom { get; set; } 
+    public string? Kingdom { get; set; }
 
     public ICollection<EspeceLocalisationEntities> Localisations { get; set; } = new List<EspeceLocalisationEntities>();
 

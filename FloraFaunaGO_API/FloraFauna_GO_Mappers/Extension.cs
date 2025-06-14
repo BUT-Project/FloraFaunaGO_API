@@ -2,11 +2,6 @@
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
@@ -119,10 +114,10 @@ public static class Extension
             dto.Capture.IdEspece = entities.EspeceId;
             dto.idUtilisateur = entities.UtilisateurId;
         };
-        return entities.ToT(null,creator, linker);
+        return entities.ToT(null, creator, linker);
     }
 
-    public static CaptureDetailsEntities ToEntities(this CaptureDetailNormalDto dto) 
+    public static CaptureDetailsEntities ToEntities(this CaptureDetailNormalDto dto)
     {
         Func<CaptureDetailNormalDto, CaptureDetailsEntities> creator = (dto) => new CaptureDetailsEntities()
         {
@@ -143,7 +138,7 @@ public static class Extension
         return dto.ToU(Mappers.CaptureDetailMapper, creator);
     }
 
-    public static CaptureDetailNormalDto ToDto(this CaptureDetailsEntities entities) 
+    public static CaptureDetailNormalDto ToDto(this CaptureDetailsEntities entities)
     {
         Func<CaptureDetailsEntities, CaptureDetailNormalDto> creator = (entities) => new CaptureDetailNormalDto()
         {
@@ -234,18 +229,18 @@ public static class Extension
     {
         Func<EspeceEntities, FullEspeceDto> creator = (entities) => new FullEspeceDto()
         {
-                Id = entities.Id,
-                Description = entities.Description ?? "",
-                Image = entities.Image,
-                Image3D = entities.Image3D,
-                Nom = entities.Nom,
-                Nom_Scientifique = entities.Nom_scientifique,
-                Climat = entities.Climat,
-                Famille = entities.Famille,
-                Zone = entities.Zone,
-                Regime = entities.Regime,
-                Kingdom = entities.Kingdom,
-                Class = entities.Class,
+            Id = entities.Id,
+            Description = entities.Description ?? "",
+            Image = entities.Image,
+            Image3D = entities.Image3D,
+            Nom = entities.Nom,
+            Nom_Scientifique = entities.Nom_scientifique,
+            Climat = entities.Climat,
+            Famille = entities.Famille,
+            Zone = entities.Zone,
+            Regime = entities.Regime,
+            Kingdom = entities.Kingdom,
+            Class = entities.Class,
         };
         Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
         {

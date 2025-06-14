@@ -1,9 +1,4 @@
 ﻿using FloraFauna_GO_Shared.Criteria;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Shared
 {
@@ -17,7 +12,7 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetSuccessStateBySuccess(SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.BySuccess,
             int index = 0, int count = 10);
 
-        Task<Pagination<Toutput>> GetSuccessStateByUser(string id,SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser,
+        Task<Pagination<Toutput>> GetSuccessStateByUser(string id, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser,
             int index = 0, int count = 10);
 
         Task<Pagination<Toutput>> GetSuccessStateByUser_Success(string idSuccess, string idUser, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser,

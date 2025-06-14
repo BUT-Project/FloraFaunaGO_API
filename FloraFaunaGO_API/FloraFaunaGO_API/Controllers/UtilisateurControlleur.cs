@@ -1,17 +1,10 @@
-﻿using FloraFauna_GO_Dto;
-using FloraFauna_GO_Dto.Full;
-using FloraFauna_GO_Dto.New;
+﻿using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace FloraFaunaGO_API.Controllers;
 
@@ -37,27 +30,28 @@ public class UtilisateurControlleur : ControllerBase
         _configuration = configuration;
     }
 
-   /* [HttpGet("test")]
-    public IActionResult GetTest()
-    {
-        return Ok("Endpoint non-sécurisé accessible");
-    }
+    /* [HttpGet("test")]
+     public IActionResult GetTest()
+     {
+         return Ok("Endpoint non-sécurisé accessible");
+     }
 
-    [HttpGet("secure")]
-    [Authorize]
-    public IActionResult GetSecure()
-    {
-        return Ok("Endpoint sécurisé accessible");
-    }*/
+     [HttpGet("secure")]
+     [Authorize]
+     public IActionResult GetSecure()
+     {
+         return Ok("Endpoint sécurisé accessible");
+     }*/
 
     [HttpGet("{id}")]
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullUtilisateurDto>> GetPlayerById(string id)
     {
         var user = await UserRepository.GetById(id);
-        if(user != null) { 
+        if (user != null)
+        {
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
         }
@@ -75,7 +69,7 @@ public class UtilisateurControlleur : ControllerBase
     private async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetUsers(Func<Task<Pagination<FullUtilisateurDto>>> func)
     {
         var result = await func();
-        foreach(var user in result.Items)
+        foreach (var user in result.Items)
         {
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
@@ -84,7 +78,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpGet]
-    
+
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Pagination<FullUtilisateurDto>>> GetAllPlayer([FromQuery] UserOrderingCriteria criterium = UserOrderingCriteria.None,
@@ -95,7 +89,7 @@ public class UtilisateurControlleur : ControllerBase
     }
 
     [HttpPost]
-    
+
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<FullUtilisateurDto>> PostPlayer(UtilisateurNormalDto dto)
@@ -108,14 +102,14 @@ public class UtilisateurControlleur : ControllerBase
         return insertedUser != null ? Created(nameof(PostPlayer), insertedUser) : NotFound();
     }
 
-    [HttpPut ("{id}")]
-    
+    [HttpPut("{id}")]
+
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<ActionResult<FullUtilisateurDto>> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)
     {
         var result = await UserRepository.Update(id, dto);
-        if(((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
+        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
     }
 }

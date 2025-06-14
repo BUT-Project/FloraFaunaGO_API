@@ -50,10 +50,11 @@ public class UnitTest1
     {
         var captureDto = new FullCaptureDto
         {
-            Capture = new CaptureNormalDto { 
+            Capture = new CaptureNormalDto
+            {
                 photo = new byte[] { 1, 2, 3 }
             },
-            
+
         };
 
         // Act
@@ -85,19 +86,19 @@ public class UnitTest1
                 }
             },
         },
-                    Photo = new byte[] { },
-                    Espece = new EspeceEntities
-                    {
-                        Id = "2",
-                        Description = "2",
-                        Image3D = new byte[] { },
-                        Famille = "Félin",
-                        Image = new byte[] { },
-                        Nom = "Nom",
-                        Nom_scientifique = "nom science",
-                        Localisations = new List<EspeceLocalisationEntities>()
-                    }
-                };
+            Photo = new byte[] { },
+            Espece = new EspeceEntities
+            {
+                Id = "2",
+                Description = "2",
+                Image3D = new byte[] { },
+                Famille = "Félin",
+                Image = new byte[] { },
+                Nom = "Nom",
+                Nom_scientifique = "nom science",
+                Localisations = new List<EspeceLocalisationEntities>()
+            }
+        };
 
         // Act
         var captureDto = captureEntity.ToDto();
