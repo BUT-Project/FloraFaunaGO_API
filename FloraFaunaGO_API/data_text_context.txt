@@ -1,6 +1,6 @@
 Context :
-Je vais t'envoyer le nom d'un être vivant et tu vas m'envoyer des informations a des espèces animals, insectes ou des plantes.  
-j'aimerai que la réponse soit un json et voici son format et je ne veut pas de commentaire de ta part :
+Je vais t'envoyer le nom d'un ï¿½tre vivant et tu vas m'envoyer des informations a des espï¿½ces animals, insectes ou des plantes.  
+j'aimerai que la rï¿½ponse soit un json et voici son format et je ne veut pas de commentaire de ta part :
 "espece": {
         "nom": "string",
         "nom_Scientifique": "string",
@@ -24,15 +24,15 @@ j'aimerai que la réponse soit un json et voici son format et je ne veut pas de c
         }
       ]
 
-Paramètre Important :
+Paramï¿½tre Important :
 
-pour la description ne la met pas en majuscule et faut quelle soit très développé
+pour la description ne la met pas en majuscule et faut quelle soit trï¿½s dï¿½veloppï¿½
 pour le nom tu ne met pas en majuscule et en francais
-localisation est un tableau donc si il y a plusieurs localisation il faut les mettre dans le tableau en gardant le shéma
+localisation est un tableau donc si il y a plusieurs localisation il faut les mettre dans le tableau en gardant le shï¿½ma
 il faut que les champ "nom_Scientifique", "famille", "zone", "climat", "class", "kingdom" et "regime" soient remplis avec les informations de l'animal que je te donne
 et que les informations soit en latin obligatoire et en majuscule obligatoire
-Pour les 2 image mets null et pas de chaine de caratres vide ou pleine juste null car ces sont des byte[]? dans les dtos de récupération
-le kingdom est à la base un enum comprit dans cette liste : 
+Pour les 2 image mets null et pas de chaine de caratres vide ou pleine juste null car ces sont des byte[]? dans les dtos de rï¿½cupï¿½ration
+le kingdom est ï¿½ la base un enum comprit dans cette liste : 
 {
   "ANIMALIA",
   "PLANTAE",
@@ -41,8 +41,8 @@ le kingdom est à la base un enum comprit dans cette liste :
   "ARCHAEA",
   "BACTERIA"
 }
-garde bien ces données la pour le kingdom
-le régime est à la base un enum comprit dans cette liste :
+garde bien ces donnï¿½es la pour le kingdom
+le rï¿½gime est ï¿½ la base un enum comprit dans cette liste :
 {
  "CARNIVORA",
  "HERBIVORA",
@@ -57,9 +57,9 @@ le régime est à la base un enum comprit dans cette liste :
  "PLANKTIVORA",
  "PARASITICA"
 }
-garde bien ces données la pour le régime
+garde bien ces donnï¿½es la pour le rï¿½gime
 
-la famille est à la base un enum comprit dans cette liste : 
+la famille est ï¿½ la base un enum comprit dans cette liste : 
 {
   "CANIDAE",
   "BOVIDAE",
@@ -104,7 +104,7 @@ la famille est à la base un enum comprit dans cette liste :
   "UNKNOWN"
 }
 
-la class est à la base un enum comprit dans cette liste :
+la class est ï¿½ la base un enum comprit dans cette liste :
 {
   "MAMMALIA",
   "AVES",
@@ -131,7 +131,7 @@ la class est à la base un enum comprit dans cette liste :
  
   "UNKNOWN"
 
-le climat est à la base un enum comprit dans cette liste :
+le climat est ï¿½ la base un enum comprit dans cette liste :
   "TROPICAL",
   "ARID",
   "TEMPERATE",
@@ -139,5 +139,6 @@ le climat est à la base un enum comprit dans cette liste :
   "POLAR",
   "UNKNOWN"
 
-ET N'OUBLIE PAS DE REFERANCE TOUTE LES INFORPMATION AVEC LEUR CARACTERISTIQUE POUR CHAQUE CHAMP
+ET N'OUBLIE PAS DE REFERANCE TOUTE LES INFORMATION AVEC LEUR CARACTERISTIQUE POUR CHAQUE CHAMP
+ET RESPECT CORRECTEMENT LA NOMENCLATURE DES ENUMSET POUR L'EXCACTITUDE ET LE RAYON IL NE PEUVENT PAS ÃŠTRE NEGATIF
 nom : 
