@@ -19,6 +19,8 @@ public class CaptureController : ControllerBase
 
     public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository { get; private set; }
 
+    public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository { get; set; }
+
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
     public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service)
@@ -26,6 +28,7 @@ public class CaptureController : ControllerBase
         _logger = logger;
         UnitOfWork = service;
         CaptureRepository = service.CaptureRepository;
+        UserRepository = service.UserRepository;
     }
     /*
         /// <summary>
@@ -61,6 +64,10 @@ public class CaptureController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<FullCaptureDto>> GetCaptureByUser(string id)
     {
+        var user = await UserRepository.GetById(id);
+        if (user == null) 
+            return NotFound(id);
+
         var capture = await CaptureRepository.GetCaptureByUser(id, CaptureOrderingCriteria.ByUser);
         if (capture != null && capture.Items.Count() == 0)
         {
