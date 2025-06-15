@@ -1,4 +1,5 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto.Edit;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
@@ -103,7 +104,7 @@ public static class Extension
     {
         Func<CaptureEntities, FullCaptureDto> creator = (entities) => new FullCaptureDto()
         {
-            Capture = new CaptureNormalDto()
+            Capture = new ResponseCaptureDto()
             {
                 Id = entities.Id,
                 photo = entities.Photo,
@@ -308,7 +309,6 @@ public static class Extension
         };
         Action<UtilisateurEntities, FullUtilisateurDto> linker = (entities, dto) =>
         {
-            dto.Capture = entities.Captures.Select(c => c.ToDto()).ToArray();
             dto.SuccessState = entities.SuccesState.Select(s => s.ToDto()).ToArray();
         };
         return entities.ToT(null, creator, linker);

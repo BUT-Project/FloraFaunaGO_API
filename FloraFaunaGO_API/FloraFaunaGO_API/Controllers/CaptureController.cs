@@ -69,16 +69,12 @@ public class CaptureController : ControllerBase
             return NotFound(id);
 
         var capture = await CaptureRepository.GetCaptureByUser(id, CaptureOrderingCriteria.ByUser);
-        if (capture != null && capture.Items.Count() == 0)
+        if (capture != null && capture.Items.Count() > 0)
         {
             foreach (var item in capture.Items)
             {
                 var cd = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(item.Capture.Id, CaptureDetailOrderingCriteria.None);
                 item.CaptureDetails = cd.Items.ToList();
-                foreach (var captureDetail in item.CaptureDetails)
-                {
-                    captureDetail.localisationNormalDtos = await UnitOfWork.LocalisationRepository.GetById(captureDetail.localisationNormalDtos.Id);
-                }
             }
         }
         return capture != null ? Ok(capture) : NotFound();
@@ -117,7 +113,7 @@ public class CaptureController : ControllerBase
         var capture = await CaptureRepository.GetById(id);
         if (dto.idEspece != null) capture.Capture.IdEspece = dto.idEspece;
         if (dto.photo != null) capture.Capture.photo = dto.photo;
-        var result = await CaptureRepository.Update(id, capture.Capture);
+        var result = await CaptureRepository.Update(id, new CaptureNormalDto { Id = capture.Capture.Id, IdEspece = dto.idEspece, photo = dto.photo });
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
         return result != null ? Created(nameof(PutCapture), result) : NotFound(id);
     }
