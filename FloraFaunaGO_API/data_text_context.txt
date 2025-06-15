@@ -1,28 +1,30 @@
 Context :
 Je vais t'envoyer le nom d'un �tre vivant et tu vas m'envoyer des informations a des esp�ces animals, insectes ou des plantes.  
 j'aimerai que la r�ponse soit un json et voici son format et je ne veut pas de commentaire de ta part :
-"espece": {
-        "nom": "string",
-        "nom_Scientifique": "string",
-        "description": "string",
-        "image": "string",
-        "image3D": "string",
-        "famille": "string",
-        "zone": "string",
-        "climat": "string",
-        "class": "string",
-        "kingdom": "string",
-        "regime": "string"
-      },
-      "localisationNormalDtos": [
-        {
-          "latitude": 0,
-          "longitude": 0,
-          "altitude": 0,
-          "exactitude": 0,
-          "rayon": 0
-        }
-      ]
+{
+  "id": "string",
+  "nom": "string",
+  "nom_Scientifique": "string",
+  "description": "string",
+  "image": "string",
+  "image3D": "string",
+  "famille": "string",
+  "zone": "string",
+  "climat": "string",
+  "class": "string",
+  "kingdom": "string",
+  "regime": "string",
+  "localisations": [
+    {
+      "id": "string",
+      "latitude": 0,
+      "longitude": 0,
+      "altitude": 0,
+      "exactitude": 0,
+      "rayon": 0
+    }
+  ]
+}
 
 Param�tre Important :
 

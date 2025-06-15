@@ -118,43 +118,43 @@ L’API FloraFauna GO utilise plusieurs services basés sur l’IA pour identifi
 
 ### Services d'identification
 
-1. **Plant Identification** (PlantNet API)
-- Endpoint: `https://my-api.plantnet.org/v2/identify`
-- Features:
-  - Plant species recognition from images
-  - Returns common and scientific names
-  - Confidence score for each identification
-  - Multiple language support (French configured)
+1. **Identification des plantes** (API PlantNet)  
+   - **Point de terminaison** : `https://my-api.plantnet.org/v2/identify`  
+   - **Fonctionnalités** :
+     - Reconnaissance des espèces végétales à partir d’images
+     - Retourne les noms communs et scientifiques
+     - Score de confiance pour chaque identification
+     - Prise en charge multilingue (configurée en français)
 
-2. **Insect Identification** (Kindwise API)
-- Endpoint: `https://insect.kindwise.com/api/v1/identification`
-- Features:
-  - Insect species recognition
-  - Returns detailed classification
-  - Includes common names and descriptions
-  - Probability scores for suggestions
+2. **Identification des insectes** (API Kindwise)  
+   - **Point de terminaison** : `https://insect.kindwise.com/api/v1/identification`  
+   - **Fonctionnalités** :
+     - Reconnaissance des espèces d'insectes
+     - Retourne une classification détaillée
+     - Comprend les noms communs et des descriptions
+     - Scores de probabilité pour les suggestions
 
-### Animal Identification Service (CameraTrapAI)
-- Endpoint: `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api`
-- Based on Google's CameraTrapAI project
-- Features:
-  - Specialized in wildlife recognition
-  - High accuracy for natural environment photos
-  - Species-level identification
-  - Confidence scores for predictions
-  - Optimized for camera trap imagery
+3. **Service d’identification des animaux** (CameraTrapAI)  
+   - **Point de terminaison** : `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api`  
+   - **Basé sur** : le projet CameraTrapAI de Google  
+   - **Fonctionnalités** :
+     - Spécialisé dans la reconnaissance de la faune
+     - Haute précision pour les photos en environnement naturel
+     - Identification au niveau de l’espèce
+     - Scores de confiance pour les prédictions
+     - Optimisé pour les images issues de pièges photographiques
 
-4. **Species Data Enrichment** (Groq AI API)
-- Endpoint: `https://api.groq.com/openai/v1/chat/completions`
-- Model: `llama-3.3-70b-versatile`
-- Features:
-  - Enriches species data with detailed information
-  - Provides:
-    - Scientific classification
-    - Habitat information
-    - Dietary habits
-    - Geographic distribution
-    - Climate preferences
+4. **Enrichissement des données d'espèces** (API Groq AI)  
+   - **Point de terminaison** : `https://api.groq.com/openai/v1/chat/completions`  
+   - **Modèle utilisé** : `llama-3.3-70b-versatile`  
+   - **Fonctionnalités** :
+     - Enrichit les données d’espèces avec des informations détaillées
+     - Fournit :
+       - Classification scientifique
+       - Informations sur l’habitat
+       - Habitudes alimentaires
+       - Répartition géographique
+       - Préférences climatiques
 
 ### Usage
 
@@ -167,55 +167,61 @@ Content-Type: application/json
 }
 ```
 
-Where `type` can be:
+Le `type` peut être :
 - `Plant`
 - `Animal`
 - `Insect`
 
-### Response Format
+### Format de la réponse
 
 ```json
 {
-    "id": "string",
-    "nom": "Common Name",
-    "nom_Scientifique": "Scientific Name",
-    "description": "Species Description",
-    "famille": "Family",
-    "zone": "Geographic Zone",
-    "climat": "Climate Type",
-    "class": "Classification",
-    "kingdom": "Kingdom",
-    "regime": "Diet Type",
-    "localisations": [
-        {
-            "latitude": 0,
-            "longitude": 0,
-            "altitude": 0
-        }
-    ]
+  "id": "string",
+  "nom": "string",
+  "nom_Scientifique": "string",
+  "description": "string",
+  "image": "string",
+  "image3D": "string",
+  "famille": "string",
+  "zone": "string",
+  "climat": "string",
+  "class": "string",
+  "kingdom": "string",
+  "regime": "string",
+  "localisations": [
+    {
+      "id": "string",
+      "latitude": 0,
+      "longitude": 0,
+      "altitude": 0,
+      "exactitude": 0,
+      "rayon": 0
+    }
+  ]
 }
 ```
 
-### Image Requirements
+### Exigences relatives aux images
 
-- Format: JPEG/JPG
-- Maximum size: 10MB
-- Recommended resolution: 1024x1024 pixels
-- Clear, well-lit images for best results
+- **Format** : JPEG/JPG 
+- **Taille maximale** : 10 Mo  
+- **Résolution recommandée** : 1024x1024 pixels  
+- Images claires et bien éclairées pour de meilleurs résultats
 
-### Error Handling
+### Gestion des erreurs
 
-The service handles various error cases:
-- Invalid image format
-- Species not found in database
-- API service unavailability
-- Insufficient confidence in identification
+Le service gère plusieurs cas d’erreur :  
+- Format d’image invalide  
+- Espèce non trouvée dans la base de données  
+- Indisponibilité du service API  
+- Confiance insuffisante dans l’identification  
 
-When a species is identified but not in the database, the system automatically creates a new entry using the AI-enriched data.
+Lorsque qu’une espèce est identifiée mais absente de la base de données, le système crée automatiquement une nouvelle entrée à l’aide des données enrichies par l’IA.
+
 
 ## 📱 Models
 
-### Species (Espece)
+### Species (EspeceEntities)
 - ID
 - Name (Common and Scientific)
 - Description
@@ -226,17 +232,54 @@ When a species is identified but not in the database, the system automatically c
 - Kingdom
 - Diet
 - Images (2D and 3D)
-- Locations
+- Locations (ICollection<EspeceLocalisationEntities>)
 
-### Capture
+### EspeceLocalisationEntities
+- EspeceId
+- Espece (EspeceEntities)
+- LocalisationId
+- Localisation (LocalisationEntities)
+
+### LocalisationEntities
 - ID
-- Species reference
-- User reference
-- Photo
-- Location data
-- Shiny status
+- Latitude
+- Longitude
+- Rayon
+- Altitude
+- Exactitude
+- EspeceLocalisation (ICollection<EspeceLocalisationEntities>)
+- CapturesDetail (CaptureDetailsEntities)
+- CaptureDetailsId
 
-### Achievement (Success)
+### CaptureEntities
+- ID
+- EspeceId
+- Espece (EspeceEntities)
+- UtilisateurId
+- Utilisateur (UtilisateurEntities)
+- Photo
+- CaptureDetails (CaptureDetailsEntities)
+
+### CaptureDetailsEntities
+- ID
+- Shiny (bool)
+- DateCapture
+- Localisation (LocalisationEntities)
+- LocalisationId
+- Capture (CaptureEntities)
+- CaptureId
+
+### UtilisateurEntities
+- ID (hérité d’IdentityUser)
+- Email, UserName, etc. (hérité d’IdentityUser)
+- Image (byte[])
+- RefreshToken
+- RefreshTokenExpiryTime
+- DateInscription
+- Captures (ICollection<CaptureEntities>)
+- SuccesState (ICollection<SuccesStateEntities>)
+
+### SuccesEntities
 - ID
 - Name
 - Type
@@ -245,53 +288,63 @@ When a species is identified but not in the database, the system automatically c
 - Progress
 - Event reference
 
-## 🔍 Filtering & Pagination
+### SuccesStateEntities
+- ID
+- PercentSucces
+- IsSucces (bool)
+- SuccesEntitiesId
+- SuccesEntities (SuccesEntities)
+- UtilisateurId
+- UtilisateurEntities (UtilisateurEntities)
 
-Most GET endpoints support:
-- Pagination (index & count parameters)
-- Ordering criteria
-- Filtering by specific properties
+## 🔍 Filtrage & Pagination
 
-Example:
+La plupart des endpoints GET prennent en charge :
+- La pagination (paramètres `index` et `count`)
+- Des critères de tri
+- Le filtrage par propriétés spécifiques
+
+Exemple :
 ```http
 GET /FloraFaunaGo_API/espece?criterium=1&index=0&count=10
 ```
 
-## 📦 Deploiement
+## 📦 Déploiement
 
-### Main API
-- Endpoint: `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-api`
-- Features:
-  - Main API gateway
-  - Handles authentication
-  - Coordinates species identification workflow
-  - Manages database operations
+### API Principale
+- Endpoint : `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-api`
+- Fonctionnalités :
+  - Passerelle principale de l'API
+  - Gère l'authentification
+  - Coordonne le processus d'identification des espèces
+  - Gère les opérations sur la base de données
 
-### Classification Service (CLIP Model)
-- Endpoint: `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-clip-classifier`
-- Based on OpenAI's CLIP model
-- Features:
-  - Pre-classification of images into categories:
+### Service de Classification (Modèle CLIP)
+- Endpoint : `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-clip-classifier`
+- Basé sur le modèle CLIP d'OpenAI
+- Fonctionnalités :
+  - Pré-classe les images dans les catégories suivantes :
     - Animal
-    - Plant
-    - Insect
-  - High accuracy image classification
-  - Real-time processing
-  - Confidence scores for each category
+    - Plante
+    - Insecte
+  - Classification d’images avec haute précision
+  - Traitement en temps réel
+  - Score de confiance pour chaque catégorie
 
-### Animal Identification Service (CameraTrapAI)
-- Endpoint: `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api`
-- Based on Google's CameraTrapAI project
-- Features:
-  - Specialized in wildlife recognition
-  - High accuracy for natural environment photos
-  - Species-level identification
-  - Confidence scores for predictions
-  - Optimized for camera trap imagery
+### Service d’Identification Animale (CameraTrapAI)
+- Endpoint : `https://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api`
+- Basé sur le projet CameraTrapAI de Google
+- Fonctionnalités :
+  - Spécialisé dans la reconnaissance de la faune
+  - Haute précision pour les photos en milieu naturel
+  - Identification au niveau de l’espèce
+  - Scores de confiance pour les prédictions
+  - Optimisé pour les images de pièges photographiques
 
-## 🏗 Architecture - Unit of Work Pattern
 
-### Diagram
+## 🏗 Architecture - Modèle Unit of Work
+
+### Diagramme
 
 ```plantuml
 @startuml FloraFauna GO API - Unit of Work Pattern
@@ -345,6 +398,17 @@ package "Repositories" {
   class LocalisationRepository
 }
 
+package "Services" {
+  class EspeceService
+  class CaptureService
+  class UserService
+  class SuccessService
+  class SuccessStateService
+  class LocalisationService
+  class CaptureDetailService
+  class IdentificationService
+}
+
 package "Database" {
   class FloraFaunaGoDB {
     + DbSet<EspeceEntities>
@@ -383,6 +447,25 @@ CaptureRepository --> FloraFaunaGoDB
 UserRepository --> FloraFaunaGoDB
 SuccessRepository --> FloraFaunaGoDB
 LocalisationRepository --> FloraFaunaGoDB
+
+' Services relations
+EspeceRepository <|.. EspeceService
+CaptureRepository <|.. CaptureService
+UserRepository <|.. UserService
+SuccessRepository <|.. SuccessService
+SuccessRepository <|.. SuccessStateService
+LocalisationRepository <|.. LocalisationService
+CaptureRepository <|.. CaptureDetailService
+EspeceRepository <|.. IdentificationService
+
+FloraFaunaService --> EspeceService
+FloraFaunaService --> CaptureService
+FloraFaunaService --> UserService
+FloraFaunaService --> SuccessService
+FloraFaunaService --> SuccessStateService
+FloraFaunaService --> LocalisationService
+FloraFaunaService --> CaptureDetailService
+FloraFaunaService --> IdentificationService
 
 note right of UnitOfWork
   Manages all repositories
