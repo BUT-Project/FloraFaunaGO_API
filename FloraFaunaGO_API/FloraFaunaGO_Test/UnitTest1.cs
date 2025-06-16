@@ -50,7 +50,7 @@ public class UnitTest1
     {
         var captureDto = new FullCaptureDto
         {
-            Capture = new CaptureNormalDto
+            Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto
             {
                 photo = new byte[] { 1, 2, 3 }
             },
@@ -58,7 +58,12 @@ public class UnitTest1
         };
 
         // Act
-        var captureEntity = captureDto.Capture.ToEntities();
+        var capture = new CaptureNormalDto
+        {
+            Id = captureDto.Capture.Id,
+            photo = captureDto.Capture.photo,
+        };
+        var captureEntity = capture.ToEntities();
 
         // Assert
         Assert.IsNotNull(captureEntity);

@@ -57,12 +57,18 @@ namespace FloraFaunaGO_Test
             // Arrange
             var captureDto = new FullCaptureDto
             {
-                Capture = new CaptureNormalDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
+                Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
                 CaptureDetails = []
             };
 
+            var capture = new CaptureNormalDto
+            {
+                Id = captureDto.Capture.Id,
+                photo = captureDto.Capture.photo,
+            };
+
             // Act
-            var captureEntity = captureDto.Capture.ToEntities();
+            var captureEntity = capture.ToEntities();
             captureEntity.CaptureDetails = captureDto.CaptureDetails.Select(cd => cd.CaptureDetail.ToEntities()).ToList();
 
             // Assert
