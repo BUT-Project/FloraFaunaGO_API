@@ -29,6 +29,7 @@ public class IdentificationService
 
     public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto, EspeceType type)
     {
+        Console.WriteLine("Reception de la requête d'identification :" + DateTime.Now);
         var imageContent = new ByteArrayContent(dto.AskedImage);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         string? speciesName = null;
@@ -55,11 +56,13 @@ public class IdentificationService
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Nom = speciesName;
             espece.Image = dto.AskedImage;
+            Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return espece;
         }
         else if (speciesName is null) return null;
         else
         {
+            Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return especes.Result.Items.First();
         }
     }
