@@ -55,7 +55,7 @@ public class IdentificationService
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Nom = speciesName;
-            espece.Image = dto.AskedImage;
+            //espece.Image = dto.AskedImage;
             Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return espece;
         }

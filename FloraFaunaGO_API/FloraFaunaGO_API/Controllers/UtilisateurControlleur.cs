@@ -1,4 +1,5 @@
-﻿using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto.Edit;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
@@ -102,14 +103,17 @@ public class UtilisateurControlleur : ControllerBase
         return insertedUser != null ? Created(nameof(PostPlayer), insertedUser) : NotFound();
     }
 
-    [HttpPut("{id}")]
+    //[HttpPut("{id}")]
 
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<FullUtilisateurDto>> PutPlayer(string id, [FromBody] UtilisateurNormalDto dto)
-    {
-        var result = await UserRepository.Update(id, dto);
-        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
-        return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
-    }
+    //[ProducesResponseType(StatusCodes.Status404NotFound)]
+    //[ProducesResponseType(StatusCodes.Status201Created)]
+    //public async Task<ActionResult<FullUtilisateurDto>> PutPlayer(string id, [FromBody] EditUserDto dto)
+    //{
+    //    var user = await UserRepository.GetById(id);
+    //    var result = await UserRepository.Update(id, new UtilisateurNormalDto() 
+    //    { Id = id, DateInscription = user.Utilisateur.DateInscription, Hash_mdp = user.Utilisateur.Hash_mdp, Image = dto.Image, Mail = dto.Mail, Pseudo = dto.Pseudo});
+    //    var save = await UnitOfWork.SaveChangesAsync();
+    //    if (save.Count() == 0) return BadRequest();
+    //    return result != null ? Created(nameof(PutPlayer), result) : NotFound(id);
+    //}
 }
