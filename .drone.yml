@@ -165,6 +165,23 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
+  # MinIO Console Web Interface
+  - name: deploy-container-minio-console
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: minio/minio:latest
+      CONTAINERNAME: FloraFauna_GO-minio-console
+      COMMAND: create
+      OVERWRITE: true
+      CODEFIRST_CLIENTDRONE_ENV_TYPE: WEB
+      CODEFIRST_CLIENTDRONE_ENV_PORT: 9001
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_SERVER_URL: http://FloraFauna_GO-FloraFauna_GO-minio:9000
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_BROWSER_REDIRECT_URL: https://codefirst.iut.uca.fr/containers/FloraFauna_GO-minio-console
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+    depends_on: [deploy-container-minio]
+
   
   # database container bdd
   - name: deploy-container-bdd
