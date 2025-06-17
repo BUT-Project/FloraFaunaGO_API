@@ -57,14 +57,14 @@ namespace FloraFaunaGO_Test
             // Arrange
             var captureDto = new FullCaptureDto
             {
-                Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
+                Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto { Id = "1", photoUrl = "test-image.jpg" },
                 CaptureDetails = []
             };
 
             var capture = new CaptureNormalDto
             {
                 Id = captureDto.Capture.Id,
-                 = captureDto.Capture.photo,
+                photoUrl = captureDto.Capture.photoUrl
             };
 
             // Act
@@ -74,7 +74,7 @@ namespace FloraFaunaGO_Test
             // Assert
             Assert.IsNotNull(captureEntity);
             Assert.IsInstanceOfType(captureEntity, typeof(CaptureEntities));
-            Assert.AreEqual(captureDto.Capture., captureEntity.Photo);
+            Assert.AreEqual(captureDto.Capture.photoUrl, captureEntity.PhotoUrl);
             Assert.AreEqual(captureDto.CaptureDetails.Count, captureEntity.CaptureDetails.Count);
         }
 
