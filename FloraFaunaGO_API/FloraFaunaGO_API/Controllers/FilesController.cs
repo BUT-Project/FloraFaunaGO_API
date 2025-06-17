@@ -80,14 +80,35 @@ public class FilesController : ControllerBase
     {
         try
         {
-            if (!await _fileStorageService.FileExistsAsync(fileName))
+            _logger.LogInformation("====== SERVING FILE: {FileName} ======", fileName);
+            
+            var fileExists = await _fileStorageService.FileExistsAsync(fileName);
+            _logger.LogInformation("File exists check: {FileExists}", fileExists);
+            
+            if (!fileExists)
             {
+                _logger.LogWarning("File not found: {FileName}", fileName);
                 return NotFound();
             }
 
+            _logger.LogInformation("Starting file download from storage...");
             var stream = await _fileStorageService.DownloadAsync(fileName);
-            var contentType = _imageProcessingService.GetContentType(fileName);
             
+            _logger.LogInformation("Stream received - CanRead: {CanRead}, CanSeek: {CanSeek}, Length: {Length}, Position: {Position}", 
+                stream?.CanRead, stream?.CanSeek, 
+                stream?.CanSeek == true ? stream.Length : -1, 
+                stream?.CanSeek == true ? stream.Position : -1);
+            
+            var contentType = _imageProcessingService.GetContentType(fileName);
+            _logger.LogInformation("Content type determined: {ContentType}", contentType);
+            
+            if (stream?.CanSeek == true && stream.Position != 0)
+            {
+                _logger.LogInformation("Resetting stream position to 0");
+                stream.Position = 0;
+            }
+            
+            _logger.LogInformation("Returning file stream with content type: {ContentType}", contentType);
             return File(stream, contentType);
         }
         catch (Exception ex)
