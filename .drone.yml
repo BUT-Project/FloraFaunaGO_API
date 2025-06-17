@@ -161,6 +161,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       CODEFIRST_CLIENTDRONE_ENV_MINIO_PORTS: "9000:9000,9001:9001"
       CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_VOLUMES: "FloraFauna_GO-minio-data:/data"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
   # MinIO Console - accessible via web
