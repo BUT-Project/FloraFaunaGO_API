@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Minio" Version="6.0.4" />
+    <PackageReference Include="SixLabors.ImageSharp" Version="3.1.7" />
     <ProjectReference Include="..\FloraFauna_GO_Entities\FloraFauna_GO_Entities.csproj" />
     <ProjectReference Include="..\FloraFauna_GO_Shared\FloraFauna_GO_Shared.csproj" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />

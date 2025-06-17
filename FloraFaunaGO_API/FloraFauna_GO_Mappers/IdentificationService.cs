@@ -2,6 +2,8 @@
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Dto.Response;
 using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System.Text;
 using System.Text.Json;
 
@@ -10,6 +12,7 @@ namespace FloraFauna_GO_Entities2Dto;
 public class IdentificationService
 {
     private IEspeceRepository<FullEspeceDto, FullEspeceDto> Service { get; set; }
+    private readonly IFileStorageService _fileStorageService;
     private HttpClient client = new HttpClient();
     private MultipartFormDataContent form = new MultipartFormDataContent();
 
@@ -22,27 +25,36 @@ public class IdentificationService
     private static readonly string dataApiEndpoint = $"https://api.groq.com/openai/v1/chat/completions";
 
     private static readonly string filePath = "data_text_context.txt";
-    public IdentificationService(IEspeceRepository<FullEspeceDto, FullEspeceDto> service)
+    public IdentificationService(IEspeceRepository<FullEspeceDto, FullEspeceDto> service, IFileStorageService fileStorageService)
     {
         Service = service;
+        _fileStorageService = fileStorageService;
     }
 
     public async Task<FullEspeceDto> identify(AnimalIdentifyNormalDto dto, EspeceType type)
     {
-        var imageContent = new ByteArrayContent(dto.AskedImage);
+        // Convert IFormFile to byte array for existing API integration
+        byte[] imageBytes;
+        using (var memoryStream = new MemoryStream())
+        {
+            await dto.AskedImage.CopyToAsync(memoryStream);
+            imageBytes = memoryStream.ToArray();
+        }
+
+        var imageContent = new ByteArrayContent(imageBytes);
         imageContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
         string? speciesName = null;
         switch (type)
         {
             case EspeceType.Plant:
                 form.Add(imageContent, "images", "image.jpg");
-                speciesName = await IdentifyPlant(form, dto.AskedImage);
+                speciesName = await IdentifyPlant(form, imageBytes);
                 break;
             case EspeceType.Animal:
-                speciesName = await IdentifyAnimal(dto.AskedImage);
+                speciesName = await IdentifyAnimal(imageBytes);
                 break;
             case EspeceType.Insect:
-                speciesName = await IdentifyInsect(dto.AskedImage);
+                speciesName = await IdentifyInsect(imageBytes);
                 break;
             default:
                 break;
@@ -54,7 +66,8 @@ public class IdentificationService
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Nom = speciesName;
-            espece.Image = dto.AskedImage;
+            // Upload the identified species image to MinIO and get URL
+            espece.ImageUrl = await UploadImageAndGetUrl(dto.AskedImage);
             return espece;
         }
         else if (speciesName is null) return null;
@@ -240,5 +253,18 @@ public class IdentificationService
         return null;
     }
 
+    private async Task<string?> UploadImageAndGetUrl(IFormFile imageFile)
+    {
+        try
+        {
+            // Upload to MinIO and get URL
+            return await _fileStorageService.UploadAsync(imageFile, "species/identified");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error uploading identified species image: {ex.Message}");
+            return null;
+        }
+    }
 }
 

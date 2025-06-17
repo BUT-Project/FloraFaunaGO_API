@@ -6,7 +6,7 @@ public class EspeceNormalDto
 
     public string Nom { get; set; }
 
-    public byte[]? Image { get; set; }
+    public string? ImageUrl { get; set; }
 
-    public byte[]? Image3D { get; set; }
+    public string? Image3DUrl { get; set; }
 }

@@ -3,6 +3,7 @@ using FloraFauna_GO_Dto.New;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,12 +15,14 @@ namespace FloraFaunaGO_API.Controllers;
 public class FloraFaunaController : ControllerBase
 {
     private readonly ILogger<FloraFaunaController> _logger;
+    private readonly IFileStorageService _fileStorageService;
 
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public FloraFaunaController(ILogger<FloraFaunaController> logger, FloraFaunaService service)
+    public FloraFaunaController(ILogger<FloraFaunaController> logger, FloraFaunaService service, IFileStorageService fileStorageService)
     {
         _logger = logger;
+        _fileStorageService = fileStorageService;
         UnitOfWork = service;
     }
 
@@ -54,7 +57,7 @@ public class FloraFaunaController : ControllerBase
     [HttpPost("capture/idUser={iduser}&idEspece={idespece}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostCapture([FromBody] NewCaptureDto dto, string iduser, string idespece)
+    public async Task<IActionResult> PostCapture([FromForm] NewCaptureDto dto, string iduser, string idespece)
     {
         if (dto == null) return BadRequest();
         var capture = (await UnitOfWork.CaptureRepository.GetCaptureByEspece(idespece)).Items.Where(c => c.idUtilisateur == iduser).FirstOrDefault();
@@ -71,7 +74,14 @@ public class FloraFaunaController : ControllerBase
             return Ok(newcapture);
         }
         var user = await UnitOfWork.UserRepository.GetById(iduser);
-        _ = await UnitOfWork.AddCaptureAsync(new CaptureNormalDto() { Id = dto.Id, photo = dto.photo, IdEspece = idespece, LocalisationNormalDto = dto.LocalisationNormalDto, Shiny = dto.Shiny }, user.Utilisateur);
+        // Handle photo upload if provided
+        string? photoUrl = null;
+        if (dto.photo != null)
+        {
+            photoUrl = await _fileStorageService.UploadAsync(dto.photo, "captures");
+        }
+        
+        _ = await UnitOfWork.AddCaptureAsync(new CaptureNormalDto() { Id = dto.Id, photoUrl = photoUrl, IdEspece = idespece, LocalisationNormalDto = dto.LocalisationNormalDto, Shiny = dto.Shiny }, user.Utilisateur);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
         var insertedCapture = inserted;
@@ -87,7 +97,7 @@ public class FloraFaunaController : ControllerBase
         var capture = await UnitOfWork.CaptureRepository.GetById(id);
         var user = await UnitOfWork.UserRepository.GetById(capture.idUtilisateur);
         var captureDetails = await UnitOfWork.CaptureDetailRepository.GetCaptureDetailByCapture(id);
-        var deleted = await UnitOfWork.DeleteCaptureAsync(new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photo = capture.Capture.photo}, user!.Utilisateur, captureDetails?.Items?.Select(cd => cd.CaptureDetail).ToList() ?? new List<CaptureDetailNormalDto>());
+        var deleted = await UnitOfWork.DeleteCaptureAsync(new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photoUrl = capture.Capture.photoUrl}, user!.Utilisateur, captureDetails?.Items?.Select(cd => cd.CaptureDetail).ToList() ?? new List<CaptureDetailNormalDto>());
         return deleted ? Ok() : NotFound();
     }
 
@@ -98,7 +108,7 @@ public class FloraFaunaController : ControllerBase
     {
         if (dto == null) return BadRequest();
         var capture = await UnitOfWork.CaptureRepository.GetById(idCapture);
-        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photo = capture.Capture.photo }, dto.Localisation);
+        _ = await UnitOfWork.AddCaptureDetailAsync(dto.CaptureDetail, new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photoUrl = capture.Capture.photoUrl }, dto.Localisation);
         var inserted = await UnitOfWork.SaveChangesAsync();
         if ((inserted?.Count() ?? 0) == 0) return BadRequest();
         var insertedCaptureDetail = inserted;
@@ -113,7 +123,7 @@ public class FloraFaunaController : ControllerBase
         var captureDetail = await UnitOfWork.CaptureDetailRepository.GetById(id);
         var capture = (await UnitOfWork.CaptureRepository.GetCaptureByCaptureDetail(id)).Items.FirstOrDefault();
         var localisation = (await UnitOfWork.LocalisationRepository.GetLocalisationByCaptureDetail(id)).Items.FirstOrDefault();
-        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail, new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photo = capture.Capture.photo }, localisation);
+        var deleted = await UnitOfWork.DeleteCaptureDetailAsync(captureDetail.CaptureDetail, new CaptureNormalDto() { Id = capture.Capture.Id, IdEspece = capture.Capture.IdEspece, photoUrl = capture.Capture.photoUrl }, localisation);
         return deleted ? Ok() : NotFound();
     }
 
@@ -130,7 +140,7 @@ public class FloraFaunaController : ControllerBase
         {
             Id = c.Id,
             IdEspece = c.IdEspece,
-            photo = c.photo
+            photoUrl = c.photoUrl
         }).ToList() ?? new List<CaptureNormalDto>();
 
         // Proceed with SuccessState conversion  

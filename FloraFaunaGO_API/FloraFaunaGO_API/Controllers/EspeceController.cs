@@ -4,6 +4,7 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,15 @@ namespace FloraFaunaGO_API.Controllers;
 public class EspeceController : ControllerBase
 {
     private readonly ILogger<EspeceController> _logger;
+    private readonly IFileStorageService _fileStorageService;
 
     public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository { get; private set; }
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service)
+    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service, IFileStorageService fileStorageService)
     {
         _logger = logger;
+        _fileStorageService = fileStorageService;
         UnitOfWork = service;
         EspeceRepository = UnitOfWork.EspeceRepository;
     }
@@ -71,8 +74,8 @@ public class EspeceController : ControllerBase
             {
                 Id = item.Id,
                 Nom = item.Nom,
-                Image = item.Image,
-                Image3D = item.Image3D,
+                ImageUrl = item.ImageUrl,
+                Image3DUrl = item.Image3DUrl,
             };
             list.Add(espece);
 
@@ -132,20 +135,56 @@ public class EspeceController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<ActionResult<FullEspeceDto>> PutEspece(string id, [FromBody] EditEspeceDto dto)
+    public async Task<ActionResult<FullEspeceDto>> PutEspece(string id, [FromForm] EditEspeceDto dto)
     {
-        var espece = new FullEspeceDto
+        try
         {
-            Id = id,
-            Nom = dto.Nom,
-            Famille = dto.Famille,
-            Regime = dto.Regime,
-            Image = dto.Image,
-            Image3D = dto.Image3D,
-            Description = dto.Description
-        };
-        var result = await EspeceRepository.Update(id, espece);
-        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
-        return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
+            var existingEspece = await EspeceRepository.GetById(id);
+            if (existingEspece == null) return NotFound(id);
+
+            string? imageUrl = existingEspece.ImageUrl; // Keep existing URL
+            if (dto.Image != null)
+            {
+                if (!string.IsNullOrEmpty(existingEspece.ImageUrl))
+                {
+                    await _fileStorageService.DeleteAsync(existingEspece.ImageUrl);
+                }
+
+                imageUrl = await _fileStorageService.UploadAsync(dto.Image, "especes");
+            }
+
+            string? image3DUrl = existingEspece.Image3DUrl; // Keep existing URL
+            if (dto.Image3D != null)
+            {
+                if (!string.IsNullOrEmpty(existingEspece.Image3DUrl))
+                {
+                    await _fileStorageService.DeleteAsync(existingEspece.Image3DUrl);
+                }
+
+                image3DUrl = await _fileStorageService.UploadAsync(dto.Image3D, "especes/3d");
+            }
+
+            var espece = new FullEspeceDto
+            {
+                Id = id,
+                Nom = dto.Nom ?? existingEspece.Nom,
+                Famille = dto.Famille ?? existingEspece.Famille,
+                Regime = dto.Regime ?? existingEspece.Regime,
+                ImageUrl = imageUrl,
+                Image3DUrl = image3DUrl,
+                Description = dto.Description ?? existingEspece.Description
+            };
+
+            var result = await EspeceRepository.Update(id, espece);
+            if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) 
+                return BadRequest("Failed to update espece");
+
+            return result != null ? Created(nameof(PutEspece), result) : NotFound(id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating espece {Id}", id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error updating espece");
+        }
     }
 }

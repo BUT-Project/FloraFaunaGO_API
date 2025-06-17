@@ -66,7 +66,7 @@ public class ExtensionMapperTests
         var dto = new CaptureNormalDto
         {
             IdEspece = "esp1",
-            photo = new byte[] { 1, 2, 3 },
+            photoUrl = "test-photo.jpg",
             Shiny = true,
             LocalisationNormalDto = new LocalisationNormalDto { Latitude = 1 }
         };
@@ -91,11 +91,11 @@ public class ExtensionMapperTests
         var entity = new CaptureEntities
         {
             Id = "cap2",
-            Photo = new byte[] { 4, 5, 6 }
+            PhotoUrl = "test-photo.jpg"
         };
         var dto = entity.ToDto();
         Assert.AreEqual("cap2", dto.Id);
-        CollectionAssert.AreEqual(new byte[] { 4, 5, 6 }, dto.photo);
+        Assert.AreEqual("test-photo.jpg", dto.photoUrl);
     }
 
     [TestMethod]
@@ -132,8 +132,8 @@ public class ExtensionMapperTests
             Nom = "Lion",
             Nom_Scientifique = "Panthera leo",
             Description = "Roi de la savane",
-            Image = new byte[] { 1 },
-            Image3D = new byte[] { 2 },
+            ImageUrl = "test-image.jpg",
+            Image3DUrl = "test-3d.jpg",
             Climat = "Savane",
             Zone = "Afrique",
             Famille = "Felidae",
@@ -162,8 +162,8 @@ public class ExtensionMapperTests
             Nom = "Lion",
             Nom_Scientifique = "Panthera leo",
             Description = "Roi de la savane",
-            Image = new byte[] { 1 },
-            Image3D = new byte[] { 2 },
+            ImageUrl = "test-image.jpg",
+            Image3DUrl = "test-3d.jpg",
             Climat = "Savane",
             Zone = "Afrique",
             Famille = "Felidae",
@@ -193,10 +193,10 @@ public class ExtensionMapperTests
             Id = "esp2",
             Nom = "Tigre",
             Nom_scientifique = "Panthera tigris",
-            Description = "Grand félin",
-            Image = new byte[] { 3 },
-            Image3D = new byte[] { 4 },
-            Climat = "Forêt",
+            Description = "Grand fï¿½lin",
+            ImageUrl = "test-image.jpg",
+            Image3DUrl = "test-3d.jpg",
+            Climat = "Forï¿½t",
             Zone = "Asie",
             Famille = "Felidae",
             Regime = "Carnivore",
@@ -207,7 +207,7 @@ public class ExtensionMapperTests
         Assert.AreEqual("esp2", dto.Id);
         Assert.AreEqual("Tigre", dto.Nom);
         Assert.AreEqual("Panthera tigris", dto.Nom_Scientifique);
-        Assert.AreEqual("Grand félin", dto.Description);
+        Assert.AreEqual("Grand fï¿½lin", dto.Description);
         Assert.AreEqual("Felidae", dto.Famille);
         Assert.AreEqual("Carnivore", dto.Regime);
     }
@@ -217,7 +217,7 @@ public class ExtensionMapperTests
     {
         var dto = new SuccessNormalDto
         {
-            Nom = "Succès 1",
+            Nom = "Succï¿½s 1",
             Type = "TypeA",
             Image = "img.png",
             Objectif = 100,
@@ -225,7 +225,7 @@ public class ExtensionMapperTests
             Evenement = "Event"
         };
         var entity = dto.ToEntities();
-        Assert.AreEqual("Succès 1", entity.Nom);
+        Assert.AreEqual("Succï¿½s 1", entity.Nom);
         Assert.AreEqual("TypeA", entity.Type);
         Assert.AreEqual("img.png", entity.Image);
         Assert.AreEqual(100, entity.Objectif);
@@ -236,10 +236,10 @@ public class ExtensionMapperTests
     [TestMethod]
     public void ToEntities_SuccessNormalDto_WithId()
     {
-        var dto = new SuccessNormalDto { Id = "s1", Nom = "Succès 2" };
+        var dto = new SuccessNormalDto { Id = "s1", Nom = "Succï¿½s 2" };
         var entity = dto.ToEntities("s1");
         Assert.AreEqual("s1", entity.Id);
-        Assert.AreEqual("Succès 2", entity.Nom);
+        Assert.AreEqual("Succï¿½s 2", entity.Nom);
     }
 
     [TestMethod]
@@ -248,7 +248,7 @@ public class ExtensionMapperTests
         var entity = new SuccesEntities
         {
             Id = "s2",
-            Nom = "Succès 3",
+            Nom = "Succï¿½s 3",
             Type = "TypeB",
             Image = "img2.png",
             Objectif = 200,
@@ -257,7 +257,7 @@ public class ExtensionMapperTests
         };
         var dto = entity.ToDto();
         Assert.AreEqual("s2", dto.Id);
-        Assert.AreEqual("Succès 3", dto.Nom);
+        Assert.AreEqual("Succï¿½s 3", dto.Nom);
         Assert.AreEqual("TypeB", dto.Type);
         Assert.AreEqual("img2.png", dto.Image);
         Assert.AreEqual(200, dto.Objectif);
@@ -338,7 +338,7 @@ public class ExtensionMapperTests
         {
             Id = "u1",
             Pseudo = "toto",
-            Image = new byte[] { 1, 2 },
+            ImageUrl = "test-image.jpg",
             Mail = "a@b.c",
             Hash_mdp = "hash",
             DateInscription = date

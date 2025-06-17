@@ -2,11 +2,16 @@
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Configuration;
+using FloraFauna_GO_Shared.Interfaces;
+using FloraFaunaGO_Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Microsoft.Extensions.Options;
+using Minio;
 using System.Reflection;
 using System.Text;
 
@@ -24,12 +29,16 @@ public class AppBootstrap(IConfiguration configuration)
         AddSwagger(services);
         AddFloraFaunaGoContextServices(services);
         AddModelService(services);
+        AddMinIOServices(services);
         AddIdentityServices(services, configuration);
         services.AddHealthChecks();
     }
 
     private void AddFloraFaunaGoContextServices(IServiceCollection services)
     {
+        // Register the file cleanup interceptor
+        // services.AddSingleton<FileCleanupInterceptor>();
+        
         string? connectionString;
 
         switch (Environment.GetEnvironmentVariable("TYPE"))
@@ -45,8 +54,9 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine("========RUNNING USING THE MYSQL SERVER==============");
                 Console.WriteLine(connectionString);
                 Console.WriteLine("====================================================");
-                services.AddDbContext<FloraFaunaGoDB>(options =>
+                services.AddDbContext<FloraFaunaGoDB>((serviceProvider, options) =>
                         options.UseMySql($"{connectionString}", new MySqlServerVersion(new Version(10, 11, 1)))
+                            // .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
                     , ServiceLifetime.Singleton);
                 break;
             default:
@@ -54,8 +64,10 @@ public class AppBootstrap(IConfiguration configuration)
                 connectionString = Configuration.GetConnectionString("FloraFaunaGoConnection");
                 Console.WriteLine(connectionString);
                 if (!string.IsNullOrWhiteSpace(connectionString))
-                    services.AddDbContext<FloraFaunaGoDB>(options =>
-                        options.UseSqlite(connectionString), ServiceLifetime.Singleton);
+                    services.AddDbContext<FloraFaunaGoDB>((serviceProvider, options) =>
+                        options.UseSqlite(connectionString)
+                            // .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
+                            , ServiceLifetime.Singleton);
                 else
                     services.AddDbContext<FloraFaunaGoDB>();
 
@@ -92,6 +104,45 @@ public class AppBootstrap(IConfiguration configuration)
                 .GetRequiredService<
                     IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                         SuccesEntities, SuccesStateEntities, LocalisationEntities>>()));
+    }
+
+    private void AddMinIOServices(IServiceCollection services)
+    {
+        services.Configure<MinIOConfiguration>(options =>
+        {
+            var config = Configuration.GetSection("MinIO").Get<MinIOConfiguration>();
+            if (config != null)
+            {
+                options.Endpoint = Environment.GetEnvironmentVariable("MINIO_ENDPOINT") ?? config.Endpoint;
+                options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
+                options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;
+                options.BucketName = Environment.GetEnvironmentVariable("MINIO_BUCKETNAME") ?? config.BucketName;
+                options.UseSSL = bool.Parse(Environment.GetEnvironmentVariable("MINIO_USESSL") ?? config.UseSSL.ToString());
+                options.MaxFileSize = config.MaxFileSize;
+                options.AllowedExtensions = config.AllowedExtensions;
+            }
+        });
+
+        services.AddSingleton<IMinioClient>(provider =>
+        {
+            var config = provider.GetRequiredService<IOptions<MinIOConfiguration>>().Value;
+            if (config == null)
+                throw new InvalidOperationException("MinIO configuration not found");
+
+            Console.WriteLine($"MinIO Configuration: Endpoint={config.Endpoint}, AccessKey={config.AccessKey}, BucketName={config.BucketName}");
+
+            var minioClient = new MinioClient()
+                .WithEndpoint(config.Endpoint)
+                .WithCredentials(config.AccessKey, config.SecretKey);
+
+            if (config.UseSSL)
+                minioClient = minioClient.WithSSL();
+
+            return minioClient.Build();
+        });
+
+        services.AddScoped<IFileStorageService, MinIOFileStorageService>();
+        services.AddScoped<IImageProcessingService, ImageProcessingService>();
     }
 
     private void AddIdentityServices(IServiceCollection services, IConfiguration config)

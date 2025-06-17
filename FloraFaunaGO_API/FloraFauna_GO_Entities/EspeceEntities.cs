@@ -11,9 +11,9 @@ public class EspeceEntities : BaseEntity
 
     public string? Description { get; set; }
 
-    public byte[]? Image { get; set; }
+    public string? ImageUrl { get; set; }
 
-    public byte[]? Image3D { get; set; }
+    public string? Image3DUrl { get; set; }
 
     public string? Famille { get; set; }
 

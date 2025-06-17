@@ -64,7 +64,7 @@ public static class Extension
     {
         Func<CaptureNormalDto, CaptureEntities> creator = (dto) => new CaptureEntities()
         {
-            Photo = dto.photo,
+            PhotoUrl = dto.photoUrl,
             EspeceId = dto.IdEspece,
             CaptureDetails = new List<CaptureDetailsEntities>()
             {
@@ -84,7 +84,7 @@ public static class Extension
         Func<CaptureNormalDto, CaptureEntities> creator = (dto) => new CaptureEntities()
         {
             Id = id,
-            Photo = dto.photo,
+            PhotoUrl = dto.photoUrl,
             EspeceId = dto.IdEspece
         };
         return dto.ToU(Mappers.CaptureMapper, creator);
@@ -94,7 +94,7 @@ public static class Extension
     {
         Func<CaptureEntities, CaptureNormalDto> creator = (entities) => new CaptureNormalDto()
         {
-            photo = entities.Photo,
+            photoUrl = entities.PhotoUrl,
             Id = entities.Id,
         };
         return entities.ToT(null, creator, null);
@@ -107,7 +107,7 @@ public static class Extension
             Capture = new ResponseCaptureDto()
             {
                 Id = entities.Id,
-                photo = entities.Photo,
+                photoUrl = entities.PhotoUrl,
             },
         };
         Action<CaptureEntities, FullCaptureDto> linker = (entities, dto) =>
@@ -175,8 +175,8 @@ public static class Extension
             Nom = dto.Nom,
             Nom_scientifique = dto.Nom_Scientifique,
             Description = dto.Description,
-            Image = dto.Image,
-            Image3D = dto.Image3D,
+            ImageUrl = dto.ImageUrl,
+            Image3DUrl = dto.Image3DUrl,
             Climat = dto.Climat,
             Zone = dto.Zone,
             Famille = dto.Famille,
@@ -195,8 +195,8 @@ public static class Extension
             Nom = dto.Nom,
             Nom_scientifique = dto.Nom_Scientifique,
             Description = dto.Description,
-            Image = dto.Image,
-            Image3D = dto.Image3D,
+            ImageUrl = dto.ImageUrl,
+            Image3DUrl = dto.Image3DUrl,
             Climat = dto.Climat,
             Zone = dto.Zone,
             Famille = dto.Famille,
@@ -214,8 +214,8 @@ public static class Extension
             Nom = entities.Nom,
             Nom_Scientifique = entities.Nom_scientifique,
             Description = entities.Description,
-            Image = entities.Image,
-            Image3D = entities.Image3D,
+            ImageUrl = entities.ImageUrl,
+            Image3DUrl = entities.Image3DUrl,
             Climat = entities.Climat,
             Zone = entities.Zone,
             Famille = entities.Famille,
@@ -232,8 +232,8 @@ public static class Extension
         {
             Id = entities.Id,
             Description = entities.Description ?? "",
-            Image = entities.Image,
-            Image3D = entities.Image3D,
+            ImageUrl = entities.ImageUrl,
+            Image3DUrl = entities.Image3DUrl,
             Nom = entities.Nom,
             Nom_Scientifique = entities.Nom_scientifique,
             Climat = entities.Climat,
@@ -255,7 +255,7 @@ public static class Extension
         Func<UtilisateurNormalDto, UtilisateurEntities> creator = (dto) => new UtilisateurEntities()
         {
             UserName = dto.Pseudo,
-            Image = dto.Image,
+            ImageUrl = dto.ImageUrl,
             Email = dto.Mail,
             PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
@@ -270,7 +270,7 @@ public static class Extension
         {
             Id = id,
             UserName = dto.Pseudo,
-            Image = dto.Image,
+            ImageUrl = dto.ImageUrl,
             Email = dto.Mail,
             PasswordHash = dto.Hash_mdp,
             DateInscription = dto.DateInscription,
@@ -284,7 +284,7 @@ public static class Extension
         Func<UtilisateurEntities, UtilisateurNormalDto> creator = (entities) => new UtilisateurNormalDto()
         {
             Pseudo = entities.UserName,
-            Image = entities.Image,
+            ImageUrl = entities.ImageUrl,
             Mail = entities.Email,
             Hash_mdp = entities.PasswordHash,
             DateInscription = entities.DateInscription,
@@ -300,7 +300,7 @@ public static class Extension
             Utilisateur = new UtilisateurNormalDto()
             {
                 Pseudo = entities.UserName,
-                Image = entities.Image,
+                ImageUrl = entities.ImageUrl,
                 Mail = entities.Email,
                 Hash_mdp = entities.PasswordHash,
                 DateInscription = entities.DateInscription,

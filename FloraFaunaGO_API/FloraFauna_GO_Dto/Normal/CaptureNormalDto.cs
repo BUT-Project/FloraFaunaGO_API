@@ -5,7 +5,7 @@ public class CaptureNormalDto
     public string? Id { get; set; }
 
     public string IdEspece { get; set; }
-    public byte[]? photo { get; set; }
+    public string? photoUrl { get; set; }
 
     public LocalisationNormalDto? LocalisationNormalDto { get; set; }
 

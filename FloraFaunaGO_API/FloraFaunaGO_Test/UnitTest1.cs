@@ -48,22 +48,18 @@ public class UnitTest1
     [TestMethod]
     public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
     {
-        var captureDto = new FullCaptureDto
+        var captureDto = new CaptureNormalDto
         {
-            Capture = new CaptureNormalDto
-            {
-                photo = new byte[] { 1, 2, 3 }
-            },
-
+            photoUrl = "test-image.jpg"
         };
 
         // Act
-        var captureEntity = captureDto.Capture.ToEntities();
+        var captureEntity = captureDto.ToEntities();
 
         // Assert
         Assert.IsNotNull(captureEntity);
         Assert.IsInstanceOfType<CaptureEntities>(captureEntity);
-        Assert.AreEqual(captureEntity.Photo, captureDto.Capture.photo);
+        Assert.AreEqual(captureEntity.PhotoUrl, captureDto.photoUrl);
         // Vérifiez les propriétés
     }
 
@@ -86,14 +82,14 @@ public class UnitTest1
                 }
             },
         },
-            Photo = new byte[] { },
+            PhotoUrl = "test-photo.jpg",
             Espece = new EspeceEntities
             {
                 Id = "2",
                 Description = "2",
-                Image3D = new byte[] { },
+                Image3DUrl = "test-3d.jpg",
                 Famille = "Félin",
-                Image = new byte[] { },
+                ImageUrl = "test-image.jpg",
                 Nom = "Nom",
                 Nom_scientifique = "nom science",
                 Localisations = new List<EspeceLocalisationEntities>()

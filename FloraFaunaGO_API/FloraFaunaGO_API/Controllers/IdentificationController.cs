@@ -2,6 +2,7 @@
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
+using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,22 +14,24 @@ namespace FloraFaunaGO_API.Controllers;
 public class IdentificationController : ControllerBase
 {
     private readonly IWebHostEnvironment _env;
-
     private readonly ILogger<IdentificationController> _logger;
+    private readonly IFileStorageService _fileStorageService;
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
     public IdentificationService Service { get; private set; }
 
-    public IdentificationController(ILogger<CaptureController> logger, FloraFaunaService service, IWebHostEnvironment env)
+    public IdentificationController(ILogger<IdentificationController> logger, FloraFaunaService service, IWebHostEnvironment env, IFileStorageService fileStorageService)
     {
+        _logger = logger;
+        _fileStorageService = fileStorageService;
         UnitOfWork = service;
-        Service = new IdentificationService(UnitOfWork.EspeceRepository);
+        Service = new IdentificationService(UnitOfWork.EspeceRepository, fileStorageService);
         _env = env;
     }
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<FullEspeceDto>> AskToIdentifyAPI(string? especeType, [FromBody] AnimalIdentifyNormalDto dto)
+    public async Task<ActionResult<FullEspeceDto>> AskToIdentifyAPI(string? especeType, [FromForm] AnimalIdentifyNormalDto dto)
     {
         if (especeType is null) especeType = "Plant";
         if (!Enum.TryParse(especeType, true, out EspeceType type))

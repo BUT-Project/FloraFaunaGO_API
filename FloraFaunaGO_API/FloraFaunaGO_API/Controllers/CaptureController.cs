@@ -4,6 +4,7 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,7 @@ public class CaptureController : ControllerBase
 {
 
     private readonly ILogger<CaptureController> _logger;
+    private readonly IFileStorageService _fileStorageService;
 
     public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository { get; private set; }
 
@@ -23,9 +25,10 @@ public class CaptureController : ControllerBase
 
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service)
+    public CaptureController(ILogger<CaptureController> logger, FloraFaunaService service, IFileStorageService fileStorageService)
     {
         _logger = logger;
+        _fileStorageService = fileStorageService;
         UnitOfWork = service;
         CaptureRepository = service.CaptureRepository;
         UserRepository = service.UserRepository;
@@ -108,13 +111,43 @@ public class CaptureController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    public async Task<ActionResult<FullCaptureDto>> PutCapture(string id, [FromBody] EditCaptureDto dto)
+    public async Task<ActionResult<FullCaptureDto>> PutCapture(string id, [FromForm] EditCaptureDto dto)
     {
-        var capture = await CaptureRepository.GetById(id);
-        if (dto.idEspece != null) capture.Capture.IdEspece = dto.idEspece;
-        if (dto.photo != null) capture.Capture.photo = dto.photo;
-        var result = await CaptureRepository.Update(id, new CaptureNormalDto { Id = capture.Capture.Id, IdEspece = dto.idEspece, photo = dto.photo });
-        if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();
-        return result != null ? Created(nameof(PutCapture), result) : NotFound(id);
+        try
+        {
+            var capture = await CaptureRepository.GetById(id);
+            if (capture == null) return NotFound(id);
+
+            if (dto.idEspece != null) 
+                capture.Capture.IdEspece = dto.idEspece;
+
+            string? photoUrl = capture.Capture.photoUrl; // Keep existing URL
+            if (dto.photo != null)
+            {
+                if (!string.IsNullOrEmpty(capture.Capture.photoUrl))
+                {
+                    await _fileStorageService.DeleteAsync(capture.Capture.photoUrl);
+                }
+
+                photoUrl = await _fileStorageService.UploadAsync(dto.photo, "captures");
+            }
+
+            var result = await CaptureRepository.Update(id, new CaptureNormalDto 
+            { 
+                Id = capture.Capture.Id, 
+                IdEspece = dto.idEspece ?? capture.Capture.IdEspece, 
+                photoUrl = photoUrl 
+            });
+
+            if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) 
+                return BadRequest("Failed to update capture");
+
+            return result != null ? Created(nameof(PutCapture), result) : NotFound(id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error updating capture {Id}", id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "Error updating capture");
+        }
     }
 }

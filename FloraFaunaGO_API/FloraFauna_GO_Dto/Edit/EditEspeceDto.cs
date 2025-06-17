@@ -1,4 +1,6 @@
-﻿namespace FloraFauna_GO_Dto.Edit;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace FloraFauna_GO_Dto.Edit;
 
 public class EditEspeceDto
 {
@@ -10,9 +12,9 @@ public class EditEspeceDto
 
     public string Description { get; set; }
 
-    public byte[]? Image { get; set; }
+    public IFormFile? Image { get; set; }
 
-    public byte[]? Image3D { get; set; }
+    public IFormFile? Image3D { get; set; }
 
     public string Famille { get; set; }
 

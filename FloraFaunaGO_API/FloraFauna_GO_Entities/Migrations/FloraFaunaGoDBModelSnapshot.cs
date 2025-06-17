@@ -58,9 +58,8 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<uint>("Numero")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("Photo")
-                        .IsRequired()
-                        .HasColumnType("BLOB");
+                    b.Property<string>("PhotoUrl")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("UtilisateurId")
                         .IsRequired()
@@ -118,11 +117,11 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<string>("Famille")
                         .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("BLOB");
+                    b.Property<string>("Image3DUrl")
+                        .HasColumnType("TEXT");
 
-                    b.Property<byte[]>("Image3D")
-                        .HasColumnType("BLOB");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("Kingdom")
                         .HasColumnType("TEXT");
@@ -272,8 +271,8 @@ namespace FloraFauna_GO_Entities.Migrations
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("BLOB");
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");

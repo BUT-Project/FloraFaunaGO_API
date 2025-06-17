@@ -1,11 +1,15 @@
-﻿namespace FloraFauna_GO_Dto.Normal;
+﻿using Microsoft.AspNetCore.Http;
+
+namespace FloraFauna_GO_Dto.Normal;
 
 public class UtilisateurNormalDto
 {
     public string? Id { get; set; }
     public string? Pseudo { get; set; }
 
-    public byte[]? Image { get; set; }
+    public string? ImageUrl { get; set; }
+    
+    public IFormFile? ProfileImage { get; set; }
 
     public string? Mail { get; set; }
 

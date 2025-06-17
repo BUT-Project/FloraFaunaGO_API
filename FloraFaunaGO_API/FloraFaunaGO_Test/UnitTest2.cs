@@ -55,21 +55,15 @@ namespace FloraFaunaGO_Test
         public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
         {
             // Arrange
-            var captureDto = new FullCaptureDto
-            {
-                Capture = new CaptureNormalDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
-                CaptureDetails = []
-            };
+            var captureDto = new CaptureNormalDto { Id = "1", photoUrl = "test-photo.jpg" };
 
             // Act
-            var captureEntity = captureDto.Capture.ToEntities();
-            captureEntity.CaptureDetails = captureDto.CaptureDetails.Select(cd => cd.CaptureDetail.ToEntities()).ToList();
+            var captureEntity = captureDto.ToEntities();
 
             // Assert
             Assert.IsNotNull(captureEntity);
             Assert.IsInstanceOfType(captureEntity, typeof(CaptureEntities));
-            Assert.AreEqual(captureDto.Capture.photo, captureEntity.Photo);
-            Assert.AreEqual(captureDto.CaptureDetails.Count, captureEntity.CaptureDetails.Count);
+            Assert.AreEqual(captureDto.photoUrl, captureEntity.PhotoUrl);
         }
 
         [TestMethod]
@@ -79,7 +73,7 @@ namespace FloraFaunaGO_Test
             var captureEntity = new CaptureEntities
             {
                 Id = "1",
-                Photo = new byte[] { 1, 2, 3 },
+                PhotoUrl = "test-photo.jpg",
                 Espece = new EspeceEntities
                 {
                     Nom = "Lion",
@@ -102,7 +96,7 @@ namespace FloraFaunaGO_Test
             // Assert
             Assert.IsNotNull(captureDto);
             Assert.IsInstanceOfType(captureDto, typeof(CaptureNormalDto));
-            Assert.AreEqual(captureEntity.Photo, captureDto.photo);
+            Assert.AreEqual(captureEntity.PhotoUrl, captureDto.photoUrl);
         }
 
         [TestMethod]

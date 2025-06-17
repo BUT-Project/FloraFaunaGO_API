@@ -147,7 +147,23 @@ steps:
         from_secret: db_password
       CODEFIRST_CLIENTDRONE_ENV_MARIADB_VOLUMES: "FloraFauna_GO-mysql-data:/var/lib/mysql"
 
-      ADMINS: davidd_almeida,alexislaurent,...
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+
+  # MinIO object storage container
+  - name: deploy-container-minio
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      IMAGENAME: minio/minio:latest
+      CONTAINERNAME: FloraFauna_GO-minio
+      COMMAND: create
+      OVERWRITE: true
+      PRIVATE: true
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_VOLUMES: "FloraFauna_GO-minio-data:/data"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_PORTS: "9000:9000,9001:9001"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
+      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
   
   # database container bdd
@@ -163,13 +179,19 @@ steps:
         from_secret: db_user
       CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
         from_secret: db_password
+      # MinIO Configuration
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ENDPOINT: FloraFauna_GO-FloraFauna_GO-minio:9000
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ACCESSKEY: minioadmin
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_SECRETKEY: minioadmin123
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_BUCKETNAME: florafauna
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_USESSL: false
       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
       CONTAINERNAME: api
       CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
       COMMAND: create
       OVERWRITE: true
-    depends_on: [deploy-container-mysql, docker-build-and-push, deploy-container-stub]
+    depends_on: [deploy-container-mysql, deploy-container-minio, docker-build-and-push, deploy-container-stub]
 
   - name: deploy-container-phpmyadmin
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest

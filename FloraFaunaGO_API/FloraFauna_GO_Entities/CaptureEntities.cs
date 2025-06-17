@@ -4,7 +4,7 @@ namespace FloraFauna_GO_Entities;
 
 public class CaptureEntities : BaseEntity
 {
-    public byte[] Photo { get; set; }
+    public string? PhotoUrl { get; set; }
 
     public uint Numero { get; set; }
 
