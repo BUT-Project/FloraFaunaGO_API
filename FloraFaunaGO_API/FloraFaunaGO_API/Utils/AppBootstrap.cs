@@ -113,8 +113,15 @@ public class AppBootstrap(IConfiguration configuration)
             var config = Configuration.GetSection("MinIO").Get<MinIOConfiguration>();
             if (config != null)
             {
-                Console.WriteLine($"MinIO Configuration: {Environment.GetEnvironmentVariable("MINIO_ENDPOINT")}");
-                Console.WriteLine($"MinIO Configuration: {Environment.GetEnvironmentVariable("MINIO_ACCESSKEY")}");
+                Console.WriteLine("====== MINIO ENVIRONMENT VARIABLES DEBUG ======");
+                Console.WriteLine($"MINIO_ENDPOINT env var: '{Environment.GetEnvironmentVariable("MINIO_ENDPOINT")}'");
+                Console.WriteLine($"MINIO_ACCESSKEY env var: '{Environment.GetEnvironmentVariable("MINIO_ACCESSKEY")}'");
+                Console.WriteLine($"MINIO_SECRETKEY env var: '{Environment.GetEnvironmentVariable("MINIO_SECRETKEY")}'");
+                Console.WriteLine($"MINIO_BUCKETNAME env var: '{Environment.GetEnvironmentVariable("MINIO_BUCKETNAME")}'");
+                Console.WriteLine($"MINIO_USESSL env var: '{Environment.GetEnvironmentVariable("MINIO_USESSL")}'");
+                Console.WriteLine($"Config Endpoint fallback: '{config.Endpoint}'");
+                Console.WriteLine("=================================================");
+                
                 options.Endpoint = Environment.GetEnvironmentVariable("MINIO_ENDPOINT") ?? config.Endpoint;
                 options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
                 options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;
@@ -122,6 +129,8 @@ public class AppBootstrap(IConfiguration configuration)
                 options.UseSSL = bool.Parse(Environment.GetEnvironmentVariable("MINIO_USESSL") ?? config.UseSSL.ToString());
                 options.MaxFileSize = config.MaxFileSize;
                 options.AllowedExtensions = config.AllowedExtensions;
+                
+                Console.WriteLine($"Final MinIO Configuration: Endpoint={options.Endpoint}, AccessKey={options.AccessKey}, BucketName={options.BucketName}");
             }
         });
 
