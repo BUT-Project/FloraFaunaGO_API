@@ -27,12 +27,21 @@ public class MinIOFileStorageService : IFileStorageService
     {
         try
         {
+            _logger.LogInformation("====== UPLOADING TO MINIO: {FileName} ======", file.FileName);
+            _logger.LogInformation("File size: {FileSize} bytes", file.Length);
+            
             await EnsureBucketExistsAsync();
 
             var fileName = GenerateUniqueFileName(file.FileName);
             var objectName = string.IsNullOrEmpty(folder) ? fileName : $"{folder}/{fileName}";
+            
+            _logger.LogInformation("Generated object name: {ObjectName}", objectName);
 
             using var stream = file.OpenReadStream();
+            _logger.LogInformation("Stream opened - CanRead: {CanRead}, CanSeek: {CanSeek}, Length: {Length}, Position: {Position}", 
+                stream.CanRead, stream.CanSeek, 
+                stream.CanSeek ? stream.Length : -1, 
+                stream.CanSeek ? stream.Position : -1);
             
             var putObjectArgs = new PutObjectArgs()
                 .WithBucket(_config.BucketName)
@@ -41,6 +50,9 @@ public class MinIOFileStorageService : IFileStorageService
                 .WithObjectSize(file.Length)
                 .WithContentType(GetContentType(file.FileName));
 
+            _logger.LogInformation("Calling MinIO PutObjectAsync with bucket: {Bucket}, object: {Object}, size: {Size}", 
+                _config.BucketName, objectName, file.Length);
+            
             await _minioClient.PutObjectAsync(putObjectArgs);
 
             _logger.LogInformation("File {FileName} uploaded successfully to {ObjectName}", fileName, objectName);
