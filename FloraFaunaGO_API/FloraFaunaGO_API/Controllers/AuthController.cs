@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using FloraFauna_GO_Shared.Interfaces;
 
 namespace FloraFaunaGO_API.Controllers
 {
@@ -26,12 +27,14 @@ namespace FloraFaunaGO_API.Controllers
 
         public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
+        private readonly IFileStorageService _fileStorageService;
 
-        public AuthController(UserManager<UtilisateurEntities> userManager, IConfiguration config, FloraFaunaService service)
+        public AuthController(UserManager<UtilisateurEntities> userManager, IConfiguration config, FloraFaunaService service, IFileStorageService fileStorageService)
         {
             _userManager = userManager;
             _config = config;
             UnitOfWork = service;
+            _fileStorageService = fileStorageService;
         }
 
         private string GenerateRefreshToken()
@@ -213,7 +216,7 @@ namespace FloraFaunaGO_API.Controllers
 
         [HttpPost("edit-user")]
         [Authorize]
-        public async Task<IActionResult> EditUser([FromBody] EditUserDto dto)
+        public async Task<IActionResult> EditUser([FromForm] EditUserDto dto)
         {
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
@@ -223,8 +226,12 @@ namespace FloraFaunaGO_API.Controllers
 
             user.Email = dto.Mail;
             user.UserName = dto.Pseudo;
-            user.Image = dto.Image;
-
+            
+            if (dto.Image != null)
+            {
+                
+                user.ImageUrl = await _fileStorageService.UploadAsync(dto.Image, "users");
+            }
             await _userManager.UpdateAsync(user);
 
             return Ok(user.ToDto());
