@@ -58,14 +58,24 @@ public class MinIOFileStorageService : IFileStorageService
     {
         try
         {
+            _logger.LogInformation("====== DOWNLOADING FROM MINIO: {FileName} ======", fileName);
+            _logger.LogInformation("Bucket: {BucketName}, Object: {ObjectName}", _config.BucketName, fileName);
+            
             var stream = new MemoryStream();
             
             var getObjectArgs = new GetObjectArgs()
                 .WithBucket(_config.BucketName)
                 .WithObject(fileName)
-                .WithCallbackStream(s => s.CopyTo(stream));
+                .WithCallbackStream(s => {
+                    _logger.LogInformation("MinIO callback stream - CanRead: {CanRead}, Length: {Length}", s.CanRead, s.CanSeek ? s.Length : -1);
+                    s.CopyTo(stream);
+                    _logger.LogInformation("After copy - MemoryStream Length: {Length}", stream.Length);
+                });
 
+            _logger.LogInformation("Calling MinIO GetObjectAsync...");
             await _minioClient.GetObjectAsync(getObjectArgs);
+            
+            _logger.LogInformation("MinIO GetObjectAsync completed - MemoryStream final length: {Length}", stream.Length);
             stream.Position = 0;
             
             return stream;
