@@ -48,13 +48,22 @@ public class UnitTest1
     [TestMethod]
     public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
     {
-        var captureDto = new CaptureNormalDto
+        var captureDto = new FullCaptureDto
         {
-            photoUrl = "test-image.jpg"
+            Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto
+            {
+                photoUrl = "test-image.jpg"
+            },
+
         };
 
         // Act
-        var captureEntity = captureDto.ToEntities();
+        var capture = new CaptureNormalDto
+        {
+            Id = captureDto.Capture.Id,
+            photoUrl = "test-image.jpg"
+        };
+        var captureEntity = capture.ToEntities();
 
         // Assert
         Assert.IsNotNull(captureEntity);

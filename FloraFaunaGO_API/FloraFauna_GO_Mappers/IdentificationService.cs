@@ -68,11 +68,13 @@ public class IdentificationService
             espece.Nom = speciesName;
             // Upload the identified species image to MinIO and get URL
             espece.ImageUrl = await UploadImageAndGetUrl(dto.AskedImage);
+            Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return espece;
         }
         else if (speciesName is null) return null;
         else
         {
+            Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return especes.Result.Items.First();
         }
     }

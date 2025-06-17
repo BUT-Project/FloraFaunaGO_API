@@ -1,4 +1,5 @@
 ﻿using FloraFauna_GO_Dto;
+using FloraFauna_GO_Dto.Edit;
 using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
@@ -208,6 +209,25 @@ namespace FloraFaunaGO_API.Controllers
             }
 
             return Ok("Password updated succesfully");
+        }
+
+        [HttpPost("edit-user")]
+        [Authorize]
+        public async Task<IActionResult> EditUser([FromBody] EditUserDto dto)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized("User not found");
+            }
+
+            user.Email = dto.Mail;
+            user.UserName = dto.Pseudo;
+            user.Image = dto.Image;
+
+            await _userManager.UpdateAsync(user);
+
+            return Ok(user.ToDto());
         }
 
     }

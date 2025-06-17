@@ -55,15 +55,27 @@ namespace FloraFaunaGO_Test
         public void ToEntities_Should_Map_FullCaptureDto_To_CaptureEntities()
         {
             // Arrange
-            var captureDto = new CaptureNormalDto { Id = "1", photoUrl = "test-photo.jpg" };
+            var captureDto = new FullCaptureDto
+            {
+                Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto { Id = "1", photo = new byte[] { 1, 2, 3 } },
+                CaptureDetails = []
+            };
+
+            var capture = new CaptureNormalDto
+            {
+                Id = captureDto.Capture.Id,
+                 = captureDto.Capture.photo,
+            };
 
             // Act
-            var captureEntity = captureDto.ToEntities();
+            var captureEntity = capture.ToEntities();
+            captureEntity.CaptureDetails = captureDto.CaptureDetails.Select(cd => cd.CaptureDetail.ToEntities()).ToList();
 
             // Assert
             Assert.IsNotNull(captureEntity);
             Assert.IsInstanceOfType(captureEntity, typeof(CaptureEntities));
-            Assert.AreEqual(captureDto.photoUrl, captureEntity.PhotoUrl);
+            Assert.AreEqual(captureDto.Capture., captureEntity.Photo);
+            Assert.AreEqual(captureDto.CaptureDetails.Count, captureEntity.CaptureDetails.Count);
         }
 
         [TestMethod]
