@@ -157,29 +157,17 @@ steps:
       CONTAINERNAME: FloraFauna_GO-minio
       COMMAND: create
       OVERWRITE: true
-      PRIVATE: true
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-
-  # MinIO Console - accessible via web
-  - name: deploy-container-minio-web
-    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-    environment:
-      IMAGENAME: minio/minio:latest
-      CONTAINERNAME: FloraFauna_GO-minio-web
-      COMMAND: create
-      OVERWRITE: true
-      PRIVATE: true
+      # Expose the console on port 9001
       CODEFIRST_CLIENTDRONE_ENV_TYPE: WEB
       CODEFIRST_CLIENTDRONE_ENV_PORT: 9001
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
+      # Add a persistent volume for data storage
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_VOLUMES: "FloraFauna_GO-minio-data:/data"
+      # Explicitly set the command for clarity
       CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-    depends_on: [deploy-container-minio]
 
-  
   # database container bdd
   - name: deploy-container-bdd
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
@@ -274,4 +262,3 @@ steps:
   #     OVERWRITE: true
   #     ADMINS: davidd_almeida,alexislaurent,...
   #   depends_on: [ build-and-push-identification ]
-
