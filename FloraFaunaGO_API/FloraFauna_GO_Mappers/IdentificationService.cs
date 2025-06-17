@@ -71,7 +71,7 @@ public class IdentificationService
 
     private async Task<String> IdentifyPlant(MultipartFormDataContent form, byte[] image)
     {
-        Console.WriteLine("INSECT IDENTIFICATION");
+        Console.WriteLine("PLANT IDENTIFICATION");
         HttpResponseMessage response = await client.PostAsync(plantApiEndpoint, form);
         
         if (response.IsSuccessStatusCode)
@@ -82,6 +82,10 @@ public class IdentificationService
             PlantIdentificationResultDto dtoResult = JsonSerializer.Deserialize<PlantIdentificationResultDto>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             PlantResultDto resultDto = dtoResult.Results.OrderByDescending(r => r.Score).FirstOrDefault();
             return resultDto.Species.CommonNames?.FirstOrDefault();
+        }
+        else
+        {
+            Console.WriteLine($"Erreur : {response}");
         }
         return null;
     }
@@ -126,8 +130,7 @@ public class IdentificationService
         }
         else
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Erreur {response.StatusCode} : {errorContent}");
+            Console.WriteLine($"Erreur : {response}");
         }
 
         return null;
@@ -167,8 +170,7 @@ public class IdentificationService
         }
         else
         {
-            var errorContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Erreur {response.StatusCode} : {errorContent}");
+            Console.WriteLine($"Erreur : {response}");
         }
 
         return null;
