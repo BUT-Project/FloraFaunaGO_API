@@ -43,6 +43,13 @@ public class MinIOFileStorageService : IFileStorageService
                 stream.CanSeek ? stream.Length : -1, 
                 stream.CanSeek ? stream.Position : -1);
             
+            // Reset stream position to ensure we read from the beginning
+            if (stream.CanSeek)
+            {
+                stream.Position = 0;
+                _logger.LogInformation("Stream position reset to 0");
+            }
+            
             var putObjectArgs = new PutObjectArgs()
                 .WithBucket(_config.BucketName)
                 .WithObject(objectName)
@@ -53,7 +60,30 @@ public class MinIOFileStorageService : IFileStorageService
             _logger.LogInformation("Calling MinIO PutObjectAsync with bucket: {Bucket}, object: {Object}, size: {Size}", 
                 _config.BucketName, objectName, file.Length);
             
-            await _minioClient.PutObjectAsync(putObjectArgs);
+            try
+            {
+                await _minioClient.PutObjectAsync(putObjectArgs);
+                _logger.LogInformation("MinIO PutObjectAsync completed successfully");
+                
+                // Verify the upload by checking if file exists and getting its size
+                _logger.LogInformation("Verifying upload by checking file existence...");
+                var statObjectArgs = new StatObjectArgs()
+                    .WithBucket(_config.BucketName)
+                    .WithObject(objectName);
+                
+                var objectStat = await _minioClient.StatObjectAsync(statObjectArgs);
+                _logger.LogInformation("Upload verified - Object size in MinIO: {Size} bytes", objectStat.Size);
+                
+                if (objectStat.Size != file.Length)
+                {
+                    _logger.LogWarning("SIZE MISMATCH! Expected: {ExpectedSize}, Actual: {ActualSize}", file.Length, objectStat.Size);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "ERROR during MinIO PutObjectAsync");
+                throw;
+            }
 
             _logger.LogInformation("File {FileName} uploaded successfully to {ObjectName}", fileName, objectName);
             
@@ -156,18 +186,39 @@ public class MinIOFileStorageService : IFileStorageService
 
     private async Task EnsureBucketExistsAsync()
     {
-        var bucketExistsArgs = new BucketExistsArgs()
-            .WithBucket(_config.BucketName);
-
-        var exists = await _minioClient.BucketExistsAsync(bucketExistsArgs);
-        
-        if (!exists)
+        try
         {
-            var makeBucketArgs = new MakeBucketArgs()
+            _logger.LogInformation("====== CHECKING MINIO CONNECTIVITY ======");
+            _logger.LogInformation("MinIO Endpoint: {Endpoint}", _minioClient.Config.Endpoint);
+            _logger.LogInformation("Checking bucket existence for: {BucketName}", _config.BucketName);
+            
+            var bucketExistsArgs = new BucketExistsArgs()
                 .WithBucket(_config.BucketName);
 
-            await _minioClient.MakeBucketAsync(makeBucketArgs);
-            _logger.LogInformation("Bucket {BucketName} created successfully", _config.BucketName);
+            _logger.LogInformation("Calling MinIO BucketExistsAsync...");
+            var exists = await _minioClient.BucketExistsAsync(bucketExistsArgs);
+            _logger.LogInformation("MinIO BucketExistsAsync result: {Exists}", exists);
+            
+            if (!exists)
+            {
+                _logger.LogInformation("Bucket does not exist, creating bucket: {BucketName}", _config.BucketName);
+                var makeBucketArgs = new MakeBucketArgs()
+                    .WithBucket(_config.BucketName);
+
+                await _minioClient.MakeBucketAsync(makeBucketArgs);
+                _logger.LogInformation("Bucket {BucketName} created successfully", _config.BucketName);
+            }
+            else
+            {
+                _logger.LogInformation("Bucket {BucketName} already exists", _config.BucketName);
+            }
+            
+            _logger.LogInformation("====== MINIO CONNECTIVITY CHECK COMPLETED ======");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "ERROR: Failed to connect to MinIO or check bucket existence");
+            throw;
         }
     }
 
