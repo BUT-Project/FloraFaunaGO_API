@@ -48,6 +48,8 @@ public class IdentificationService
             default:
                 break;
         }
+        if (speciesName is not null )
+            Console.WriteLine("speciesName :" + speciesName);
         var especes = Service.GetEspeceByName(speciesName);
         Console.WriteLine("init Espece");
         if (especes is null) Console.WriteLine("ton espece elle est null enfaite");
@@ -55,7 +57,7 @@ public class IdentificationService
         {
             var espece = await RetrieveFloraFaunaDatas(speciesName);
             espece.Nom = speciesName;
-            //espece.Image = dto.AskedImage;
+            espece.Image = dto.AskedImage;
             Console.WriteLine("Réponse de la requête d'identification :" + DateTime.Now);
             return espece;
         }
@@ -69,10 +71,13 @@ public class IdentificationService
 
     private async Task<String> IdentifyPlant(MultipartFormDataContent form, byte[] image)
     {
+        Console.WriteLine("INSECT IDENTIFICATION");
         HttpResponseMessage response = await client.PostAsync(plantApiEndpoint, form);
+        
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("PLANT IDENTIFICATION RECEPTION");
             Console.WriteLine("Réponse brute de l'API : " + jsonResponse);
             PlantIdentificationResultDto dtoResult = JsonSerializer.Deserialize<PlantIdentificationResultDto>(jsonResponse, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             PlantResultDto resultDto = dtoResult.Results.OrderByDescending(r => r.Score).FirstOrDefault();
@@ -98,12 +103,13 @@ public class IdentificationService
 
         client.DefaultRequestHeaders.Clear();
         client.DefaultRequestHeaders.Add("Api-Key", INSECT_API_KEY);
-
+        Console.WriteLine("INSECT IDENTIFICATION");
         HttpResponseMessage response = await client.PostAsync(insectApiEndpoint, jsonContent);
 
         if (response.IsSuccessStatusCode)
         {
             var jsonResponse = await response.Content.ReadAsStringAsync();
+            Console.WriteLine("INSECT IDENTIFICATION RECEPTION");
             Console.WriteLine("Réponse brute de l'API : " + jsonResponse);
 
             var dtoResult = JsonSerializer.Deserialize<InsectIdentificationResultDto>(
@@ -143,11 +149,12 @@ public class IdentificationService
         );
 
         client.DefaultRequestHeaders.Clear();
-
+        Console.WriteLine("ANIMAL IDENTIFICATION");
         HttpResponseMessage response = await client.PostAsync(animalApiEndpoint, jsonContent);
 
         if (response.IsSuccessStatusCode)
         {
+            Console.WriteLine("ANIMAL IDENTIFICATION RECEPTION");
             var jsonResponse = await response.Content.ReadAsStringAsync();
             Console.WriteLine("Réponse brute de l'API : " + jsonResponse);
 
