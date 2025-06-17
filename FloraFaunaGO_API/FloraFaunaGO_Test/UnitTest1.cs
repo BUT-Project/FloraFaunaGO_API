@@ -68,7 +68,7 @@ public class UnitTest1
         // Assert
         Assert.IsNotNull(captureEntity);
         Assert.IsInstanceOfType<CaptureEntities>(captureEntity);
-        Assert.AreEqual(captureEntity.PhotoUrl, captureDto.photoUrl);
+        Assert.AreEqual(captureEntity.PhotoUrl, captureDto.Capture.photoUrl);
         // Vérifiez les propriétés
     }
 
