@@ -113,6 +113,8 @@ public class AppBootstrap(IConfiguration configuration)
             var config = Configuration.GetSection("MinIO").Get<MinIOConfiguration>();
             if (config != null)
             {
+                Console.WriteLine($"MinIO Configuration: {Environment.GetEnvironmentVariable("MINIO_ENDPOINT")}");
+                Console.WriteLine($"MinIO Configuration: {Environment.GetEnvironmentVariable("MINIO_ACCESSKEY")}");
                 options.Endpoint = Environment.GetEnvironmentVariable("MINIO_ENDPOINT") ?? config.Endpoint;
                 options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
                 options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;

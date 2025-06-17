@@ -157,7 +157,6 @@ steps:
       CONTAINERNAME: FloraFauna_GO-minio
       COMMAND: create
       OVERWRITE: true
-      PRIVATE: true
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       CODEFIRST_CLIENTDRONE_ENV_MINIO_VOLUMES: "FloraFauna_GO-minio-data:/data"
@@ -177,7 +176,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_PORT: 9001
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_SERVER_URL: http://FloraFauna_GO-FloraFauna_GO-minio:9000
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_SERVER_URL: http://FloraFauna_GO-minio:9000
       CODEFIRST_CLIENTDRONE_ENV_MINIO_BROWSER_REDIRECT_URL: https://codefirst.iut.uca.fr/containers/FloraFauna_GO-minio-console
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [deploy-container-minio]
@@ -197,7 +196,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
         from_secret: db_password
       # MinIO Configuration
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_ENDPOINT: FloraFauna_GO-FloraFauna_GO-minio:9000
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ENDPOINT: FloraFauna_GO-minio:9000
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ACCESSKEY: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_SECRETKEY: minioadmin123
       CODEFIRST_CLIENTDRONE_ENV_MINIO_BUCKETNAME: florafauna
