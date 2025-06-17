@@ -160,8 +160,7 @@ steps:
       PRIVATE: true
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_PORTS: "9000:9000,9001:9001"
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --address :80 --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
   # MinIO Console - accessible via web
@@ -196,7 +195,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_PASSWORD:
         from_secret: db_password
       # MinIO Configuration
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_ENDPOINT: FloraFauna_GO-FloraFauna_GO-minio:9000
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_ENDPOINT: FloraFauna_GO-FloraFauna_GO-minio:80
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ACCESSKEY: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_SECRETKEY: minioadmin123
       CODEFIRST_CLIENTDRONE_ENV_MINIO_BUCKETNAME: florafauna
