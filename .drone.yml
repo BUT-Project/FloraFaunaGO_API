@@ -155,7 +155,7 @@ steps:
     environment:
       IMAGENAME: minio/minio:latest
       CONTAINERNAME: FloraFauna_GO-minio
-      COMMAND: up
+      COMMAND: create
       OVERWRITE: true
       PRIVATE: true
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
@@ -170,7 +170,7 @@ steps:
     environment:
       IMAGENAME: minio/minio:latest
       CONTAINERNAME: FloraFauna_GO-minio-web
-      COMMAND: up
+      COMMAND: create
       OVERWRITE: true
       PRIVATE: true
       CODEFIRST_CLIENTDRONE_ENV_TYPE: WEB
