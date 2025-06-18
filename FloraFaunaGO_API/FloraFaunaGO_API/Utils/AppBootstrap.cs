@@ -328,6 +328,7 @@ public class AppBootstrap(IConfiguration configuration)
             {
                 Console.WriteLine($"Header: {header.Key}: {header.Value}");
             }
+            
 
             // Vérification JWT si présent
             if (context.Request.Headers.TryGetValue("Authorization", out var authHeader))
