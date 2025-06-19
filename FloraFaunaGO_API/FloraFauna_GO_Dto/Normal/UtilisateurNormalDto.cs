@@ -9,8 +9,6 @@ public class UtilisateurNormalDto
 
     public string? ImageUrl { get; set; }
     
-    public IFormFile? ProfileImage { get; set; }
-
     public string? Mail { get; set; }
 
     public string Hash_mdp { get; set; }
