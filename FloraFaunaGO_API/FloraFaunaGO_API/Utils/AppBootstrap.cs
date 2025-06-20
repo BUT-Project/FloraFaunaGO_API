@@ -122,7 +122,7 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine($"Config Endpoint fallback: '{config.Endpoint}'");
                 Console.WriteLine("=================================================");
                 
-                options.Endpoint = "FloraFauna_GO-FloraFauna_GO-minio:9000";
+                options.Endpoint = "minio:9000";
                 options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
                 options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;
                 options.BucketName = Environment.GetEnvironmentVariable("MINIO_BUCKETNAME") ?? config.BucketName;
