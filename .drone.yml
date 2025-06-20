@@ -171,7 +171,8 @@ steps:
       OVERWRITE: true
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_BROWSER_REDIRECT_URL: "https://codefirst.iut.uca.fr/containers/FloraFauna_GO-FloraFauna_GO-minio-console"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_BROWSER_REDIRECT_URL: "https://codefirst.iut.uca.fr/containers/FloraFauna_GO-FloraFauna_GO-minio:9001"
+      CODEFIRST_CLIENTDRONE_ENV_PORTS: "9000,9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [docker-build-and-push-minio]
 
