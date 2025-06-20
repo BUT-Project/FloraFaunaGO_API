@@ -77,6 +77,19 @@ public class MinIOFileStorageService : IFileStorageService
                 if (objectStat.Size != file.Length)
                 {
                     _logger.LogWarning("SIZE MISMATCH! Expected: {ExpectedSize}, Actual: {ActualSize}", file.Length, objectStat.Size);
+                    
+                    // Read back the stored content to see what was actually uploaded
+                    var testStream = new MemoryStream();
+                    var getObjectArgs = new GetObjectArgs()
+                        .WithBucket(_config.BucketName)
+                        .WithObject(objectName)
+                        .WithCallbackStream(s => s.CopyTo(testStream));
+                    
+                    await _minioClient.GetObjectAsync(getObjectArgs);
+                    testStream.Position = 0;
+                    
+                    var content = System.Text.Encoding.UTF8.GetString(testStream.ToArray());
+                    _logger.LogError("ACTUAL STORED CONTENT: {Content}", content);
                 }
             }
             catch (Exception ex)
