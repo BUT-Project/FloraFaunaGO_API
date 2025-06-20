@@ -162,10 +162,7 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_PORT: 9001
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      # Add a persistent volume for data storage
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_VOLUMES: "FloraFauna_GO-minio-data:/data"
-      # Explicitly set the command for clarity
-      CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /data --console-address :9001"
+      CODEFIRST_CLIENTDRONE_ENV_MINIO_COMMAND: "server /app --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
   # database container bdd
