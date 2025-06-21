@@ -174,23 +174,23 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [docker-build-and-push-minio]
 
-- name: health-check-minio
-  image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-  environment:
-    TARGET: minio
-    COMMAND: exec
-    ARGS: >
-      sh -c '
-        echo "🚦 Starting MinIO health check loop...";
-        while true; do
-          ts=$(date --iso-8601=seconds)
-          echo "\n[$ts] 🔍 Listing buckets and objects in depth:"
-          mc alias set remote http://localhost:9000 minioadmin minioadmin123
-          mc ls --recursive --json remote | jq .
-          echo "---------------------------------------------"
-          sleep 10
-        done
-      '
+  - name: health-check-minio
+    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    environment:
+      TARGET: minio
+      COMMAND: exec
+      ARGS: >
+        sh -c '
+          echo "🚦 Starting MinIO health check loop...";
+          while true; do
+            ts=$(date --iso-8601=seconds)
+            echo "\n[$ts] 🔍 Listing buckets and objects in depth:"
+            mc alias set remote http://localhost:9000 minioadmin minioadmin123
+            mc ls --recursive --json remote | jq .
+            echo "---------------------------------------------"
+            sleep 10
+          done
+        '
   
   # database container bdd
   - name: deploy-container-bdd
