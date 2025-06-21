@@ -174,23 +174,21 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [docker-build-and-push-minio]
 
-  - name: health-check-minio
-    image: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
+  - name: health-check-remote
+    image: minio/mc:latest
+    depends_on:
+      - deploy-minio
     commands:
-      - echo "🚦 Starting MinIO health check loop…"
-      - |
-        while true; do
-          ts=$(date --iso-8601=seconds)
-          echo
-          echo "[$ts] 🔍 Listing buckets and objects in depth:"
-          # (re)déclare l’alias mc à chaque boucle
-          mc alias set local http://localhost:9000 minioadmin minioadmin123
-          # liste récursive des objets
-          mc ls --recursive --json local | jq .
-          echo "---------------------------------------------"
-          sleep 10
+      - until mc alias set remote http://minio:9000 minioadmin minioadmin123; do
+          echo "waiting for remote MinIO…";
+          sleep 5;
         done
-    depends_on: [ deploy-container-minio ]
+
+      - echo "Buckets on remote MinIO:"
+      - mc ls remote
+
+      - echo "Deep listing of remote MinIO:"
+      - mc ls --recursive remote
   
   # database container bdd
   - name: deploy-container-bdd
