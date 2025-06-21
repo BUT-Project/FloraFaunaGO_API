@@ -172,45 +172,25 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-    networks:
-      - minio-net    
     depends_on: [docker-build-and-push-minio]
 
-  - name: debug-dns-1
-    image: busybox
-    depends_on:
-      - deploy-container-minio
-    commands:
-      - nslookup FloraFauna_GO-minio
-    networks:
-      - minio-net  
-
-  - name: debug-dns
-    image: busybox
-    depends_on:
-      - deploy-container-minio
-    commands:
-      - nslookup minio
-    networks:
-      - minio-net       
-
-  - name: health-check-remote
-    image: minio/mc:latest
-    depends_on:
-      - deploy-container-minio
-    commands:
-      - until mc alias set remote http://minio:9000 minioadmin minioadmin123; do
-          echo "waiting for remote MinIO…";
-          sleep 5;
+- name: health-check-minio
+  image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+  environment:
+    TARGET: minio
+    COMMAND: exec
+    ARGS: >
+      sh -c '
+        echo "🚦 Starting MinIO health check loop...";
+        while true; do
+          ts=$(date --iso-8601=seconds)
+          echo "\n[$ts] 🔍 Listing buckets and objects in depth:"
+          mc alias set remote http://localhost:9000 minioadmin minioadmin123
+          mc ls --recursive --json remote | jq .
+          echo "---------------------------------------------"
+          sleep 10
         done
-
-      - echo "Buckets on remote MinIO:"
-      - mc ls remote
-
-      - echo "Deep listing of remote MinIO:"
-      - mc ls --recursive remote
-    networks:
-      - minio-net         
+      '
   
   # database container bdd
   - name: deploy-container-bdd
@@ -255,9 +235,6 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [deploy-container-mysql]
 
-networks:
-  minio-net:
-    driver: bridge
   # - name: build-and-push-classifier
   #   image: plugins/docker
   #   settings:
