@@ -204,14 +204,14 @@ steps:
       - sleep 60
       - |
         set -x
-        MINIO_HOSTNAME=$(echo "${DRONE_REPO_OWNER}" | tr -d '._')-minio
-        echo "Tentative de connexion à MinIO sur l'hôte : ${MINIO_HOSTNAME}"
-        RESPONSE=$(curl --connect-timeout 10 -s -o /dev/null -w "%{http_code}" "http://${MINIO_HOSTNAME}:9000/minio/health/ready")
+        MINIO_HOSTNAME=$$(echo "$${DRONE_REPO_OWNER}" | tr -d '._')-minio
+        echo "Tentative de connexion à MinIO sur l'hôte : $${MINIO_HOSTNAME}"
+        RESPONSE=$$(curl --connect-timeout 10 -s -o /dev/null -w "%{http_code}" "http://$${MINIO_HOSTNAME}:9000/minio/health/ready")
         
-        if [ "$RESPONSE" -eq 200 ]; then
+        if [ "$$RESPONSE" -eq 200 ]; then
           echo "Connexion à MinIO réussie."
         else
-          echo "Échec de la connexion à MinIO sur l'hôte ${MINIO_HOSTNAME}. Code de réponse HTTP: ${RESPONSE}"
+          echo "Échec de la connexion à MinIO sur l'hôte $${MINIO_HOSTNAME}. Code de réponse HTTP: $$RESPONSE"
           exit 1
         fi
     depends_on: [deploy-container-mysql, deploy-container-minio, docker-build-and-push, deploy-container-stub]
