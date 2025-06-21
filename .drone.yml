@@ -166,7 +166,6 @@ steps:
       # Command to start MinIO with console on port 9001
       CODEFIRST_CLIENTDRONE_ENV_COMMAND: "server /data --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-    depends_on: [docker-build-and-push-minio] 
 
 
   # database container bdd
