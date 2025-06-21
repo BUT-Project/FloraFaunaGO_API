@@ -103,7 +103,18 @@ steps:
         from_secret: SECRET_REGISTRY_USERNAME
       password:
         from_secret: SECRET_REGISTRY_PASSWORD
-  
+  - name: docker-build-and-push-minio
+    image: plugins/docker
+    settings:
+      dockerfile: minio/Dockerfile
+      context: minio/
+      registry: hub.codefirst.iut.uca.fr
+      repo: hub.codefirst.iut.uca.fr/alexis.laurent/minio
+      username:
+        from_secret: SECRET_REGISTRY_USERNAME
+      password:
+        from_secret: SECRET_REGISTRY_PASSWORD
+
   # database container stub
   - name: deploy-container-stub
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
@@ -152,12 +163,8 @@ steps:
   # MinIO object storage container
   - name: deploy-container-minio
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-    commands:
-      - echo "Starting MinIO DAVEE"
-      - ls
-      - server /data --console-address :9001
     environment:
-      IMAGENAME: minio/minio:latest  # Use official MinIO image directly
+      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
       CONTAINERNAME: minio
       COMMAND: create
       OVERWRITE: true  # Set to true temporarily to apply the volume configuration
@@ -165,11 +172,27 @@ steps:
       # MinIO credentials
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
-      # IMPORTANT: Add the volume mapping for persistent storage
-      CODEFIRST_CLIENTDRONE_ENV_VOLUMES: "FloraFauna_GO-minio-data:/data"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+    depends_on: [docker-build-and-push-minio]
 
-
+  - name: health-check-minio
+    image: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
+    commands:
+      - echo "🚦 Starting MinIO health check loop…"
+      - |
+        while true; do
+          ts=$(date --iso-8601=seconds)
+          echo
+          echo "[$ts] 🔍 Listing buckets and objects in depth:"
+          # (re)déclare l’alias mc à chaque boucle
+          mc alias set local http://localhost:9000 minioadmin minioadmin123
+          # liste récursive des objets
+          mc ls --recursive --json local | jq .
+          echo "---------------------------------------------"
+          sleep 10
+        done
+    depends_on: [ docker-build-and-push-minio ]
+  
   # database container bdd
   - name: deploy-container-bdd
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
