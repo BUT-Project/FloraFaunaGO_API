@@ -172,6 +172,8 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
+    networks:
+      - minio-net    
     depends_on: [docker-build-and-push-minio]
 
   - name: debug-dns-1
@@ -180,13 +182,17 @@ steps:
       - deploy-container-minio
     commands:
       - nslookup FloraFauna_GO-minio
+    networks:
+      - minio-net  
 
   - name: debug-dns
     image: busybox
     depends_on:
       - deploy-container-minio
     commands:
-      - nslookup minio     
+      - nslookup minio
+    networks:
+      - minio-net       
 
   - name: health-check-remote
     image: minio/mc:latest
@@ -203,6 +209,8 @@ steps:
 
       - echo "Deep listing of remote MinIO:"
       - mc ls --recursive remote
+    networks:
+      - minio-net         
   
   # database container bdd
   - name: deploy-container-bdd
@@ -247,6 +255,9 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [deploy-container-mysql]
 
+networks:
+  minio-net:
+    driver: bridge
   # - name: build-and-push-classifier
   #   image: plugins/docker
   #   settings:
