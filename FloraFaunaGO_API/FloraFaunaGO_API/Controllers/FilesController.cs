@@ -53,9 +53,12 @@ public class FilesController : ControllerBase
                 _logger.LogWarning("File validation failed: {ErrorMessage}", validationResult.ErrorMessage);
                 return BadRequest(validationResult.ErrorMessage);
             }
+            _logger.LogInformation("Trying to upload file: {FileName}", file.FileName);
 
             // Upload file
+            _logger.LogInformation("About to call _fileStorageService.UploadAsync...");
             var fileName = await _fileStorageService.UploadAsync(file, folder);
+            _logger.LogInformation("_fileStorageService.UploadAsync completed successfully");
             
             _logger.LogInformation("File uploaded successfully: {FileName}", fileName);
             
@@ -81,25 +84,31 @@ public class FilesController : ControllerBase
         try
         {
             _logger.LogInformation("====== SERVING FILE: {FileName} ======", fileName);
+            _logger.LogInformation("Raw fileName parameter: '{RawFileName}'", fileName);
+            _logger.LogInformation("URL decoded fileName: '{DecodedFileName}'", Uri.UnescapeDataString(fileName));
             
-            var fileExists = await _fileStorageService.FileExistsAsync(fileName);
+            // Normalize the file path - decode URL encoding
+            var normalizedFileName = Uri.UnescapeDataString(fileName);
+            _logger.LogInformation("Using normalized fileName: '{NormalizedFileName}'", normalizedFileName);
+            
+            var fileExists = await _fileStorageService.FileExistsAsync(normalizedFileName);
             _logger.LogInformation("File exists check: {FileExists}", fileExists);
             
             if (!fileExists)
             {
-                _logger.LogWarning("File not found: {FileName}", fileName);
+                _logger.LogWarning("File not found: {FileName}", normalizedFileName);
                 return NotFound();
             }
 
             _logger.LogInformation("Starting file download from storage...");
-            var stream = await _fileStorageService.DownloadAsync(fileName);
+            var stream = await _fileStorageService.DownloadAsync(normalizedFileName);
             
             _logger.LogInformation("Stream received - CanRead: {CanRead}, CanSeek: {CanSeek}, Length: {Length}, Position: {Position}", 
                 stream?.CanRead, stream?.CanSeek, 
                 stream?.CanSeek == true ? stream.Length : -1, 
                 stream?.CanSeek == true ? stream.Position : -1);
             
-            var contentType = _imageProcessingService.GetContentType(fileName);
+            var contentType = _imageProcessingService.GetContentType(normalizedFileName);
             _logger.LogInformation("Content type determined: {ContentType}", contentType);
             
             if (stream?.CanSeek == true && stream.Position != 0)

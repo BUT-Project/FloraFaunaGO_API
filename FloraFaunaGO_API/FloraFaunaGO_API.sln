@@ -26,6 +26,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "python", "python", "{CD1273
 		..\classifier\requirements.txt = ..\classifier\requirements.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FloraFaunaGO_Services", "FloraFaunaGO_Services\FloraFaunaGO_Services.csproj", "{3CEADF8E-373F-4E87-AC20-435C2D642495}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,6 +66,10 @@ Global
 		{EB852F76-CA27-4290-B5AD-285919A73EF9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EB852F76-CA27-4290-B5AD-285919A73EF9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EB852F76-CA27-4290-B5AD-285919A73EF9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CEADF8E-373F-4E87-AC20-435C2D642495}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CEADF8E-373F-4E87-AC20-435C2D642495}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CEADF8E-373F-4E87-AC20-435C2D642495}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CEADF8E-373F-4E87-AC20-435C2D642495}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

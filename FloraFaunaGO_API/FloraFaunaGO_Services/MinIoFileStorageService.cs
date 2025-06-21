@@ -1,53 +1,83 @@
+using System.Reactive.Linq;
 using FloraFauna_GO_Shared.Configuration;
 using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Minio;
+using Minio.ApiEndpoints;
 using Minio.DataModel.Args;
 
 namespace FloraFaunaGO_Services;
 
-public class MinIOFileStorageService : IFileStorageService
+public class MinIoFileStorageService : IFileStorageService
 {
     private readonly IMinioClient _minioClient;
     private readonly MinIOConfiguration _config;
-    private readonly ILogger<MinIOFileStorageService> _logger;
+    private readonly ILogger<MinIoFileStorageService> _logger;
 
-    public MinIOFileStorageService(
+    public MinIoFileStorageService(
         IMinioClient minioClient,
         IOptions<MinIOConfiguration> config,
-        ILogger<MinIOFileStorageService> logger)
+        ILogger<MinIoFileStorageService> logger)
     {
         _minioClient = minioClient;
-        _config = config.Value;
         _logger = logger;
+        
+        _logger.LogInformation("====== MINIO SERVICE CONSTRUCTOR DEBUG ======");
+        
+        if (config == null || config.Value == null)
+        {
+            _logger.LogError("ERROR: MinIO configuration is null or has no value");
+            throw new ArgumentNullException(nameof(config), "MinIO configuration is not provided.");
+        }
+
+        _config = config.Value;
+        
+        _logger.LogInformation("MinIO Config in constructor:");
+        _logger.LogInformation("  Endpoint: '{Endpoint}'", _config.Endpoint);
+        _logger.LogInformation("  AccessKey: '{AccessKey}'", _config.AccessKey);
+        _logger.LogInformation("  BucketName: '{BucketName}'", _config.BucketName);
+        _logger.LogInformation("  UseSSL: {UseSSL}", _config.UseSSL);
+        _logger.LogInformation("===============================================");
+        
+        if (string.IsNullOrEmpty(_config.BucketName))
+        {
+            _logger.LogError("ERROR: BucketName is null or empty. Value: '{BucketName}'", _config.BucketName);
+            throw new ArgumentException("Bucket name must be provided in MinIO configuration.", nameof(config));
+        }
+        
+        _logger.LogInformation("MinIO Service constructor completed successfully");
+        
+        // Temporary debug - this should appear in logs - FORCE RECOMPILE
+        _logger.LogCritical("TEMPORARY DEBUG: MinIoFileStorageService constructor was called with new code! REBUILD TRIGGERED");
     }
+    
 
     public async Task<string> UploadAsync(Microsoft.AspNetCore.Http.IFormFile file, string folder)
     {
         try
         {
+            _logger.LogCritical("UPLOAD METHOD CALLED - NEW CODE VERSION!");
             _logger.LogInformation("====== UPLOADING TO MINIO: {FileName} ======", file.FileName);
             _logger.LogInformation("File size: {FileSize} bytes", file.Length);
             
+            _logger.LogInformation("DEBUG: About to call EnsureBucketExistsAsync...");
             await EnsureBucketExistsAsync();
+            _logger.LogInformation("DEBUG: EnsureBucketExistsAsync completed");
 
             var fileName = GenerateUniqueFileName(file.FileName);
             var objectName = string.IsNullOrEmpty(folder) ? fileName : $"{folder}/{fileName}";
             
-            _logger.LogInformation("Generated object name: {ObjectName}", objectName);
+            Console.WriteLine($"Generated object name: {objectName}");
 
-            using var stream = file.OpenReadStream();
-            _logger.LogInformation("Stream opened - CanRead: {CanRead}, CanSeek: {CanSeek}, Length: {Length}, Position: {Position}", 
-                stream.CanRead, stream.CanSeek, 
-                stream.CanSeek ? stream.Length : -1, 
-                stream.CanSeek ? stream.Position : -1);
+            await using var stream = file.OpenReadStream();
+            Console.WriteLine($"Stream opened - CanRead: {stream.CanRead}, CanSeek: {stream.CanSeek}, Length: {(stream.CanSeek ? stream.Length : -1)}, Position: {(stream.CanSeek ? stream.Position : -1)}");
             
             // Reset stream position to ensure we read from the beginning
             if (stream.CanSeek)
             {
                 stream.Position = 0;
-                _logger.LogInformation("Stream position reset to 0");
+                Console.WriteLine("Stream position reset to 0");
             }
             
             var putObjectArgs = new PutObjectArgs()
@@ -57,26 +87,25 @@ public class MinIOFileStorageService : IFileStorageService
                 .WithObjectSize(file.Length)
                 .WithContentType(GetContentType(file.FileName));
 
-            _logger.LogInformation("Calling MinIO PutObjectAsync with bucket: {Bucket}, object: {Object}, size: {Size}", 
-                _config.BucketName, objectName, file.Length);
+            Console.WriteLine($"Calling MinIO PutObjectAsync with bucket: {_config.BucketName}, object: {objectName}, size: {file.Length}");
             
             try
             {
                 await _minioClient.PutObjectAsync(putObjectArgs);
-                _logger.LogInformation("MinIO PutObjectAsync completed successfully");
+                Console.WriteLine("MinIO PutObjectAsync completed successfully");
                 
-                // Verify the upload by checking if file exists and getting its size
-                _logger.LogInformation("Verifying upload by checking file existence...");
+                // Verify the upload by checking if a file exists and getting its size
+                Console.WriteLine("Verifying upload by checking file existence...");
                 var statObjectArgs = new StatObjectArgs()
                     .WithBucket(_config.BucketName)
                     .WithObject(objectName);
                 
                 var objectStat = await _minioClient.StatObjectAsync(statObjectArgs);
-                _logger.LogInformation("Upload verified - Object size in MinIO: {Size} bytes", objectStat.Size);
+                Console.WriteLine($"Upload verified - Object size in MinIO: {objectStat.Size} bytes");
                 
                 if (objectStat.Size != file.Length)
                 {
-                    _logger.LogWarning("SIZE MISMATCH! Expected: {ExpectedSize}, Actual: {ActualSize}", file.Length, objectStat.Size);
+                    Console.WriteLine($"SIZE MISMATCH! Expected: {file.Length}, Actual: {objectStat.Size}");
                     
                     // Read back the stored content to see what was actually uploaded
                     var testStream = new MemoryStream();
@@ -89,22 +118,22 @@ public class MinIOFileStorageService : IFileStorageService
                     testStream.Position = 0;
                     
                     var content = System.Text.Encoding.UTF8.GetString(testStream.ToArray());
-                    _logger.LogError("ACTUAL STORED CONTENT: {Content}", content);
+                    Console.WriteLine($"ACTUAL STORED CONTENT: {content}");
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "ERROR during MinIO PutObjectAsync");
+                Console.WriteLine($"ERROR during MinIO PutObjectAsync: {ex}");
                 throw;
             }
 
-            _logger.LogInformation("File {FileName} uploaded successfully to {ObjectName}", fileName, objectName);
+            Console.WriteLine($"File {fileName} uploaded successfully to {objectName}");
             
             return objectName;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error uploading file {FileName}", file.FileName);
+            Console.WriteLine($"Error uploading file {file.FileName}: {ex}");
             throw;
         }
     }
@@ -113,8 +142,8 @@ public class MinIOFileStorageService : IFileStorageService
     {
         try
         {
-            _logger.LogInformation("====== DOWNLOADING FROM MINIO: {FileName} ======", fileName);
-            _logger.LogInformation("Bucket: {BucketName}, Object: {ObjectName}", _config.BucketName, fileName);
+            Console.WriteLine($"====== DOWNLOADING FROM MINIO: {fileName} ======");
+            Console.WriteLine($"Bucket: {_config.BucketName}, Object: {fileName}");
             
             var stream = new MemoryStream();
             
@@ -122,22 +151,22 @@ public class MinIOFileStorageService : IFileStorageService
                 .WithBucket(_config.BucketName)
                 .WithObject(fileName)
                 .WithCallbackStream(s => {
-                    _logger.LogInformation("MinIO callback stream - CanRead: {CanRead}, Length: {Length}", s.CanRead, s.CanSeek ? s.Length : -1);
+                    Console.WriteLine($"MinIO callback stream - CanRead: {s.CanRead}, Length: {(s.CanSeek ? s.Length : -1)}");
                     s.CopyTo(stream);
-                    _logger.LogInformation("After copy - MemoryStream Length: {Length}", stream.Length);
+                    Console.WriteLine($"After copy - MemoryStream Length: {stream.Length}");
                 });
 
-            _logger.LogInformation("Calling MinIO GetObjectAsync...");
+            Console.WriteLine("Calling MinIO GetObjectAsync...");
             await _minioClient.GetObjectAsync(getObjectArgs);
             
-            _logger.LogInformation("MinIO GetObjectAsync completed - MemoryStream final length: {Length}", stream.Length);
+            Console.WriteLine($"MinIO GetObjectAsync completed - MemoryStream final length: {stream.Length}");
             stream.Position = 0;
             
             return stream;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error downloading file {FileName}", fileName);
+            Console.WriteLine($"Error downloading file {fileName}: {ex}");
             throw;
         }
     }
@@ -152,12 +181,12 @@ public class MinIOFileStorageService : IFileStorageService
 
             await _minioClient.RemoveObjectAsync(removeObjectArgs);
             
-            _logger.LogInformation("File {FileName} deleted successfully", fileName);
+            Console.WriteLine($"File {fileName} deleted successfully");
             return true;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error deleting file {FileName}", fileName);
+            Console.WriteLine($"Error deleting file {fileName}: {ex}");
             return false;
         }
     }
@@ -175,7 +204,7 @@ public class MinIOFileStorageService : IFileStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error generating presigned URL for file {FileName}", fileName);
+            Console.WriteLine($"Error generating presigned URL for file {fileName}: {ex}");
             throw;
         }
     }
@@ -184,15 +213,41 @@ public class MinIOFileStorageService : IFileStorageService
     {
         try
         {
+            _logger.LogInformation("====== CHECKING FILE EXISTS: {FileName} ======", fileName);
+            _logger.LogInformation("Bucket: {BucketName}, Object: {ObjectName}", _config.BucketName, fileName);
+            
+            // List bucket contents to debug
+            _logger.LogInformation("Listing bucket contents for debugging:");
+            try
+            {
+                var listObjectsArgs = new ListObjectsArgs()
+                    .WithBucket(_config.BucketName)
+                    .WithPrefix("uploads/")
+                    .WithRecursive(true);
+                
+                var objects = _minioClient.ListObjectsAsync(listObjectsArgs);
+                await objects.ForEachAsync(obj =>
+                {
+                    _logger.LogInformation("Found object: {ObjectKey} (Size: {Size})", obj.Key, obj.Size);
+                });
+            }
+            catch (Exception listEx)
+            {
+                _logger.LogError("Error listing objects: {Error}", listEx.Message);
+            }
+            
             var statObjectArgs = new StatObjectArgs()
                 .WithBucket(_config.BucketName)
                 .WithObject(fileName);
 
             await _minioClient.StatObjectAsync(statObjectArgs);
+            _logger.LogInformation("File exists: {FileName}", fileName);
             return true;
         }
-        catch
+        catch (Exception ex)
         {
+            _logger.LogWarning("File does not exist or error checking: {FileName}, Error: {Error}", fileName, ex.Message);
+            _logger.LogError("Full exception: {Exception}", ex);
             return false;
         }
     }
@@ -230,7 +285,7 @@ public class MinIOFileStorageService : IFileStorageService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "ERROR: Failed to connect to MinIO or check bucket existence");
+            Console.WriteLine($"ERROR: Failed to connect to MinIO or check bucket existence: {ex}");
             throw;
         }
     }

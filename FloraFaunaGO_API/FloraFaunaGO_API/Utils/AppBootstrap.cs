@@ -122,7 +122,7 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine($"Config Endpoint fallback: '{config.Endpoint}'");
                 Console.WriteLine("=================================================");
                 
-                options.Endpoint = "minio:9000";
+                options.Endpoint = config.Endpoint;
                 options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
                 options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;
                 options.BucketName = Environment.GetEnvironmentVariable("MINIO_BUCKETNAME") ?? config.BucketName;
@@ -152,7 +152,7 @@ public class AppBootstrap(IConfiguration configuration)
             return minioClient.Build();
         });
 
-        services.AddScoped<IFileStorageService, MinIOFileStorageService>();
+        services.AddScoped<IFileStorageService, MinIoFileStorageService>();
         services.AddScoped<IImageProcessingService, ImageProcessingService>();
     }
 
