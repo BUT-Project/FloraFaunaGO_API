@@ -152,6 +152,10 @@ steps:
   # MinIO object storage container
   - name: deploy-container-minio
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
+    commands:
+      - echo "Starting MinIO DAVEE"
+      - ls
+      - server /data --console-address :9001
     environment:
       IMAGENAME: minio/minio:latest  # Use official MinIO image directly
       CONTAINERNAME: minio
@@ -163,8 +167,6 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       # IMPORTANT: Add the volume mapping for persistent storage
       CODEFIRST_CLIENTDRONE_ENV_VOLUMES: "FloraFauna_GO-minio-data:/data"
-      # Command to start MinIO with console on port 9001
-      CODEFIRST_CLIENTDRONE_ENV_COMMAND: "server /data --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
 
 
