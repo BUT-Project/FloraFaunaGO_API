@@ -168,7 +168,6 @@ steps:
       CONTAINERNAME: minio
       COMMAND: create
       OVERWRITE: true  # Set to true temporarily to apply the volume configuration
-      PRIVATE: false   # So you can access the console for debugging
       # MinIO credentials
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
