@@ -167,6 +167,7 @@ steps:
       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
       CONTAINERNAME: minio
       COMMAND: create
+      PRIVATE: true
       OVERWRITE: true  # Set to true temporarily to apply the volume configuration
       # MinIO credentials
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
@@ -203,6 +204,7 @@ steps:
       - echo "Attente de 2 minutes avant de tester la connexion à MinIO..."
       - sleep 120
       - |
+        set -x
         # On reconstruit le nom du conteneur MinIO comme le fait le clientdrone
         MINIO_HOSTNAME=$(echo ${DRONE_REPO_OWNER} | tr -d '.')-minio
 
