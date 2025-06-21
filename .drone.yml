@@ -174,6 +174,20 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [docker-build-and-push-minio]
 
+  - name: debug-dns
+    image: busybox
+    depends_on:
+      - deploy-container-minio
+    commands:
+      - nslookup FloraFauna_GO-minio
+
+  - name: debug-dns
+    image: busybox
+    depends_on:
+      - deploy-container-minio
+    commands:
+      - nslookup minio     
+
   - name: health-check-remote
     image: minio/mc:latest
     depends_on:
