@@ -190,7 +190,7 @@ steps:
           echo "---------------------------------------------"
           sleep 10
         done
-    depends_on: [ docker-build-and-push-minio ]
+    depends_on: [ deploy-container-minio ]
   
   # database container bdd
   - name: deploy-container-bdd
