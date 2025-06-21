@@ -13,7 +13,7 @@ steps:
       - cd FloraFaunaGO_API/
       - dotnet restore FloraFaunaGO_API.sln
       - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
-      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o $CI_PROJECT_DIR/build/release
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o CI_PROJECT_DIR/build/release
 
   - name: tests
     image: mcr.microsoft.com/dotnet/sdk:8.0
@@ -61,7 +61,7 @@ steps:
       - dotnet tool install --global Swashbuckle.AspNetCore.Cli --version 7.2.0
       - cd ../
       - dotnet build FloraFaunaGO_API.sln -c Release --no-restore
-      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o $CI_PROJECT_DIR/build/release
+      - dotnet publish FloraFaunaGO_API.sln -c Release --no-restore -o CI_PROJECT_DIR/build/release
       - export PATH="$PATH:/root/.dotnet/tools"
       - swagger tofile --output /docs/swagger.json FloraFaunaGO_API/bin/Release/net8.0/FloraFaunaGO_API.dll v1
     depends_on: [build,tests]
@@ -168,8 +168,7 @@ steps:
       CONTAINERNAME: minio
       COMMAND: create
       PRIVATE: true
-      OVERWRITE: true  # Set to true temporarily to apply the volume configuration
-      # MinIO credentials
+      OVERWRITE: true 
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
