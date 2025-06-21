@@ -177,7 +177,7 @@ steps:
   - name: health-check-remote
     image: minio/mc:latest
     depends_on:
-      - deploy-minio
+      - deploy-container-minio
     commands:
       - until mc alias set remote http://minio:9000 minioadmin minioadmin123; do
           echo "waiting for remote MinIO…";
