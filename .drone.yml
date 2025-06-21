@@ -174,13 +174,6 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
     depends_on: [docker-build-and-push-minio]
 
-  - name: tail-minio-logs
-    image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
-    environment:
-      CONTAINERNAME: minio
-      COMMAND: logs
-
-  
   # database container bdd
   - name: deploy-container-bdd
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
