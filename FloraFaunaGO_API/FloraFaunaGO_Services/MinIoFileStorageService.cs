@@ -47,9 +47,6 @@ public class MinIoFileStorageService : IFileStorageService
         }
         
         _logger.LogInformation("MinIO Service constructor completed successfully");
-        
-        // Temporary debug - this should appear in logs - FORCE RECOMPILE
-        _logger.LogCritical("TEMPORARY DEBUG: MinIoFileStorageService constructor was called with new code! REBUILD TRIGGERED");
     }
     
 
