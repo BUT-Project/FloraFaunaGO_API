@@ -199,6 +199,17 @@ steps:
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
       COMMAND: create
       OVERWRITE: true
+    commands:
+      - echo "Attente de 2 minutes avant de tester la connexion à MinIO..."
+      - sleep 120
+      - |
+        RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" http://FloraFauna_GO-minio:9000/minio/health/live)
+        if [ "$RESPONSE" -eq 200 ]; then
+          echo "Connexion à MinIO réussie."
+        else
+          echo "Échec de la connexion à MinIO. Code de réponse HTTP: $RESPONSE"
+          exit 1
+        fi      
     depends_on: [deploy-container-mysql, deploy-container-minio, docker-build-and-push, deploy-container-stub]
 
   - name: deploy-container-phpmyadmin
