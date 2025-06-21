@@ -103,18 +103,6 @@ steps:
         from_secret: SECRET_REGISTRY_USERNAME
       password:
         from_secret: SECRET_REGISTRY_PASSWORD
-
-  - name: docker-build-and-push-minio
-    image: plugins/docker
-    settings:
-      dockerfile: minio/Dockerfile
-      context: minio/
-      registry: hub.codefirst.iut.uca.fr
-      repo: hub.codefirst.iut.uca.fr/alexis.laurent/minio
-      username:
-        from_secret: SECRET_REGISTRY_USERNAME
-      password:
-        from_secret: SECRET_REGISTRY_PASSWORD
   
   # database container stub
   - name: deploy-container-stub
@@ -165,14 +153,21 @@ steps:
   - name: deploy-container-minio
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
-      IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
+      IMAGENAME: minio/minio:latest  # Use official MinIO image directly
       CONTAINERNAME: minio
       COMMAND: create
-      OVERWRITE: true
+      OVERWRITE: true  # Set to true temporarily to apply the volume configuration
+      PRIVATE: false   # So you can access the console for debugging
+      # MinIO credentials
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_PASSWORD: minioadmin123
+      # IMPORTANT: Add the volume mapping for persistent storage
+      CODEFIRST_CLIENTDRONE_ENV_VOLUMES: "FloraFauna_GO-minio-data:/data"
+      # Command to start MinIO with console on port 9001
+      CODEFIRST_CLIENTDRONE_ENV_COMMAND: "server /data --console-address :9001"
       ADMINS: davidd_almeida,alexislaurent,thomasmuzard,patrickbrugiere,yoanbrugiere,matthieurestituito
-    depends_on: [docker-build-and-push-minio]
+    depends_on: [docker-build-and-push-minio] 
+
 
   # database container bdd
   - name: deploy-container-bdd
