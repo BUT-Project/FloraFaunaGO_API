@@ -166,7 +166,7 @@ steps:
     image: hub.codefirst.iut.uca.fr/thomas.bellembois/codefirst-dockerproxy-clientdrone:latest
     environment:
       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/minio:latest
-      CONTAINERNAME: FloraFauna_GO-minio
+      CONTAINERNAME: minio
       COMMAND: create
       OVERWRITE: true
       CODEFIRST_CLIENTDRONE_ENV_MINIO_ROOT_USER: minioadmin
