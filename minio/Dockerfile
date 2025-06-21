@@ -6,6 +6,7 @@ RUN echo '#!/bin/sh' > /custom-entrypoint.sh && \
     echo 'echo "Data directory: /app"' >> /custom-entrypoint.sh && \
     echo 'echo "Checking /app directory..."' >> /custom-entrypoint.sh && \
     echo 'ls -la /app || echo "/app directory not found, creating..."' >> /custom-entrypoint.sh && \
+    echo 'ls -la' >> /custom-entrypoint.sh && \
     echo 'mkdir -p /app' >> /custom-entrypoint.sh && \
     echo 'echo "Directory permissions:"' >> /custom-entrypoint.sh && \
     echo 'ls -la /app' >> /custom-entrypoint.sh && \
