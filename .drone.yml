@@ -203,7 +203,6 @@ steps:
       - echo "Attente de 60 secondes avant le health check..."
       - sleep 60
       - |
-        set -x
         MINIO_HOSTNAME=$$(echo "$${DRONE_REPO_OWNER}" | tr -d '._')-minio
         echo "Tentative de connexion à MinIO sur l'hôte : $${MINIO_HOSTNAME}"
         RESPONSE=$$(curl --connect-timeout 10 -s -o /dev/null -w "%{http_code}" "http://$${MINIO_HOSTNAME}:9000/minio/health/ready")
