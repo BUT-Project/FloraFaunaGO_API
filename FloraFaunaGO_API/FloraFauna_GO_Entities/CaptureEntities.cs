@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace FloraFauna_GO_Entities;
 
@@ -19,7 +11,7 @@ public class CaptureEntities : BaseEntity
     public ICollection<CaptureDetailsEntities> CaptureDetails = new List<CaptureDetailsEntities>();
 
     [Required]
-    public string EspeceId { get; set;  }
+    public string EspeceId { get; set; }
 
     public EspeceEntities Espece { get; set; }
 

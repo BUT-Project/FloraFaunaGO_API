@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FloraFauna_GO_Shared
+﻿namespace FloraFauna_GO_Shared
 {
     public interface IUnitOfWork<TEspeceInput, TEspeceOutput, TCaptureInput, TCaptureOutput, TCaptureDetailInput, TCaptureDetailOutput,
                                  TUserInput, TUserOutput, TSuccessInput, TSuccessOutput, TSuccessStateInput, TSuccessStateOutput,
@@ -34,6 +28,7 @@ namespace FloraFauna_GO_Shared
         ISuccessStateRepository<TSuccessStateInput, TSuccessStateOutput> SuccessStateRepository { get; }
         ILocalisationRepository<TLocalisationInput, TLocalisationOutput> LocalisationRepository { get; }
 
+        Task<bool> AddSuccess(TSuccessInput success);
         Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);
@@ -48,7 +43,7 @@ namespace FloraFauna_GO_Shared
         Task RejectChangesAsync();
     }
 
-    public interface IUnitOfWork<TEspeceInput, TCaptureInput, TCaptureDetailInput, TUserInput, TSuccessInput, 
+    public interface IUnitOfWork<TEspeceInput, TCaptureInput, TCaptureDetailInput, TUserInput, TSuccessInput,
                                  TSuccessStateInput, TLocalisationInput> : IDisposable
         where TEspeceInput : class
         where TCaptureInput : class
@@ -66,6 +61,7 @@ namespace FloraFauna_GO_Shared
         ISuccessStateRepository<TSuccessStateInput> SuccessStateRepository { get; }
         ILocalisationRepository<TLocalisationInput> LocalisationRepository { get; }
 
+        Task<bool> AddSuccess(TSuccessInput success);
         Task<bool> AddSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> DeleteSuccesStateAsync(TSuccessStateInput successState, TUserInput user, TSuccessInput success);
         Task<bool> AddCaptureAsync(TCaptureInput capture, TUserInput user);

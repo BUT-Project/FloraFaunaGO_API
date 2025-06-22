@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FloraFauna_GO_Shared.Criteria;
+﻿using FloraFauna_GO_Shared.Criteria;
 
 namespace FloraFauna_GO_Shared
 {
@@ -20,7 +15,7 @@ namespace FloraFauna_GO_Shared
         Task<Pagination<Toutput>> GetUserMail(UserOrderingCriteria criteria = UserOrderingCriteria.Mail,
             int index = 0, int count = 5);
 
-        Task<Pagination<Toutput>> GetUserByMail(string mail,UserOrderingCriteria criteria = UserOrderingCriteria.Mail,
+        Task<Pagination<Toutput>> GetUserByMail(string mail, UserOrderingCriteria criteria = UserOrderingCriteria.Mail,
             int index = 0, int count = 5);
 
         Task<Pagination<Toutput>> GetUserBySuccessState(string id, UserOrderingCriteria criteria = UserOrderingCriteria.None,

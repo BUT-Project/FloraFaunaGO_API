@@ -3,15 +3,10 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto>
+public class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto>
 {
     private ICaptureDetailRepository<CaptureDetailsEntities> Repository { get; set; }
     public CaptureDetailService(ICaptureDetailRepository<CaptureDetailsEntities> repository)
@@ -27,7 +22,7 @@ internal class CaptureDetailService : ICaptureDetailRepository<CaptureDetailNorm
         => (await Repository.GetById(id))?.ToResponseDto();
 
     public async Task<Pagination<FullCaptureDetailDto>> GetCaptureDetailByCapture(string id, CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCapture, int index = 0, int count = 15)
-        => (await Repository.GetCaptureDetailByCapture(id,criteria, index, count)).ToPagingResponseDtos();
+        => (await Repository.GetCaptureDetailByCapture(id, criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<Pagination<FullCaptureDetailDto>> GetCaptureDetailByDate(CaptureDetailOrderingCriteria criteria = CaptureDetailOrderingCriteria.ByCaptureDate, int index = 0, int count = 15)
         => (await Repository.GetCaptureDetailByDate(criteria, index, count)).ToPagingResponseDtos();

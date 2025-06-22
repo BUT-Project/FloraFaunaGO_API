@@ -1,10 +1,5 @@
-using FloraFauna_GO_Entities;
-using FloraFauna_GO_Entities2Dto;
-using FloraFauna_Go_Repository;
-using FloraFauna_GO_Shared;
+﻿using FloraFauna_GO_Entities;
 using FloraFaunaGO_API.Utils;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +15,15 @@ init.ConfigureServices(builder.Services);
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<FloraFaunaGoDB>();
+    dbContext.Database.EnsureCreated();
+    Console.WriteLine("============ Database created with Identity tables ============");
+}
+
 init.Configure(app, app.Environment);
 
-var context = app.Services.GetService<FloraFaunaGoDB>();
-
-context!.Database.EnsureCreated();
 Console.WriteLine("============ Database created ============");
 app.Run();
 

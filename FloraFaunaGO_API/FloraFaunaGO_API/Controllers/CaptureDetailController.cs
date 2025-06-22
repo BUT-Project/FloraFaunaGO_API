@@ -3,17 +3,19 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FloraFaunaGO_API.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("FloraFaunaGo_API/capturedetail/")]
 public class CaptureDetailController : ControllerBase
 {
     private readonly ILogger<CaptureDetailController> _logger;
     public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository { get; private set; }
-    public IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
+    public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
     public CaptureDetailController(ILogger<CaptureDetailController> logger, FloraFaunaService service)
     {
         _logger = logger;
@@ -21,10 +23,10 @@ public class CaptureDetailController : ControllerBase
         CaptureDetailRepository = service.CaptureDetailRepository;
     }
 
-    [HttpGet ("{id}")]
+    [HttpGet("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetById(string id)
+    public async Task<ActionResult<FullCaptureDetailDto>> GetById(string id)
     {
         var result = await CaptureDetailRepository.GetById(id);
         if (result == null) return NotFound();
@@ -33,7 +35,7 @@ public class CaptureDetailController : ControllerBase
         return Ok(result);
     }
 
-    private async Task<IActionResult> GetCaptureDetail(Func<Task<Pagination<FullCaptureDetailDto>>> func)
+    private async Task<ActionResult<Pagination<FullCaptureDetailDto>>> GetCaptureDetail(Func<Task<Pagination<FullCaptureDetailDto>>> func)
     {
         var result = await func();
         foreach (var item in result.Items)
@@ -46,7 +48,7 @@ public class CaptureDetailController : ControllerBase
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> GetAllCaptureDetail([FromQuery] CaptureDetailOrderingCriteria criterium = CaptureDetailOrderingCriteria.None,
+    public async Task<ActionResult<Pagination<FullCaptureDetailDto>>> GetAllCaptureDetail([FromQuery] CaptureDetailOrderingCriteria criterium = CaptureDetailOrderingCriteria.None,
                                                   [FromQuery] int index = 0,
                                                   [FromQuery] int count = 10)
     {
@@ -56,7 +58,7 @@ public class CaptureDetailController : ControllerBase
     [HttpPut("{id}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutCaptureDetail([FromQuery] string id,[FromBody] CaptureDetailNormalDto dto)
+    public async Task<ActionResult<FullCaptureDetailDto>> PutCaptureDetail([FromQuery] string id, [FromBody] CaptureDetailNormalDto dto)
     {
         var result = await CaptureDetailRepository.Update(id, dto);
         if (((await UnitOfWork.SaveChangesAsync())?.Count() ?? 0) == 0) return BadRequest();

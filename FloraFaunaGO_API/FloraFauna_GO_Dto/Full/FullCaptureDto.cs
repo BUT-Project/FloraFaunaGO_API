@@ -1,16 +1,11 @@
-﻿using FloraFauna_GO_Dto.Normal;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
-using System.Threading.Tasks;
+﻿using FloraFauna_GO_Dto.Edit;
+using FloraFauna_GO_Dto.Normal;
 
 namespace FloraFauna_GO_Dto.Full
 {
     public class FullCaptureDto
     {
-        public CaptureNormalDto Capture { get; set; }
+        public ResponseCaptureDto Capture { get; set; }
 
         public List<FullCaptureDetailDto> CaptureDetails { get; set; } = new List<FullCaptureDetailDto>();
 

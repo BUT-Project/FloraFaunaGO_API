@@ -1,32 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities;
 
-public class UtilisateurEntities : BaseEntity
+public class UtilisateurEntities : IdentityUser
 {
-    [Required]
-    [MaxLength(50)]
-    public string Pseudo { get; set; }
+    public byte[]? Image { get; set; }
 
-    [EmailAddress]
-    [MaxLength (70)]
-    public string Mail { get; set; }
+    public string? RefreshToken { get; set; }
+    public DateTime? RefreshTokenExpiryTime { get; set; }
 
     [Required]
-    [MinLength(8)]
-    public string Hash_mdp { get; set; }
+    public DateTime DateInscription { get; set; } = DateTime.Now;
 
-    [Required]
-    public DateTime DateInscription { get; set; }
-
-    public ICollection<CaptureEntities>? Captures { get; set; } =  new List<CaptureEntities>();
+    public ICollection<CaptureEntities>? Captures { get; set; } = new List<CaptureEntities>();
 
     public ICollection<SuccesStateEntities>? SuccesState { get; set; } = new List<SuccesStateEntities>();
 }

@@ -3,15 +3,10 @@ using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-internal class SuccessStateService : ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto>
+public class SuccessStateService : ISuccessStateRepository<SuccessStateNormalDto, FullSuccessStateDto>
 {
     private ISuccessStateRepository<SuccesStateEntities> Repository { get; set; }
     public SuccessStateService(ISuccessStateRepository<SuccesStateEntities> repository)
@@ -28,13 +23,13 @@ internal class SuccessStateService : ISuccessStateRepository<SuccessStateNormalD
         var result = await Repository.GetById(id);
         return result?.ToResponseDto();
     }
-        //=> (await Repository.GetById(id))?.ToResponseDto();
+    //=> (await Repository.GetById(id))?.ToResponseDto();
 
     public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateBySuccess(SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.BySuccess, int index = 0, int count = 10)
         => (await Repository.GetSuccessStateBySuccess(criteria, index, count)).ToPagingResponseDtos();
 
-    public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateByUser(string id,SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
-        => (await Repository.GetSuccessStateByUser(id,criteria, index, count)).ToPagingResponseDtos();
+    public async Task<Pagination<FullSuccessStateDto>> GetSuccessStateByUser(string id, SuccessStateOrderingCreteria criteria = SuccessStateOrderingCreteria.ByUser, int index = 0, int count = 10)
+        => (await Repository.GetSuccessStateByUser(id, criteria, index, count)).ToPagingResponseDtos();
 
     public async Task<FullSuccessStateDto?> Insert(SuccessStateNormalDto item)
         => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();

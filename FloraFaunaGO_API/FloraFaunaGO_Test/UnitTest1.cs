@@ -13,9 +13,9 @@ public class UnitTest1
     public void ToEntities_Should_Map_FullEspeceDto_To_EspeceEntities()
     {
         // Arrange
-        EspeceNormalDto especeDto = new EspeceNormalDto()
+        FullEspeceDto especeDto = new FullEspeceDto()
         {
-            Nom = "Lion", Nom_Scientifique = "Panthera leo"
+            Nom = "Lion"
         };
 
         // Act
@@ -41,7 +41,7 @@ public class UnitTest1
 
         // Assert
         Assert.IsNotNull(dtos);
-        Assert.IsInstanceOfType<EspeceNormalDto>(dtos);
+        Assert.IsInstanceOfType<FullEspeceDto>(dtos);
         // Vérifiez les propriétés spécifiques, si besoin
     }
 
@@ -50,14 +50,20 @@ public class UnitTest1
     {
         var captureDto = new FullCaptureDto
         {
-            Capture = new CaptureNormalDto { 
+            Capture = new FloraFauna_GO_Dto.Edit.ResponseCaptureDto
+            {
                 photo = new byte[] { 1, 2, 3 }
             },
-            
+
         };
 
         // Act
-        var captureEntity = captureDto.Capture.ToEntities();
+        var capture = new CaptureNormalDto
+        {
+            Id = captureDto.Capture.Id,
+            photo = captureDto.Capture.photo,
+        };
+        var captureEntity = capture.ToEntities();
 
         // Assert
         Assert.IsNotNull(captureEntity);
@@ -85,19 +91,19 @@ public class UnitTest1
                 }
             },
         },
-                    Photo = new byte[] { },
-                    Espece = new EspeceEntities
-                    {
-                        Id = "2",
-                        Description = "2",
-                        Image3D = new byte[] { },
-                        Famille = "Félin",
-                        Image = new byte[] { },
-                        Nom = "Nom",
-                        Nom_scientifique = "nom science",
-                        Localisations = new List<EspeceLocalisationEntities>()
-                    }
-                };
+            Photo = new byte[] { },
+            Espece = new EspeceEntities
+            {
+                Id = "2",
+                Description = "2",
+                Image3D = new byte[] { },
+                Famille = "Félin",
+                Image = new byte[] { },
+                Nom = "Nom",
+                Nom_scientifique = "nom science",
+                Localisations = new List<EspeceLocalisationEntities>()
+            }
+        };
 
         // Act
         var captureDto = captureEntity.ToDto();

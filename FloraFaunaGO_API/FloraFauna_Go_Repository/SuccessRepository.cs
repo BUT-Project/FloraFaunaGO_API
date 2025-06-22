@@ -2,11 +2,6 @@
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Criteria;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FloraFauna_Go_Repository
 {
@@ -23,9 +18,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<SuccesEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -39,9 +34,9 @@ namespace FloraFauna_Go_Repository
             var items = await query.Skip(index * count).Take(count).ToListAsync();
             return new Pagination<SuccesEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }
@@ -56,9 +51,9 @@ namespace FloraFauna_Go_Repository
 
             return new Pagination<SuccesEntities>()
             {
-                TotalCount = totalCount,
-                PageIndex = index,
-                CountPerPage = count,
+                Total = totalCount,
+                Index = index,
+                Count = count,
                 Items = items
             };
         }

@@ -4,18 +4,22 @@ using FloraFauna_GO_Entities;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace FloraFauna_GO_Entities2Dto;
 
-public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto,CaptureDetailNormalDto,FullCaptureDetailDto,UtilisateurNormalDto, FullUtilisateurDto,SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto>
+public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto>
 {
-    
+
     private IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> DbUnitOfWork { get; set; }
 
-    public FloraFaunaService(IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities,UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> dbUnitOfWork)
+    public FloraFaunaService(IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities, SuccesEntities, SuccesStateEntities, LocalisationEntities> dbUnitOfWork)
     {
         DbUnitOfWork = dbUnitOfWork;
+        if (DbUnitOfWork == null)
+        {
+            Console.WriteLine("it's null");
+        }
+
         Mappers.Reset();
     }
 
@@ -24,7 +28,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
     public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
-    public IEspeceRepository<EspeceNormalDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
+    public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
 
     public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository => new CaptureDetailService(DbUnitOfWork.CaptureDetailRepository);
 
@@ -36,28 +40,28 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<IEnumerable<object?>?> SaveChangesAsync()
     {
-            var result =await DbUnitOfWork.SaveChangesAsync();
-            if (result == null) return null;
+        var result = await DbUnitOfWork.SaveChangesAsync();
+        if (result == null) return null;
 
-            static object? ToResponseDto(Object? obj)
-            {
-                if (obj is CaptureEntities) return (obj as CaptureEntities)?.ToDto();
-                if (obj is UtilisateurEntities) return (obj as UtilisateurEntities)?.ToDto();
-                if (obj is EspeceEntities) return (obj as EspeceEntities)?.ToDto();
-                if (obj is SuccesEntities) return (obj as SuccesEntities)?.ToDto();
-                if (obj is CaptureDetailsEntities) return (obj as CaptureDetailsEntities)?.ToDto();
-                if (obj is LocalisationEntities) return (obj as  LocalisationEntities)?.ToDto();
-                if (obj is SuccesStateEntities) return (obj as SuccesStateEntities)?.ToDto();
-                return null;
-            }
-            return result.Select(ToResponseDto);
+        static object? ToResponseDto(Object? obj)
+        {
+            if (obj is CaptureEntities) return (obj as CaptureEntities)?.ToDto();
+            if (obj is UtilisateurEntities) return (obj as UtilisateurEntities)?.ToDto();
+            if (obj is EspeceEntities) return (obj as EspeceEntities)?.ToDto();
+            if (obj is SuccesEntities) return (obj as SuccesEntities)?.ToDto();
+            if (obj is CaptureDetailsEntities) return (obj as CaptureDetailsEntities)?.ToDto();
+            if (obj is LocalisationEntities) return (obj as LocalisationEntities)?.ToDto();
+            if (obj is SuccesStateEntities) return (obj as SuccesStateEntities)?.ToDto();
+            return null;
+        }
+        return result.Select(ToResponseDto);
     }
 
     public async Task RejectChangesAsync()
     {
         await DbUnitOfWork.RejectChangesAsync();
     }
-    
+
     private bool disposed = false;
     protected virtual void Dispose(bool disposing)
     {
@@ -70,7 +74,7 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public void Dispose()
     {
-        Dispose(true);
+        Dispose(false);
         GC.SuppressFinalize(this);
     }
 
@@ -88,8 +92,8 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
 
     public async Task<bool> AddCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user)
     {
-       bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities(user.Id));
-       return result;
+        bool result = await DbUnitOfWork.AddCaptureAsync(capture.ToEntities(), user.ToEntities(user.Id));
+        return result;
     }
 
     public async Task<bool> DeleteCaptureAsync(CaptureNormalDto capture, UtilisateurNormalDto user, IEnumerable<CaptureDetailNormalDto> captureDetails)
@@ -118,19 +122,25 @@ public class FloraFaunaService : IUnitOfWork<EspeceNormalDto, FullEspeceDto, Cap
             var captureDetails = await CaptureDetailRepository.GetCaptureDetailByCapture(capture.Id);
             var localisations = captureDetails.Items.Select(cd => cd.localisationNormalDtos);
         }
-        bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(user.Id), captureDto, successStates.Select(x => x.ToEntities(x.Id))); 
+        bool result = await DbUnitOfWork.DeleteUser(user.ToEntities(user.Id), captureDto, successStates.Select(x => x.ToEntities(x.Id)));
         return result;
     }
 
-    public async Task<bool> AddEspeceAsync(EspeceNormalDto espece, IEnumerable<LocalisationNormalDto> localisations)
+    public async Task<bool> AddEspeceAsync(FullEspeceDto espece, IEnumerable<LocalisationNormalDto> localisations)
     {
         bool result = await DbUnitOfWork.AddEspeceAsync(espece.ToEntities(), localisations.Select(l => l.ToEntities()));
         return result;
     }
 
-    public async Task<bool> DeleteEspeceAsync(EspeceNormalDto espece, IEnumerable<LocalisationNormalDto> localisations)
+    public async Task<bool> DeleteEspeceAsync(FullEspeceDto espece, IEnumerable<LocalisationNormalDto> localisations)
     {
         bool result = await DbUnitOfWork.DeleteEspeceAsync(espece.ToEntities(espece.Id), localisations.Select(l => l.ToEntities(l.Id)));
+        return result;
+    }
+
+    public async Task<bool> AddSuccess(SuccessNormalDto success)
+    {
+        bool result = await DbUnitOfWork.AddSuccess(success.ToEntities());
         return result;
     }
 }

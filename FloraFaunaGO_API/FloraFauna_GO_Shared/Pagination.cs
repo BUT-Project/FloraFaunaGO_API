@@ -2,11 +2,11 @@
 
 public class Pagination<T>
 {
-    public long TotalCount { get; set; }
+    public long Total { get; set; }
 
-    public int PageIndex { get; set; }
+    public int Index { get; set; }
 
-    public int CountPerPage { get; set; }
+    public int Count { get; set; }
 
     public IEnumerable<T> Items { get; set; } = null!;
 }
