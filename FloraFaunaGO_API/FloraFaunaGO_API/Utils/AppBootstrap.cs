@@ -1,10 +1,12 @@
-﻿using FloraFauna_GO_Entities;
+using FloraFauna_GO_Entities;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_Go_Repository;
 using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Configuration;
 using FloraFauna_GO_Shared.Interfaces;
+using FloraFauna_GO_Shared.Enums;
 using FloraFaunaGO_Services;
+using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Minio;
 using System.Reflection;
 using System.Text;
+using Amazon.Runtime;
 
 namespace FloraFaunaGO_API.Utils;
 
@@ -29,7 +32,7 @@ public class AppBootstrap(IConfiguration configuration)
         AddSwagger(services);
         AddFloraFaunaGoContextServices(services);
         AddModelService(services);
-        AddMinIOServices(services);
+        AddFileStorageServices(services);
         AddIdentityServices(services, configuration);
         services.AddHealthChecks();
     }
@@ -106,22 +109,15 @@ public class AppBootstrap(IConfiguration configuration)
                         SuccesEntities, SuccesStateEntities, LocalisationEntities>>()));
     }
 
-    private void AddMinIOServices(IServiceCollection services)
+    private void AddFileStorageServices(IServiceCollection services)
     {
+        services.Configure<FileStorageOptions>(Configuration.GetSection(FileStorageOptions.SectionName));
+        
         services.Configure<MinIOConfiguration>(options =>
         {
             var config = Configuration.GetSection("MinIO").Get<MinIOConfiguration>();
             if (config != null)
             {
-                Console.WriteLine("====== MINIO ENVIRONMENT VARIABLES DEBUG ======");
-                Console.WriteLine($"MINIO_ENDPOINT env var: '{Environment.GetEnvironmentVariable("MINIO_ENDPOINT")}'");
-                Console.WriteLine($"MINIO_ACCESSKEY env var: '{Environment.GetEnvironmentVariable("MINIO_ACCESSKEY")}'");
-                Console.WriteLine($"MINIO_SECRETKEY env var: '{Environment.GetEnvironmentVariable("MINIO_SECRETKEY")}'");
-                Console.WriteLine($"MINIO_BUCKETNAME env var: '{Environment.GetEnvironmentVariable("MINIO_BUCKETNAME")}'");
-                Console.WriteLine($"MINIO_USESSL env var: '{Environment.GetEnvironmentVariable("MINIO_USESSL")}'");
-                Console.WriteLine($"Config Endpoint fallback: '{config.Endpoint}'");
-                Console.WriteLine("=================================================");
-                
                 options.Endpoint = Environment.GetEnvironmentVariable("MINIO_ENDPOINT") ?? config.Endpoint;
                 options.AccessKey = Environment.GetEnvironmentVariable("MINIO_ACCESSKEY") ?? config.AccessKey;
                 options.SecretKey = Environment.GetEnvironmentVariable("MINIO_SECRETKEY") ?? config.SecretKey;
@@ -129,18 +125,14 @@ public class AppBootstrap(IConfiguration configuration)
                 options.UseSSL = bool.Parse(Environment.GetEnvironmentVariable("MINIO_USESSL") ?? config.UseSSL.ToString());
                 options.MaxFileSize = config.MaxFileSize;
                 options.AllowedExtensions = config.AllowedExtensions;
-                
-                Console.WriteLine($"Final MinIO Configuration: Endpoint={options.Endpoint}, AccessKey={options.AccessKey}, BucketName={options.BucketName}");
             }
         });
-
+        
         services.AddSingleton<IMinioClient>(provider =>
         {
             var config = provider.GetRequiredService<IOptions<MinIOConfiguration>>().Value;
             if (config == null)
                 throw new InvalidOperationException("MinIO configuration not found");
-
-            Console.WriteLine($"MinIO Configuration: Endpoint={config.Endpoint}, AccessKey={config.AccessKey}, BucketName={config.BucketName}");
 
             var minioClient = new MinioClient()
                 .WithEndpoint(config.Endpoint)
@@ -151,8 +143,35 @@ public class AppBootstrap(IConfiguration configuration)
 
             return minioClient.Build();
         });
-
-        services.AddScoped<IFileStorageService, MinIoFileStorageService>();
+        
+        services.AddSingleton<IAmazonS3>(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<FileStorageOptions>>().Value;
+            var config = options.CloudflareR2;
+            
+            var accountId = Environment.GetEnvironmentVariable("CLOUDFLARE_ACCOUNT_ID") ?? config.AccountId;
+            var accessKeyId = Environment.GetEnvironmentVariable("CLOUDFLARE_ACCESS_KEY_ID") ?? config.AccessKeyId;
+            var secretAccessKey = Environment.GetEnvironmentVariable("CLOUDFLARE_SECRET_ACCESS_KEY") ?? config.SecretAccessKey;
+            var region = Environment.GetEnvironmentVariable("CLOUDFLARE_REGION") ?? config.Region;
+            
+            var s3Config = new AmazonS3Config
+            {
+                ServiceURL = $"https://{accountId}.r2.cloudflarestorage.com",
+                ForcePathStyle = true,
+                UseHttp = false,
+                AuthenticationRegion = region,
+                DisableHostPrefixInjection = true
+            };
+            
+            var credentials = new BasicAWSCredentials(accessKeyId, secretAccessKey);
+            
+            return new AmazonS3Client(credentials, s3Config);
+        });
+        
+        services.AddScoped<MinIoFileStorageService>();
+        services.AddScoped<CloudflareR2FileStorageService>();
+        services.AddScoped<IFileStorageFactory, FileStorageFactory>();
+        services.AddScoped<IFileStorageService>(provider => provider.GetRequiredService<IFileStorageFactory>().Create(FileStorageProvider.Cloudflare));
         services.AddScoped<IImageProcessingService, ImageProcessingService>();
     }
 

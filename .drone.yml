@@ -193,6 +193,16 @@ steps:
       CODEFIRST_CLIENTDRONE_ENV_MINIO_SECRETKEY: minioadmin123
       CODEFIRST_CLIENTDRONE_ENV_MINIO_BUCKETNAME: florafauna
       CODEFIRST_CLIENTDRONE_ENV_MINIO_USESSL: false
+      # Cloudflare R2 Configuration
+      CODEFIRST_CLIENTDRONE_ENV_CLOUDFLARE_ACCOUNT_ID:
+        from_secret: cloudflare_account_id
+      CODEFIRST_CLIENTDRONE_ENV_CLOUDFLARE_ACCESS_KEY_ID:
+        from_secret: cloudflare_access_key_id
+      CODEFIRST_CLIENTDRONE_ENV_CLOUDFLARE_SECRET_ACCESS_KEY:
+        from_secret: cloudflare_secret_access_key
+      CODEFIRST_CLIENTDRONE_ENV_CLOUDFLARE_BUCKET_NAME:
+        from_secret: cloudflare_bucket_name
+      CODEFIRST_CLIENTDRONE_ENV_CLOUDFLARE_REGION: auto
       IMAGENAME: hub.codefirst.iut.uca.fr/alexis.laurent/api:latest
       CONTAINERNAME: api
       CODEFIRST_CLIENTDRONE_ENV_PORT: 8080
