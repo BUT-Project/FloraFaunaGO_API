@@ -559,4 +559,4 @@ cython_debug/
 
 
 #MACOS
-.DS_Store
+*.DS_Store
