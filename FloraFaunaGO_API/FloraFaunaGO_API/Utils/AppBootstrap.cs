@@ -346,6 +346,7 @@ public class AppBootstrap(IConfiguration configuration)
 
         if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
         {
+            Console.WriteLine($"\n===== ENVIRONMENT: {env.EnvironmentName} =====");
             app.UsePathBase("/containers/FloraFauna_GO-api");
         }
         
