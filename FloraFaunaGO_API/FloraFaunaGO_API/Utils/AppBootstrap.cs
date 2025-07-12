@@ -41,6 +41,8 @@ public class AppBootstrap(IConfiguration configuration)
         {
             options.ForwardedHeaders =
                 ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+            options.KnownProxies.Clear();
+            options.KnownNetworks.Clear();
         });
     }
 

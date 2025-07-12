@@ -55,7 +55,8 @@ public class UtilisateurControlleur : ControllerBase
         {
             if (!string.IsNullOrEmpty(user.Utilisateur.ImageUrl))
             {
-                user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, Request.Scheme);
+                var scheme = (Environment.GetEnvironmentVariable("TYPE") == "BDD") ? "https" : Request.Scheme;
+                user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, scheme);
             }
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
