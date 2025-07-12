@@ -55,8 +55,16 @@ public class UtilisateurControlleur : ControllerBase
         {
             if (!string.IsNullOrEmpty(user.Utilisateur.ImageUrl))
             {
-                var scheme = (Environment.GetEnvironmentVariable("TYPE") == "BDD") ? "https" : Request.Scheme;
-                user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, scheme);
+                if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
+                {
+                    var host = Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? "codefirst.iut.uca.fr";
+                    var basePath = "/containers/FloraFauna_GO-api";
+                    user.Utilisateur.ImageUrl = $"https://{host}{basePath}/api/Files/{user.Utilisateur.ImageUrl}";
+                }
+                else
+                {
+                    user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, Request.Scheme);
+                }
             }
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
