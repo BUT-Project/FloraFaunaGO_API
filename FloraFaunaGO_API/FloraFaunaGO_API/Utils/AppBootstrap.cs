@@ -343,6 +343,12 @@ public class AppBootstrap(IConfiguration configuration)
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
         app.UseForwardedHeaders();
+
+        if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
+        {
+            app.UsePathBase("/containers/FloraFauna_GO-api");
+        }
+        
         app.UseHttpsRedirection();
 
         // Middleware de diagnostic global - pour toutes les requêtes
