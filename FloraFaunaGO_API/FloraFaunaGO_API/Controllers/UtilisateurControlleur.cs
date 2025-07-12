@@ -53,6 +53,10 @@ public class UtilisateurControlleur : ControllerBase
         var user = await UserRepository.GetById(id);
         if (user != null)
         {
+            if (!string.IsNullOrEmpty(user.Utilisateur.ImageUrl))
+            {
+                user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, Request.Scheme);
+            }
             user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
         }
