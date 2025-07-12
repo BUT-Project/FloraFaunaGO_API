@@ -15,6 +15,7 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using Minio;
 using System.Reflection;
+using Microsoft.AspNetCore.HttpOverrides;
 using System.Text;
 using Amazon.Runtime;
 
@@ -35,6 +36,12 @@ public class AppBootstrap(IConfiguration configuration)
         AddFileStorageServices(services);
         AddIdentityServices(services, configuration);
         services.AddHealthChecks();
+
+        services.Configure<ForwardedHeadersOptions>(options =>
+        {
+            options.ForwardedHeaders =
+                ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        });
     }
 
     private void AddFloraFaunaGoContextServices(IServiceCollection services)
@@ -335,6 +342,7 @@ public class AppBootstrap(IConfiguration configuration)
 
     public void Configure(WebApplication app, IWebHostEnvironment env)
     {
+        app.UseForwardedHeaders();
         app.UseHttpsRedirection();
 
         // Middleware de diagnostic global - pour toutes les requêtes
