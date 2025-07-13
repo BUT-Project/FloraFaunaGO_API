@@ -116,6 +116,9 @@ public class AppBootstrap(IConfiguration configuration)
                 .GetRequiredService<
                     IUnitOfWork<EspeceEntities, CaptureEntities, CaptureDetailsEntities, UtilisateurEntities,
                         SuccesEntities, SuccesStateEntities, LocalisationEntities>>()));
+
+        // Register URL transformation service
+        services.AddScoped<IUrlTransformationService, UrlTransformationService>();
     }
 
     private void AddFileStorageServices(IServiceCollection services)

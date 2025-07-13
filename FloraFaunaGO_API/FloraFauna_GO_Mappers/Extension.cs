@@ -3,6 +3,7 @@ using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared;
+using Microsoft.AspNetCore.Http;
 
 namespace FloraFauna_GO_Entities2Dto;
 
@@ -479,6 +480,104 @@ public static class Extension
             Count = entities.Count,
             Total = entities.Total,
             Items = entities.Items.Select(ToDto).ToArray()
+        };
+    }
+
+    // URL-aware Response DTO methods that transform file URLs
+    public static FullUtilisateurDto ToResponseDto(this UtilisateurEntities entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        Func<UtilisateurEntities, FullUtilisateurDto> creator = (entities) => new FullUtilisateurDto()
+        {
+            Utilisateur = new UtilisateurNormalDto()
+            {
+                Pseudo = entities.UserName,
+                ImageUrl = urlService.TransformFileUrl(entities.ImageUrl, request),
+                Mail = entities.Email,
+                Hash_mdp = entities.PasswordHash,
+                DateInscription = entities.DateInscription,
+                Id = entities.Id,
+            },
+        };
+        Action<UtilisateurEntities, FullUtilisateurDto> linker = (entities, dto) =>
+        {
+            dto.SuccessState = entities.SuccesState.Select(s => s.ToDto()).ToArray();
+        };
+        return entities.ToT(null, creator, linker);
+    }
+
+    public static FullEspeceDto ToResponseDto(this EspeceEntities entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        Func<EspeceEntities, FullEspeceDto> creator = (entities) => new FullEspeceDto()
+        {
+            Id = entities.Id,
+            Description = entities.Description ?? "",
+            ImageUrl = urlService.TransformFileUrl(entities.ImageUrl, request),
+            Image3DUrl = urlService.TransformFileUrl(entities.Image3DUrl, request),
+            Nom = entities.Nom,
+            Nom_Scientifique = entities.Nom_scientifique,
+            Climat = entities.Climat,
+            Famille = entities.Famille,
+            Zone = entities.Zone,
+            Regime = entities.Regime,
+            Kingdom = entities.Kingdom,
+            Class = entities.Class,
+        };
+        Action<EspeceEntities, FullEspeceDto> linker = (entities, dto) =>
+        {
+            dto.localisations = entities.Localisations.Select(loc => new LocalisationNormalDto() { Id = loc.LocalisationId }).ToArray();
+        };
+        return entities.ToT(null, creator, linker);
+    }
+
+    public static FullCaptureDto ToResponseDto(this CaptureEntities entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        Func<CaptureEntities, FullCaptureDto> creator = (entities) => new FullCaptureDto()
+        {
+            Capture = new ResponseCaptureDto()
+            {
+                Id = entities.Id,
+                photoUrl = urlService.TransformFileUrl(entities.PhotoUrl, request),
+            },
+        };
+        Action<CaptureEntities, FullCaptureDto> linker = (entities, dto) =>
+        {
+            dto.Capture.IdEspece = entities.EspeceId;
+            dto.idUtilisateur = entities.UtilisateurId;
+        };
+        return entities.ToT(null, creator, linker);
+    }
+
+    // URL-aware pagination methods
+    public static Pagination<FullEspeceDto> ToPagingResponseDtos(this Pagination<EspeceEntities> entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        return new Pagination<FullEspeceDto>
+        {
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
+            Items = entities.Items.Select(e => e.ToResponseDto(urlService, request)).ToArray()
+        };
+    }
+
+    public static Pagination<FullCaptureDto> ToPagingResponseDtos(this Pagination<CaptureEntities> entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        return new Pagination<FullCaptureDto>
+        {
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
+            Items = entities.Items.Select(e => e.ToResponseDto(urlService, request)).ToArray()
+        };
+    }
+
+    public static Pagination<FullUtilisateurDto> ToPagingResponseDtos(this Pagination<UtilisateurEntities> entities, IUrlTransformationService urlService, HttpRequest request)
+    {
+        return new Pagination<FullUtilisateurDto>
+        {
+            Index = entities.Index,
+            Count = entities.Count,
+            Total = entities.Total,
+            Items = entities.Items.Select(e => e.ToResponseDto(urlService, request)).ToArray()
         };
     }
 }

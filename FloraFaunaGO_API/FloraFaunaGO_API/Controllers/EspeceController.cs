@@ -17,16 +17,18 @@ public class EspeceController : ControllerBase
 {
     private readonly ILogger<EspeceController> _logger;
     private readonly IFileStorageService _fileStorageService;
+    private readonly IUrlTransformationService _urlService;
 
     public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository { get; private set; }
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service, IFileStorageService fileStorageService)
+    public EspeceController(ILogger<EspeceController> logger, FloraFaunaService service, IFileStorageService fileStorageService, IUrlTransformationService urlService)
     {
         _logger = logger;
         _fileStorageService = fileStorageService;
         UnitOfWork = service;
         EspeceRepository = UnitOfWork.EspeceRepository;
+        _urlService = urlService;
     }
 
     [HttpGet("{id}")]
@@ -37,7 +39,12 @@ public class EspeceController : ControllerBase
         var espece = await EspeceRepository.GetById(id);
         var localisations = await UnitOfWork.LocalisationRepository.GetLocalisationByEspece(id);
         if (espece != null)
+        {
             espece.localisations = localisations.Items.ToArray();
+            // Transform URLs using centralized service
+            espece.ImageUrl = _urlService.TransformFileUrl(espece.ImageUrl, Request);
+            espece.Image3DUrl = _urlService.TransformFileUrl(espece.Image3DUrl, Request);
+        }
 
         return espece != null ? Ok(espece) : NotFound(id);
     }
@@ -74,8 +81,8 @@ public class EspeceController : ControllerBase
             {
                 Id = item.Id,
                 Nom = item.Nom,
-                ImageUrl = item.ImageUrl,
-                Image3DUrl = item.Image3DUrl,
+                ImageUrl = _urlService.TransformFileUrl(item.ImageUrl, Request),
+                Image3DUrl = _urlService.TransformFileUrl(item.Image3DUrl, Request),
             };
             list.Add(espece);
 

@@ -1,5 +1,4 @@
-﻿using FloraFauna_GO_Dto.Edit;
-using FloraFauna_GO_Dto.Full;
+﻿using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
 using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
@@ -15,20 +14,20 @@ namespace FloraFaunaGO_API.Controllers;
 public class UtilisateurControlleur : ControllerBase
 {
     private readonly ILogger<UtilisateurControlleur> _logger;
-
-    // Permet d'accéder au appsettingJson pour avoir la key du token
     private readonly IConfiguration _configuration;
+    private readonly IUrlTransformationService _urlService;
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository { get; set; }
 
     public IUnitOfWork<FullEspeceDto, FullEspeceDto, CaptureNormalDto, FullCaptureDto, CaptureDetailNormalDto, FullCaptureDetailDto, UtilisateurNormalDto, FullUtilisateurDto, SuccessNormalDto, SuccessNormalDto, SuccessStateNormalDto, FullSuccessStateDto, LocalisationNormalDto, LocalisationNormalDto> UnitOfWork { get; private set; }
 
-    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service, IConfiguration configuration)
+    public UtilisateurControlleur(ILogger<UtilisateurControlleur> logger, FloraFaunaService service, IConfiguration configuration, IUrlTransformationService urlService)
     {
         _logger = logger;
         UnitOfWork = service;
         UserRepository = service.UserRepository;
         _configuration = configuration;
+        _urlService = urlService;
     }
 
     /* [HttpGet("test")]
@@ -53,20 +52,16 @@ public class UtilisateurControlleur : ControllerBase
         var user = await UserRepository.GetById(id);
         if (user != null)
         {
-            if (!string.IsNullOrEmpty(user.Utilisateur.ImageUrl))
-            {
-                if (Environment.GetEnvironmentVariable("TYPE") == "BDD")
-                {
-                    var host = Request.Headers["X-Forwarded-Host"].FirstOrDefault() ?? "codefirst.iut.uca.fr";
-                    var basePath = "/containers/FloraFauna_GO-api";
-                    user.Utilisateur.ImageUrl = $"https://{host}{basePath}/api/Files/{user.Utilisateur.ImageUrl}";
-                }
-                else
-                {
-                    user.Utilisateur.ImageUrl = Url.Action("ServeImage", "Files", new { fileName = user.Utilisateur.ImageUrl }, Request.Scheme);
-                }
-            }
-            user.Capture = (await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id)).Items.Select(c => c.Capture).ToArray();
+            // Transform URLs using the centralized service
+            user.Utilisateur.ImageUrl = _urlService.TransformFileUrl(user.Utilisateur.ImageUrl, Request);
+            
+            // Get captures and success states with URL transformation
+            var captures = await UnitOfWork.CaptureRepository.GetCaptureByUser(user.Utilisateur.Id);
+            user.Capture = captures.Items.Select(c => {
+                c.Capture.photoUrl = _urlService.TransformFileUrl(c.Capture.photoUrl, Request);
+                return c.Capture;
+            }).ToArray();
+            
             user.SuccessState = (await UnitOfWork.SuccessStateRepository.GetSuccessStateByUser(user.Utilisateur.Id)).Items.Select(ss => ss.State).ToArray();
         }
         return user != null ? Ok(user) : NotFound(id);
