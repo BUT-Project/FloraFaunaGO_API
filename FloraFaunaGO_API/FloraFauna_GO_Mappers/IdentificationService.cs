@@ -18,7 +18,7 @@ public class IdentificationService
 
     private const string PLANT_API_KEY = "2b10Pg3bHxg7lUNrD6FHVgxmu";
     private const string INSECT_API_KEY = "If5WLVV1F1DfPvA0d7gyjvf0MV6UH6RZ29dG0Wool6YxRRrgHW";
-    private const string DATA_API_KEY = "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";
+    private const string DATA_API_KEY = "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";
     private static readonly string plantApiEndpoint = $"https://my-api.plantnet.org/v2/identify/all?lang=fr&api-key={PLANT_API_KEY}";
     private static readonly string insectApiEndpoint = $"https://insect.kindwise.com/api/v1/identification?details=common_names,url,description,image";
     private static readonly string animalApiEndpoint = $"http://codefirst.iut.uca.fr/containers/FloraFauna_GO-identification-api/FloraFaunaGo_API/identification/animal";
