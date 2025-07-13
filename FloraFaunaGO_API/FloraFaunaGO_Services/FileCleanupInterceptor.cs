@@ -48,6 +48,10 @@ public class FileCleanupInterceptor : SaveChangesInterceptor
             .Where(e => e.State == EntityState.Deleted)
             .ToList();
 
+        var modifiedEntities = context.ChangeTracker.Entries()
+            .Where(e => e.State == EntityState.Modified)
+            .ToList();
+
         foreach (var entry in deletedEntities)
         {
             try
@@ -57,6 +61,19 @@ public class FileCleanupInterceptor : SaveChangesInterceptor
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Failed to delete files for entity {EntityType}", entry.Entity.GetType().Name);
+                // Continue with other
+            }
+        }
+
+        foreach (var entry in modifiedEntities)
+        {
+            try
+            {
+                await DeleteOrphanedFilesAsync(entry);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to delete orphaned files for entity {EntityType}", entry.Entity.GetType().Name);
                 // Continue with other
             }
         }
@@ -78,6 +95,43 @@ public class FileCleanupInterceptor : SaveChangesInterceptor
             case UtilisateurEntities user:
                 await DeleteFileIfExists(user.ImageUrl);
                 break;
+        }
+    }
+
+    private async Task DeleteOrphanedFilesAsync(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry)
+    {
+        switch (entry.Entity)
+        {
+            case EspeceEntities espece:
+                await CheckAndDeleteModifiedFile(entry, nameof(EspeceEntities.ImageUrl));
+                await CheckAndDeleteModifiedFile(entry, nameof(EspeceEntities.Image3DUrl));
+                break;
+
+            case CaptureEntities capture:
+                await CheckAndDeleteModifiedFile(entry, nameof(CaptureEntities.PhotoUrl));
+                break;
+
+            case UtilisateurEntities user:
+                await CheckAndDeleteModifiedFile(entry, nameof(UtilisateurEntities.ImageUrl));
+                break;
+        }
+    }
+
+    private async Task CheckAndDeleteModifiedFile(Microsoft.EntityFrameworkCore.ChangeTracking.EntityEntry entry, string propertyName)
+    {
+        var property = entry.Property(propertyName);
+        
+        if (property.IsModified)
+        {
+            var originalValue = property.OriginalValue as string;
+            var currentValue = property.CurrentValue as string;
+            
+            if (!string.IsNullOrEmpty(originalValue) && originalValue != currentValue)
+            {
+                await DeleteFileIfExists(originalValue);
+                _logger.LogInformation("Deleted orphaned file: {FileUrl} (replaced with: {NewFileUrl})", 
+                    originalValue, currentValue ?? "null");
+            }
         }
     }
 

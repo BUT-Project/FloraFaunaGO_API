@@ -49,7 +49,7 @@ public class AppBootstrap(IConfiguration configuration)
     private void AddFloraFaunaGoContextServices(IServiceCollection services)
     {
         // Register the file cleanup interceptor
-        // services.AddSingleton<FileCleanupInterceptor>();
+        services.AddSingleton<FileCleanupInterceptor>();
         
         string? connectionString;
 
@@ -68,7 +68,7 @@ public class AppBootstrap(IConfiguration configuration)
                 Console.WriteLine("====================================================");
                 services.AddDbContext<FloraFaunaGoDB>((serviceProvider, options) =>
                         options.UseMySql($"{connectionString}", new MySqlServerVersion(new Version(10, 11, 1)))
-                            // .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
+                            .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
                     , ServiceLifetime.Singleton);
                 break;
             default:
@@ -78,7 +78,7 @@ public class AppBootstrap(IConfiguration configuration)
                 if (!string.IsNullOrWhiteSpace(connectionString))
                     services.AddDbContext<FloraFaunaGoDB>((serviceProvider, options) =>
                         options.UseSqlite(connectionString)
-                            // .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
+                            .AddInterceptors(serviceProvider.GetRequiredService<FileCleanupInterceptor>())
                             , ServiceLifetime.Singleton);
                 else
                     services.AddDbContext<FloraFaunaGoDB>();
