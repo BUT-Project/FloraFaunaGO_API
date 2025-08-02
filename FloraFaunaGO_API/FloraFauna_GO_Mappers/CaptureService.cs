@@ -1,43 +1,92 @@
-﻿using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Full;
 using FloraFauna_GO_Dto.Normal;
-using FloraFauna_GO_Entities;
+using FloraFauna_GO_Entities2Dto;
 using FloraFauna_GO_Shared;
-using FloraFauna_GO_Shared.Criteria;
+using FloraFauna_GO_Shared.Interfaces;
+using FloraFauna_GO_Mappers.Interfaces;
+using Microsoft.AspNetCore.Http;
 
-namespace FloraFauna_GO_Entities2Dto;
+namespace FloraFauna_GO_Mappers;
 
-public class CaptureService : ICaptureRepository<CaptureNormalDto, FullCaptureDto>
+/// <summary>
+/// Facade service that orchestrates the complete capture creation process.
+/// This service acts as the single entry point for capture creation and manages
+/// the coordination between file storage, species identification, and database persistence.
+/// </summary>
+public class CaptureService : ICaptureService
 {
-    private ICaptureRepository<CaptureEntities> Repository { get; set; }
-
-    public CaptureService(ICaptureRepository<CaptureEntities> repository)
+    private readonly IIdentificationService _identificationService;
+    private readonly IFileStorageService _fileStorageService;
+    private readonly IEspeceRepository<FullEspeceDto, FullEspeceDto> especeRepository;
+    private readonly ICaptureRepository<CaptureNormalDto, FullCaptureDto> captureRepository;
+    public CaptureService(
+        IIdentificationService identificationService,
+        IFileStorageService fileStorageService,
+        FloraFaunaService unitOfWork)
     {
-        Repository = repository;
+        _identificationService = identificationService;
+        _fileStorageService = fileStorageService;
+        
+        especeRepository = unitOfWork.EspeceRepository;
+        captureRepository = unitOfWork.CaptureRepository;
     }
 
-    public async Task<bool> Delete(string id) => await Repository.Delete(id);
+    public async Task<FullCaptureDto?> CreateCaptureFromImageAsync(IFormFile image, string userId, EspeceType type)
+    {
+            Console.WriteLine($"Starting capture creation for user {userId}, species type: {type}");
 
-    public async Task<Pagination<FullCaptureDto>> GetAllCapture(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None, int index = 0, int count = 15)
-        => (await Repository.GetAllCapture(criteria, index, count)).ToPagingResponseDtos();
+            // Step 1: Convert IFormFile to byte array for identification
+            byte[] imageBytes;
+            using (var memoryStream = new MemoryStream())
+            {
+                await image.CopyToAsync(memoryStream);
+                imageBytes = memoryStream.ToArray();
+            }
 
-    public async Task<FullCaptureDto?> GetById(string id)
-        => (await Repository.GetById(id))?.ToResponseDto();
+            // Step 2: Upload the capture image and get URL
+            var captureImageUrl = await _fileStorageService.UploadAsync(image, "captures/");
+            Console.WriteLine($"Capture image uploaded: {captureImageUrl}");
 
-    public async Task<Pagination<FullCaptureDto>> GetCaptureByNumero(CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByNumero, int index = 0, int count = 15)
-        => (await Repository.GetCaptureByNumero(criteria, index, count)).ToPagingResponseDtos();
+            // Step 3: Identify the species using our identification service
+            var identifiedSpecies = await _identificationService.IdentifySpeciesAsync(imageBytes, type);
+            if (identifiedSpecies == null)
+            {
+                Console.WriteLine("Species identification failed");
+                return null;
+            }
 
-    public async Task<FullCaptureDto?> Insert(CaptureNormalDto item)
-        => (await Repository.Insert(item.ToEntities()))?.ToResponseDto();
+            // Step 4: Handle new species persistence if needed
+            if (string.IsNullOrEmpty(identifiedSpecies.Id))
+            {
+                Console.WriteLine($"Adding new species to database: {identifiedSpecies.Nom}");
+                var insertedSpecies = await especeRepository.Insert(identifiedSpecies);
+                if (insertedSpecies != null)
+                {
+                    identifiedSpecies = insertedSpecies;
+                }
+            }
 
-    public async Task<FullCaptureDto?> Update(string id, CaptureNormalDto item)
-        => (await Repository.Update(id, item.ToEntities()))?.ToResponseDto();
+            // Step 5: Create the capture entity
+            var newCapture = new CaptureNormalDto
+            {
+                Id = null, // Will be set by database
+                IdEspece = identifiedSpecies.Id!,
+                photoUrl = captureImageUrl,
+                LocalisationNormalDto = null, // Can be added later if needed [TODO: Implement location handling]
+                Shiny = false // Default value
+            };
 
-    public async Task<Pagination<FullCaptureDto>> GetCaptureByUser(string id, CaptureOrderingCriteria criteria = CaptureOrderingCriteria.ByUser, int index = 0, int count = 15)
-        => (await Repository.GetCaptureByUser(id, criteria, index, count)).ToPagingResponseDtos();
+            // Step 6: Add capture to database
+            var insertedCapture = await captureRepository.Insert(newCapture);
+            if (insertedCapture == null)
+            {
+                Console.WriteLine("Failed to insert capture into database");
+                return null;
+            }
+            
+            Console.WriteLine($"Capture created successfully with ID: {insertedCapture.Capture.Id}");
 
-    public async Task<Pagination<FullCaptureDto>> GetCaptureByCaptureDetail(string id, CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None, int index = 0, int count = 15)
-        => (await Repository.GetCaptureByCaptureDetail(id, criteria, index, count)).ToPagingResponseDtos();
-
-    public async Task<Pagination<FullCaptureDto>> GetCaptureByEspece(string id, CaptureOrderingCriteria criteria = CaptureOrderingCriteria.None, int index = 0, int count = 15)
-        => (await Repository.GetCaptureByEspece(id, criteria, index, count)).ToPagingResponseDtos();
+            // Step 8: Return the complete capture DTO
+            return insertedCapture;
+    }
 }

@@ -166,27 +166,27 @@ public class IdentificationResultDtoTests
     public void InsectIdentificationResultDto_Can_Be_Deserialized()
     {
         string json = @"{
-            ""AccessToken"": ""token"",
-            ""ModelVersion"": ""v1"",
-            ""CustomId"": ""cid"",
-            ""Input"": { ""Latitude"": 12.34, ""Longitude"": 56.78, ""SimilarImages"": true, ""Images"": [""imgA""], ""Datetime"": ""2024-01-01T00:00:00"" },
-            ""Result"": {
-                ""Classification"": {
-                    ""Suggestions"": [{
-                        ""Id"": ""s1"",
-                        ""Name"": ""Papillon"",
-                        ""Probability"": 0.88,
-                        ""SimilarImages"": [ { ""Id"": ""img1"", ""Url"": ""http://img1"", ""Similarity"": 0.99, ""UrlSmall"": ""http://img1/small"", ""LicenseName"": ""CC"", ""LicenseUrl"": ""http://license"", ""Citation"": ""citation"" } ],
-                        ""Details"": { ""CommonNames"": [""Butterfly""], ""Url"": ""http://species"", ""Description"": { ""Value"": ""desc"", ""Citation"": ""cit"", ""LicenseName"": ""CC"", ""LicenseUrl"": ""http://lic"" }, ""Image"": { ""Value"": ""img"", ""Citation"": ""cit"", ""LicenseName"": ""CC"", ""LicenseUrl"": ""http://lic"" }, ""Language"": ""fr"", ""EntityId"": ""ent1"" }
+            ""access_token"": ""token"",
+            ""model_version"": ""v1"",
+            ""custom_id"": ""cid"",
+            ""input"": { ""latitude"": 12.34, ""longitude"": 56.78, ""similar_images"": true, ""images"": [""imgA""], ""datetime"": ""2024-01-01T00:00:00"" },
+            ""result"": {
+                ""classification"": {
+                    ""suggestions"": [{
+                        ""id"": ""s1"",
+                        ""name"": ""Papillon"",
+                        ""probability"": 0.88,
+                        ""similar_images"": [ { ""id"": ""img1"", ""url"": ""http://img1"", ""similarity"": 0.99, ""url_small"": ""http://img1/small"", ""license_name"": ""CC"", ""license_url"": ""http://license"", ""citation"": ""citation"" } ],
+                        ""details"": { ""common_names"": [""Butterfly""], ""url"": ""http://species"", ""description"": { ""value"": ""desc"", ""citation"": ""cit"", ""license_name"": ""CC"", ""license_url"": ""http://lic"" }, ""image"": { ""value"": ""img"", ""citation"": ""cit"", ""license_name"": ""CC"", ""license_url"": ""http://lic"" }, ""language"": ""fr"", ""entity_id"": ""ent1"" }
                     }]
                 },
-                ""IsInsect"": { ""Probability"": 0.99, ""Threshold"": 0.5, ""Binary"": true }
+                ""is_insect"": { ""probability"": 0.99, ""threshold"": 0.5, ""binary"": true }
             },
-            ""Status"": ""ok"",
-            ""SlaCompliantClient"": true,
-            ""SlaCompliantSystem"": false,
-            ""Created"": 123456.0,
-            ""Completed"": 123457.0
+            ""status"": ""ok"",
+            ""sla_compliant_client"": true,
+            ""sla_compliant_system"": false,
+            ""created"": 123456.0,
+            ""completed"": 123457.0
         }";
         var dto = JsonSerializer.Deserialize<InsectIdentificationResultDto>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         Assert.IsNotNull(dto);

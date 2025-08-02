@@ -2,15 +2,23 @@ using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FloraFaunaGO_Services;
 
 public class FileCleanupInterceptor : SaveChangesInterceptor
 {
-    private readonly IFileStorageService _fileStorageService;
+    private readonly IServiceProvider? _serviceProvider;
     private readonly ILogger<FileCleanupInterceptor> _logger;
+    private readonly IFileStorageService? _fileStorageService;
 
+    public FileCleanupInterceptor(IServiceProvider serviceProvider, ILogger<FileCleanupInterceptor> logger)
+    {
+        _serviceProvider = serviceProvider;
+        _logger = logger;
+    }
+    
     public FileCleanupInterceptor(IFileStorageService fileStorageService, ILogger<FileCleanupInterceptor> logger)
     {
         _fileStorageService = fileStorageService;
@@ -142,14 +150,36 @@ public class FileCleanupInterceptor : SaveChangesInterceptor
 
         try
         {
-            var deleted = await _fileStorageService.DeleteAsync(fileUrl);
-            if (deleted)
+            IFileStorageService fileStorageService;
+            IDisposable? scope = null;
+
+            if (_fileStorageService != null)
             {
-                _logger.LogInformation("Successfully deleted file: {FileUrl}", fileUrl);
+                fileStorageService = _fileStorageService;
+            }
+            else if (_serviceProvider != null)
+            {
+                var scopeInstance = _serviceProvider.CreateScope();
+                scope = scopeInstance;
+                fileStorageService = scopeInstance.ServiceProvider.GetRequiredService<IFileStorageService>();
             }
             else
             {
-                _logger.LogWarning("File not found or could not be deleted: {FileUrl}", fileUrl);
+                _logger.LogError("Both IFileStorageService and IServiceProvider are null. Cannot proceed.");
+                return;
+            }
+
+            using (scope) // This will dispose the scope if it was created
+            {
+                var deleted = await fileStorageService.DeleteAsync(fileUrl);
+                if (deleted)
+                {
+                    _logger.LogInformation("Successfully deleted file: {FileUrl}", fileUrl);
+                }
+                else
+                {
+                    _logger.LogWarning("File not found or could not be deleted: {FileUrl}", fileUrl);
+                }
             }
         }
         catch (Exception ex)

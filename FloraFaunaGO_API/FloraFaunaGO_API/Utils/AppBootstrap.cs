@@ -5,7 +5,13 @@ using FloraFauna_GO_Shared;
 using FloraFauna_GO_Shared.Configuration;
 using FloraFauna_GO_Shared.Interfaces;
 using FloraFauna_GO_Shared.Enums;
+using FloraFauna_GO_Mappers;
+using FloraFauna_GO_Mappers.Interfaces;
+using FloraFauna_GO_Mappers.Strategies;
+using FloraFauna_GO_Mappers.Factories;
 using FloraFaunaGO_Services;
+using FloraFauna_GO_Dto.Full;
+using FloraFauna_GO_Dto.Normal;
 using Amazon.S3;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -119,6 +125,31 @@ public class AppBootstrap(IConfiguration configuration)
 
         // Register URL transformation service
         services.AddScoped<IUrlTransformationService, UrlTransformationService>();
+
+        // Register API Keys configuration with environment-first pattern
+        services.Configure<ApiKeys>(options =>
+        {
+            var config = Configuration.GetSection("ApiKeys").Get<ApiKeys>();
+            options.PlantNet = Environment.GetEnvironmentVariable("PLANTNET_API_KEY") ?? config?.PlantNet ?? "";
+            options.Kindwise = Environment.GetEnvironmentVariable("KINDWISE_API_KEY") ?? config?.Kindwise ?? "";
+            options.Gemini = Environment.GetEnvironmentVariable("GEMINI_API_KEY") ?? config?.Gemini ?? "";
+            options.GroqLlm = Environment.GetEnvironmentVariable("GROQ_API_KEY") ?? config?.GroqLlm ?? "";
+        });
+
+        // Register HTTP client for API calls
+        services.AddHttpClient();
+
+        // Register identification strategies
+        services.AddScoped<PlantNetStrategy>();
+        services.AddScoped<KindwiseStrategy>();
+        services.AddScoped<AnimalApiStrategy>();
+
+        // Register strategy factory
+        services.AddScoped<IdentificationStrategyFactory>();
+        
+        // Register modern identification and capture services
+        services.AddScoped<IIdentificationService, ModernIdentificationService>();
+        services.AddScoped<ICaptureService, CaptureService>();
     }
 
     private void AddFileStorageServices(IServiceCollection services)
@@ -183,7 +214,7 @@ public class AppBootstrap(IConfiguration configuration)
         services.AddScoped<MinIoFileStorageService>();
         services.AddScoped<CloudflareR2FileStorageService>();
         services.AddScoped<IFileStorageFactory, FileStorageFactory>();
-        services.AddScoped<IFileStorageService>(provider => provider.GetRequiredService<IFileStorageFactory>().Create(FileStorageProvider.Cloudflare));
+        services.AddScoped<IFileStorageService>(provider => provider.GetRequiredService<IFileStorageFactory>().Create(FileStorageProvider.MinIO));
         services.AddScoped<IImageProcessingService, ImageProcessingService>();
     }
 

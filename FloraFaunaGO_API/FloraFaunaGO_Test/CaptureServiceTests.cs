@@ -11,13 +11,13 @@ namespace FloraFaunaGO_Test;
 public class CaptureServiceTests
 {
     private Mock<ICaptureRepository<CaptureEntities>> _mockRepo;
-    private CaptureService _service;
+    private CaptureRepositoryService _service;
 
     [TestInitialize]
     public void Setup()
     {
         _mockRepo = new Mock<ICaptureRepository<CaptureEntities>>();
-        _service = new CaptureService(_mockRepo.Object);
+        _service = new CaptureRepositoryService(_mockRepo.Object);
     }
 
     [TestMethod]

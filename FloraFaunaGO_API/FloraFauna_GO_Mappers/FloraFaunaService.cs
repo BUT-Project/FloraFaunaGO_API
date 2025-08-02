@@ -27,7 +27,7 @@ public class FloraFaunaService : IUnitOfWork<FullEspeceDto, FullEspeceDto, Captu
         : this(new UnitOfWork(new FloraFaunaGoDB(options))) { }
 
     public IUserRepository<UtilisateurNormalDto, FullUtilisateurDto> UserRepository => new UserService(DbUnitOfWork.UserRepository);
-    public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository => new CaptureService(DbUnitOfWork.CaptureRepository);
+    public ICaptureRepository<CaptureNormalDto, FullCaptureDto> CaptureRepository => new CaptureRepositoryService(DbUnitOfWork.CaptureRepository);
     public IEspeceRepository<FullEspeceDto, FullEspeceDto> EspeceRepository => new EspeceService(DbUnitOfWork.EspeceRepository);
 
     public ICaptureDetailRepository<CaptureDetailNormalDto, FullCaptureDetailDto> CaptureDetailRepository => new CaptureDetailService(DbUnitOfWork.CaptureDetailRepository);

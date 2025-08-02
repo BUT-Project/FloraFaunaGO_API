@@ -1,6 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using FloraFauna_GO_Entities;
 using FloraFauna_GO_Shared.Interfaces;
@@ -21,6 +22,7 @@ public class FileCleanupInterceptorTests
     {
         _mockFileStorageService = new Mock<IFileStorageService>();
         _mockLogger = new Mock<ILogger<FileCleanupInterceptor>>();
+        
         _interceptor = new FileCleanupInterceptor(_mockFileStorageService.Object, _mockLogger.Object);
 
         var options = new DbContextOptionsBuilder<FloraFaunaGoDB>()

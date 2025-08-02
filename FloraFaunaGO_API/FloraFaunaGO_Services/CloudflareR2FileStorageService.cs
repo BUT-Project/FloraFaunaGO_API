@@ -45,8 +45,8 @@ public class CloudflareR2FileStorageService : IFileStorageService
             try
             {
                 // Save file to temporary location
-                using (var stream = file.OpenReadStream())
-                using (var fileStream = new FileStream(tempFile, FileMode.Create))
+                await using (var stream = file.OpenReadStream())
+                await using (var fileStream = new FileStream(tempFile, FileMode.Create))
                 {
                     await stream.CopyToAsync(fileStream);
                 }
